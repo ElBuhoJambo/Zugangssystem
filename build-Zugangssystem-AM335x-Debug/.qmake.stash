@@ -1,0 +1,23 @@
+QMAKE_CXX.INCDIRS = \
+    /home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 \
+    /home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf \
+    /home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward \
+    /home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include \
+    /home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed \
+    /home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include \
+    /home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include
+QMAKE_CXX.LIBDIRS = \
+    /home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0 \
+    /home/user/larsys/compiler-2019.02.4/lib/gcc \
+    /home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/lib \
+    /home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/lib \
+    /home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib
+QMAKE_CXX.QT_COMPILER_STDCXX = 201402L
+QMAKE_CXX.QMAKE_GCC_MAJOR_VERSION = 7
+QMAKE_CXX.QMAKE_GCC_MINOR_VERSION = 4
+QMAKE_CXX.QMAKE_GCC_PATCH_VERSION = 0
+QMAKE_CXX.COMPILER_MACROS = \
+    QT_COMPILER_STDCXX \
+    QMAKE_GCC_MAJOR_VERSION \
+    QMAKE_GCC_MINOR_VERSION \
+    QMAKE_GCC_PATCH_VERSION
