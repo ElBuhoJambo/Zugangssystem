@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_sqlCheck_t {
-    QByteArrayData data[13];
-    char stringdata0[94];
+    QByteArrayData data[16];
+    char stringdata0[126];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -43,12 +43,16 @@ QT_MOC_LITERAL(8, 48, 10), // "logMessage"
 QT_MOC_LITERAL(9, 59, 3), // "msg"
 QT_MOC_LITERAL(10, 63, 5), // "index"
 QT_MOC_LITERAL(11, 69, 14), // "receiveRequest"
-QT_MOC_LITERAL(12, 84, 9) // "showTable"
+QT_MOC_LITERAL(12, 84, 9), // "showTable"
+QT_MOC_LITERAL(13, 94, 9), // "addWorker"
+QT_MOC_LITERAL(14, 104, 8), // "location"
+QT_MOC_LITERAL(15, 113, 12) // "deleteWorker"
 
     },
     "sqlCheck\0Result\0\0access\0RFID\0loc\0name\0"
     "ShowTable\0logMessage\0msg\0index\0"
-    "receiveRequest\0showTable"
+    "receiveRequest\0showTable\0addWorker\0"
+    "location\0deleteWorker"
 };
 #undef QT_MOC_LITERAL
 
@@ -58,7 +62,7 @@ static const uint qt_meta_data_sqlCheck[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -66,13 +70,15 @@ static const uint qt_meta_data_sqlCheck[] = {
        3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    4,   39,    2, 0x06 /* Public */,
-       7,    4,   48,    2, 0x06 /* Public */,
-       8,    2,   57,    2, 0x06 /* Public */,
+       1,    4,   49,    2, 0x06 /* Public */,
+       7,    4,   58,    2, 0x06 /* Public */,
+       8,    2,   67,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      11,    2,   62,    2, 0x0a /* Public */,
-      12,    0,   67,    2, 0x0a /* Public */,
+      11,    2,   72,    2, 0x0a /* Public */,
+      12,    0,   77,    2, 0x0a /* Public */,
+      13,    4,   78,    2, 0x0a /* Public */,
+      15,    1,   87,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool, QMetaType::QString, QMetaType::QString, QMetaType::QString,    3,    4,    5,    6,
@@ -82,6 +88,8 @@ static const uint qt_meta_data_sqlCheck[] = {
  // slots: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QString,    4,    5,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::QString,    4,   14,    6,    3,
+    QMetaType::Void, QMetaType::QString,    4,
 
        0        // eod
 };
@@ -97,6 +105,8 @@ void sqlCheck::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 2: _t->logMessage((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         case 3: _t->receiveRequest((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         case 4: _t->showTable(); break;
+        case 5: _t->addWorker((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
+        case 6: _t->deleteWorker((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -150,13 +160,13 @@ int sqlCheck::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 5)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 5;
+        _id -= 7;
     }
     return _id;
 }
