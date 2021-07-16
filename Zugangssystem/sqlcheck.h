@@ -7,6 +7,8 @@
 #include <QSqlError>
 #include <QDebug>
 
+#include "logging.h"
+
 class sqlCheck : public QObject
 {
     Q_OBJECT

@@ -2,6 +2,9 @@
 #define OPENDOOR_H
 
 #include <QObject>
+#include <QDebug>
+
+#include "logging.h"
 
 class openDoor : public QObject
 {
@@ -12,6 +15,7 @@ public:
 
 signals:
     void Rights(QString RFID, QString loc);
+    void logMessage(QString msg, int index);
 
 public slots:
     void rightsReturned(bool access, QString loc);

@@ -12,7 +12,11 @@ openDoor::openDoor()
 }
 
 void openDoor::rightsReturned(bool access, QString loc){
-
+    if(access){
+        qDebug() << "Granted " << loc;
+    }else{
+        qDebug() << "Denied" << loc;
+    }
 }
 
 void openDoor::checkAccess(QString RFID, QString loc){

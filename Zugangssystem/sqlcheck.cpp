@@ -72,6 +72,7 @@ QStringList sqlCheck::request(QString RFID, QString loc){
     if(query.exec()){
         if(query.next()){
             qDebug() << "DB found" << RFID << query.value(0).toString();
+            emit logMessage(QString(";Worker found for %1;sqlCheck;%2").arg(loc).arg(query.value(0).toString()), (int)LOG_SCAN);
             results << query.value(0).toString() << query.value(1).toString();
             return results;
         }else{
@@ -80,16 +81,23 @@ QStringList sqlCheck::request(QString RFID, QString loc){
             if(query.exec()){
                 if(query.next()){
                     qDebug() << "DB not found" << RFID << query.value(0).toString();
+                    emit logMessage(QString(";ERR;DB not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
                     return QStringList(query.value(0).toString());
                 }else{
                     qDebug() << "Error query next";
+                    emit logMessage(QString(";ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
                     return QStringList("Worker not found");
                 }
+            }else{
+                qDebug() << "Error query execution";
+                emit logMessage(QString(";ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
+                return QStringList("Worker not found");
             }
 
         }
     }else{
         qDebug() << "Error query execution";
+        emit logMessage(QString(";ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
         return QStringList("Worker not found");
     }
 }

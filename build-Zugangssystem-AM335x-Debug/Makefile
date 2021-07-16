@@ -50,11 +50,27 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../Zugangssystem/main.cpp \
-		../Zugangssystem/mainwindow.cpp moc_mainwindow.cpp
-OBJECTS       = main.o \
+SOURCES       = ../Zugangssystem/accessrights.cpp \
+		../Zugangssystem/logging.cpp \
+		../Zugangssystem/main.cpp \
+		../Zugangssystem/mainwindow.cpp \
+		../Zugangssystem/opendoor.cpp \
+		../Zugangssystem/sqlcheck.cpp moc_accessrights.cpp \
+		moc_logging.cpp \
+		moc_mainwindow.cpp \
+		moc_opendoor.cpp \
+		moc_sqlcheck.cpp
+OBJECTS       = accessrights.o \
+		logging.o \
+		main.o \
 		mainwindow.o \
-		moc_mainwindow.o
+		opendoor.o \
+		sqlcheck.o \
+		moc_accessrights.o \
+		moc_logging.o \
+		moc_mainwindow.o \
+		moc_opendoor.o \
+		moc_sqlcheck.o
 DIST          = ../../../compiler/mkspecs/features/spec_pre.prf \
 		../../../compiler-2019.02.4/mkspecs/common/unix.conf \
 		../../../compiler-2019.02.4/mkspecs/common/linux.conf \
@@ -154,6 +170,7 @@ DIST          = ../../../compiler/mkspecs/features/spec_pre.prf \
 		../../../compiler/mkspecs/features/qt_config.prf \
 		../../../compiler/mkspecs/devices/linux-buildroot-g++/qmake.conf \
 		../../../compiler/mkspecs/features/spec_post.prf \
+		../Zugangssystem/.qmake.stash \
 		../../../compiler/mkspecs/features/exclusive_builds.prf \
 		../../../compiler/mkspecs/features/toolchain.prf \
 		../../../compiler/mkspecs/features/default_pre.prf \
@@ -172,8 +189,16 @@ DIST          = ../../../compiler/mkspecs/features/spec_pre.prf \
 		../../../compiler/mkspecs/features/exceptions.prf \
 		../../../compiler/mkspecs/features/yacc.prf \
 		../../../compiler/mkspecs/features/lex.prf \
-		../Zugangssystem/Zugangssystem.pro ../Zugangssystem/mainwindow.h ../Zugangssystem/main.cpp \
-		../Zugangssystem/mainwindow.cpp
+		../Zugangssystem/Zugangssystem.pro ../Zugangssystem/accessrights.h \
+		../Zugangssystem/logging.h \
+		../Zugangssystem/mainwindow.h \
+		../Zugangssystem/opendoor.h \
+		../Zugangssystem/sqlcheck.h ../Zugangssystem/accessrights.cpp \
+		../Zugangssystem/logging.cpp \
+		../Zugangssystem/main.cpp \
+		../Zugangssystem/mainwindow.cpp \
+		../Zugangssystem/opendoor.cpp \
+		../Zugangssystem/sqlcheck.cpp
 QMAKE_TARGET  = Zugangssystem
 DESTDIR       = 
 TARGET        = Zugangssystem
@@ -284,6 +309,7 @@ Makefile: ../Zugangssystem/Zugangssystem.pro ../../../compiler/mkspecs/devices/l
 		../../../compiler/mkspecs/features/qt_config.prf \
 		../../../compiler/mkspecs/devices/linux-buildroot-g++/qmake.conf \
 		../../../compiler/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../compiler/mkspecs/features/exclusive_builds.prf \
 		../../../compiler/mkspecs/features/toolchain.prf \
 		../../../compiler/mkspecs/features/default_pre.prf \
@@ -407,6 +433,7 @@ Makefile: ../Zugangssystem/Zugangssystem.pro ../../../compiler/mkspecs/devices/l
 ../../../compiler/mkspecs/features/qt_config.prf:
 ../../../compiler/mkspecs/devices/linux-buildroot-g++/qmake.conf:
 ../../../compiler/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../compiler/mkspecs/features/exclusive_builds.prf:
 ../../../compiler/mkspecs/features/toolchain.prf:
 ../../../compiler/mkspecs/features/default_pre.prf:
@@ -445,8 +472,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../compiler/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../Zugangssystem/mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../Zugangssystem/main.cpp ../Zugangssystem/mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../Zugangssystem/accessrights.h ../Zugangssystem/logging.h ../Zugangssystem/mainwindow.h ../Zugangssystem/opendoor.h ../Zugangssystem/sqlcheck.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../Zugangssystem/accessrights.cpp ../Zugangssystem/logging.cpp ../Zugangssystem/main.cpp ../Zugangssystem/mainwindow.cpp ../Zugangssystem/opendoor.cpp ../Zugangssystem/sqlcheck.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../Zugangssystem/mainwindow.ui $(DISTDIR)/
 
 
@@ -479,9 +506,133 @@ compiler_moc_predefs_clean:
 moc_predefs.h: ../../../compiler/mkspecs/features/data/dummy.cpp
 	/home/user/larsys/compiler/bin/arm-larsys-linux-gnueabihf-g++ -pipe -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Os --sysroot=/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h ../../../compiler/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_accessrights.cpp moc_logging.cpp moc_mainwindow.cpp moc_opendoor.cpp moc_sqlcheck.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp
+	-$(DEL_FILE) moc_accessrights.cpp moc_logging.cpp moc_mainwindow.cpp moc_opendoor.cpp moc_sqlcheck.cpp
+moc_accessrights.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnamespace.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtcore-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsystemdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qprocessordetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcompilerdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtypeinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsysinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlogging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qflags.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasicatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qgenericatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_msvc.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobalstatic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmutex.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnumeric.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qversiontagging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qchar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qrefcount.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qarraydata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringliteral.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringview.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringbuilder.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiterator.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhashfunctions.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpair.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearraylist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qregexp.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreevent.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qscopedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../Zugangssystem/accessrights.h \
+		moc_predefs.h \
+		../../../compiler/bin/moc
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/accessrights.h -o moc_accessrights.cpp
+
+moc_logging.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qchar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtcore-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsystemdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qprocessordetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcompilerdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtypeinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsysinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlogging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qflags.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasicatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qgenericatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_msvc.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobalstatic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmutex.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnumeric.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qversiontagging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qrefcount.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnamespace.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qarraydata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringliteral.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringview.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringbuilder.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiterator.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhashfunctions.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpair.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearraylist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qregexp.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QThread \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreevent.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qscopedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfile.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfiledevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiodevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../Zugangssystem/logging.h \
+		moc_predefs.h \
+		../../../compiler/bin/moc
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/logging.h -o moc_logging.cpp
+
 moc_mainwindow.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QMainWindow \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qmainwindow.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qtwidgetsglobal.h \
@@ -637,6 +788,138 @@ moc_mainwindow.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/inc
 		../../../compiler/bin/moc
 	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/mainwindow.h -o moc_mainwindow.cpp
 
+moc_opendoor.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnamespace.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtcore-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsystemdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qprocessordetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcompilerdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtypeinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsysinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlogging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qflags.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasicatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qgenericatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_msvc.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobalstatic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmutex.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnumeric.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qversiontagging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qchar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qrefcount.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qarraydata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringliteral.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringview.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringbuilder.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiterator.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhashfunctions.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpair.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearraylist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qregexp.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreevent.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qscopedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../Zugangssystem/opendoor.h \
+		moc_predefs.h \
+		../../../compiler/bin/moc
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/opendoor.h -o moc_opendoor.cpp
+
+moc_sqlcheck.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnamespace.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtcore-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsystemdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qprocessordetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcompilerdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtypeinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsysinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlogging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qflags.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasicatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qgenericatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_msvc.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobalstatic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmutex.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnumeric.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qversiontagging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qchar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qrefcount.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qarraydata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringliteral.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringview.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringbuilder.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiterator.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhashfunctions.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpair.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearraylist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qregexp.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreevent.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qscopedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlDatabase \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqldatabase.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qtsqlglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlQuery \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqlquery.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlError \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqlerror.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiodevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../Zugangssystem/sqlcheck.h \
+		moc_predefs.h \
+		../../../compiler/bin/moc
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/sqlcheck.h -o moc_sqlcheck.cpp
+
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
@@ -657,6 +940,140 @@ compiler_lex_clean:
 compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
+
+accessrights.o: ../Zugangssystem/accessrights.cpp ../Zugangssystem/accessrights.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnamespace.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtcore-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsystemdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qprocessordetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcompilerdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtypeinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsysinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlogging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qflags.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasicatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qgenericatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_msvc.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobalstatic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmutex.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnumeric.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qversiontagging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qchar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qrefcount.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qarraydata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringliteral.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringview.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringbuilder.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiterator.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhashfunctions.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpair.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearraylist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qregexp.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreevent.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qscopedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o accessrights.o ../Zugangssystem/accessrights.cpp
+
+logging.o: ../Zugangssystem/logging.cpp ../Zugangssystem/logging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qchar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtcore-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsystemdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qprocessordetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcompilerdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtypeinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsysinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlogging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qflags.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasicatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qgenericatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_msvc.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobalstatic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmutex.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnumeric.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qversiontagging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qrefcount.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnamespace.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qarraydata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringliteral.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringview.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringbuilder.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiterator.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhashfunctions.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpair.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearraylist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qregexp.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QThread \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreevent.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qscopedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfile.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfiledevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiodevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o logging.o ../Zugangssystem/logging.cpp
 
 main.o: ../Zugangssystem/main.cpp ../Zugangssystem/mainwindow.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QMainWindow \
@@ -969,11 +1386,188 @@ mainwindow.o: ../Zugangssystem/mainwindow.cpp ../Zugangssystem/mainwindow.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QToolTip \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qtooltip.h \
-		ui_mainwindow.h
+		ui_mainwindow.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVariant \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QApplication \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qapplication.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreapplication.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qdesktopwidget.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui/qguiapplication.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui/qinputmethod.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QMenuBar \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qmenubar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qmenu.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qaction.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qactiongroup.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QStatusBar \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qstatusbar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QWidget \
+		../Zugangssystem/sqlcheck.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlDatabase \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqldatabase.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qtsqlglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlQuery \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqlquery.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlError \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqlerror.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../Zugangssystem/accessrights.h \
+		../Zugangssystem/opendoor.h \
+		../Zugangssystem/logging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../Zugangssystem/mainwindow.cpp
+
+opendoor.o: ../Zugangssystem/opendoor.cpp ../Zugangssystem/opendoor.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnamespace.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtcore-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsystemdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qprocessordetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcompilerdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtypeinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsysinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlogging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qflags.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasicatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qgenericatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_msvc.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobalstatic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmutex.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnumeric.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qversiontagging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qchar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qrefcount.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qarraydata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringliteral.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringview.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringbuilder.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiterator.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhashfunctions.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpair.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearraylist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qregexp.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreevent.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qscopedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o opendoor.o ../Zugangssystem/opendoor.cpp
+
+sqlcheck.o: ../Zugangssystem/sqlcheck.cpp ../Zugangssystem/sqlcheck.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnamespace.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig-bootstrapped.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qconfig.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtcore-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsystemdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qprocessordetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcompilerdetection.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtypeinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsysinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlogging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qflags.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasicatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qgenericatomic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qatomic_msvc.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qglobalstatic.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmutex.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qnumeric.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qversiontagging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qchar.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qrefcount.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qarraydata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringliteral.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringview.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringbuilder.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qalgorithms.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiterator.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhashfunctions.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpair.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbytearraylist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringlist.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qregexp.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreevent.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qscopedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlDatabase \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqldatabase.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qtsqlglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlQuery \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqlquery.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlError \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqlerror.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiodevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o sqlcheck.o ../Zugangssystem/sqlcheck.cpp
+
+moc_accessrights.o: moc_accessrights.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_accessrights.o moc_accessrights.cpp
+
+moc_logging.o: moc_logging.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_logging.o moc_logging.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_opendoor.o: moc_opendoor.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_opendoor.o moc_opendoor.cpp
+
+moc_sqlcheck.o: moc_sqlcheck.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_sqlcheck.o moc_sqlcheck.cpp
 
 ####### Install
 
