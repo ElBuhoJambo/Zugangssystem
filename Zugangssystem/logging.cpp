@@ -125,6 +125,8 @@ void Logging::logTimeIsvalid(void)
  */
 void Logging::logMessage(QString msg,int index)
 {
+    //temporary
+    lIsTimeValid = true;
     if (lIsTimeValid)
     {
         QFile* pLogFile = lPLogFile[index];
@@ -144,6 +146,7 @@ void Logging::logMessage(QString msg,int index)
             pLogFile->close();
             /* sync with the disc to avoid losing data on power down */
             fsync(pLogFile->handle());
+            emit LogMessageTest(message);
         }
         /* create a backup log file if the maximum size is reached */
         if ( lMaxLogFileSize <= pLogFile->size())

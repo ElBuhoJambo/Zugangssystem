@@ -35,6 +35,7 @@ public:
 
 signals:
     void stopCopyLogfiles(void);
+    void LogMessageTest(QString msg);
 
 public slots:
     void logMessage(QString msg, int index = 0);
