@@ -181,7 +181,7 @@ void MainWindow::showTabToolTips(bool show){
         break;
     case 1:
         while(toolTip){
-            QToolTip::showText(QPoint(100,100), "Logging Output", loggingTabFrame, QRect(), 1000);
+            QToolTip::showText(QPoint(760,30), "Logging Output", loggingTabFrame, QRect(), 1000);
             delay(1000);
         }
         break;
@@ -199,8 +199,14 @@ void MainWindow::showTabToolTips(bool show){
         break;
     case 4:
         while(toolTip){
-            QToolTip::showText(QPoint(460,50),"Toggle whether the worker table is shown or not!", showTableButton, QRect(), 1000);
-            delay(1000);
+            QToolTip::showText(QPoint(460,55),"Toggle whether the worker table is shown or not!", showTableButton, QRect(), 1300);
+            delay(1300);
+            if(adminLogged){
+                QToolTip::showText(QPoint(700,55),"Add a worker via input", showAddButton, QRect(), 1000);
+                delay(1000);
+                QToolTip::showText(QPoint(770,95),"Delete a worker via input of the RFID", showDeleteButton, QRect(), 1300);
+                delay(1300);
+            }
             if(showTableWidget->isVisible()){
                 QToolTip::showText(QPoint(400,200),"Worker table", showTableWidget, QRect(), 1000);
                 delay(1000);
