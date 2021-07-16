@@ -153,7 +153,7 @@ void MainWindow::deleteWorker(){
 
 void MainWindow::addWorker(){
     //Some way of getting a text input?
-    emit AddWorker("0001234567","Location 1","Ferdinand","false");
+    emit AddWorker("0000160302","Location 3","Jambo","true");
 }
 
 void MainWindow::showTabToolTips(bool show){
