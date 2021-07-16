@@ -31,6 +31,45 @@ sqlCheck::sqlCheck(){
     }
 }
 
+void sqlCheck::deleteWorker(QString RFID){
+    QSqlQuery query;
+
+    query.prepare("DELETE FROM worker WHERE RFID = ?");
+    query.addBindValue(RFID);
+
+    if(query.exec()){
+        qDebug() << "worker deleted successfully";
+        emit logMessage(QString(";worker deleted;%1").arg(RFID), (int)LOG_COMMON);
+    }else{
+        qWarning() << "ERROR: " << query.lastError().text();
+        emit logMessage(QString(";ERR;worked not deleted;no query;%1").arg(RFID), (int)LOG_COMMON);
+    }
+}
+
+void sqlCheck::addWorker(QString RFID, QString location, QString name, QString access){
+    QSqlQuery query;
+    int accessInt;
+    if(access == "true"){
+        accessInt = 1;
+    }else{
+        accessInt = 0;
+    }
+
+    query.prepare("INSERT INTO worker(name, RFID, loc, access) VALUES(?, ?, ?, ?)");
+    query.addBindValue(name);
+    query.addBindValue(RFID);
+    query.addBindValue(location);
+    query.addBindValue(accessInt);
+
+    if(query.exec()){
+        qDebug() << "worker added successfully";
+        emit logMessage(QString(";worker added;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
+    }else{
+        qWarning() << "ERROR: " << query.lastError().text();
+        emit logMessage(QString(";ERR;worked not added;no query;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
+    }
+}
+
 void sqlCheck::showTable(){
     QSqlQuery query;
     query.prepare("SELECT name, RFID, loc, access FROM worker");

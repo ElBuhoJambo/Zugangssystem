@@ -26,6 +26,8 @@ signals:
 public slots:
     void receiveRequest(QString RFID, QString loc);
     void showTable();
+    void addWorker(QString RFID, QString location, QString name, QString access);
+    void deleteWorker(QString RFID);
 
 private:
     sqlCheck();

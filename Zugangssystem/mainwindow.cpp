@@ -38,24 +38,29 @@ MainWindow::MainWindow(QWidget *parent)
     testTextEdit->grabKeyboard();
     testLocLayout = new QGridLayout;
 
-    showTableButton = new QPushButton("Show Worker Table");
+    showTableButton = new QPushButton("Show worker table");
     showTableButton->setCheckable(true);
     showTableButton->setFixedWidth(460);
-    showSpaceButton = new QPushButton("Spacer");
-    showSpaceButton->hide();
+    showAddButton = new QPushButton("Add worker");
+    showAddButton->hide();
+    showDeleteButton = new QPushButton("Delete worker");
+    showDeleteButton->hide();
     showFrame = new QFrame;
     showFrame->setMaximumWidth(460);
     showFrame->hide();
     showSpaceFrame = new QFrame;
     showTableWidget = new QTableWidget(0,4,this);
+    showTableWidget->setColumnWidth(1,125);
+    showTableWidget->setColumnWidth(3,84);
     showLayout = new QVBoxLayout;
     showLayout->setAlignment(Qt::AlignTop);
     showLayout->setSpacing(0);
     showLayout->addWidget(showTableWidget);
     sqlLayout->addWidget(showTableButton,0,0);
     sqlLayout->addWidget(showFrame, 1,0);
-    sqlLayout->addWidget(showSpaceButton,0,1);
-    sqlLayout->addWidget(showSpaceFrame, 1,1);
+    sqlLayout->addWidget(showAddButton,0,1);
+    sqlLayout->addWidget(showDeleteButton,1,1,Qt::AlignTop);
+    sqlLayout->addWidget(showSpaceFrame, 2,1);
     showFrame->setLayout(showLayout);
     sqlTabFrame->setLayout(sqlLayout);
 
@@ -110,6 +115,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(sqlCheck::getInstance(),SIGNAL(Result(bool, QString, QString, QString)),accessRights::getInstance(), SLOT(receiveResult(bool, QString, QString, QString)));
     connect(this, SIGNAL(ScanInitiated(QString, QString)), openDoor::getInstance(), SLOT(checkAccess(QString, QString)));
     connect(sqlCheck::getInstance(), SIGNAL(ShowTable(QString,QString,QString,QString)), this, SLOT(sql(QString,QString,QString,QString)));
+    connect(this, SIGNAL(AddWorker(QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(addWorker(QString, QString, QString, QString)));
+    connect(this, SIGNAL(DeleteWorker(QString)), sqlCheck::getInstance(), SLOT(deleteWorker(QString)));
 
     connect(testLoc1But1, SIGNAL(clicked()), this, SLOT(loc1Clicked1()));
     connect(testLoc2But1, SIGNAL(clicked()), this, SLOT(loc2Clicked1()));
@@ -122,6 +129,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(FirstShow()), sqlCheck::getInstance(), SLOT(showTable()));
     connect(logOutButton, SIGNAL(clicked()),this, SLOT(hideAdminScreen()));
     connect(toolTipBut, SIGNAL(clicked(bool)), this, SLOT(showTabToolTips(bool)));
+    connect(showAddButton, SIGNAL(clicked()), this, SLOT(addWorker()));
+    connect(showDeleteButton, SIGNAL(clicked()), this, SLOT(deleteWorker()));
 
     connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(Logging::getInstance(), SIGNAL(LogMessageTest(QString)), this, SLOT(logMessage(QString)));
@@ -133,6 +142,18 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::deleteWorker(){
+    //Some way of getting a text input
+    //Maybe Qt Virtual Keyboard
+    emit DeleteWorker("?");
+
+}
+
+void MainWindow::addWorker(){
+    //Some way of getting a text input?
+    emit AddWorker("0001234567","Location 1","Ferdinand","false");
 }
 
 void MainWindow::showTabToolTips(bool show){
@@ -180,8 +201,11 @@ void MainWindow::showTabToolTips(bool show){
         while(toolTip){
             QToolTip::showText(QPoint(460,50),"Toggle whether the worker table is shown or not!", showTableButton, QRect(), 1000);
             delay(1000);
-            QToolTip::showText(QPoint(400,200),"Worker table", showTableWidget, QRect(), 1000);
-            delay(1000);
+            if(showTableWidget->isVisible()){
+                QToolTip::showText(QPoint(400,200),"Worker table", showTableWidget, QRect(), 1000);
+                delay(1000);
+            }
+
         }
 
         break;
@@ -229,7 +253,7 @@ void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
     QTableWidgetItem *locItem = new QTableWidgetItem(loc);
     QTableWidgetItem *accessItem = new QTableWidgetItem();
 
-    if(access == 1){
+    if(access == "1"){
         accessItem->setText("Granted");
     }else{
         accessItem->setText("Denied");
@@ -266,12 +290,16 @@ void MainWindow::scanTest(){
 void MainWindow::showAdminScreen(){
     adminLogged = true;
     logOutButton->show();
+    showAddButton->show();
+    showDeleteButton->show();
     ui->statusbar->showMessage("admin logged in");
     emit LoggingTest(";admin logged in",(int)LOG_COMMON);
 }
 
 void MainWindow::hideAdminScreen(){
     logOutButton->hide();
+    showAddButton->hide();
+    showDeleteButton->hide();
     ui->statusbar->showMessage("admin gone");
     adminLogged = false;
     emit LoggingTest(";admin logged out",(int)LOG_COMMON);

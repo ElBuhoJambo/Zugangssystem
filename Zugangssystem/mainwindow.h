@@ -61,7 +61,8 @@ public:
     QLineEdit *testTextEdit;
 
     QPushButton *showTableButton;
-    QPushButton *showSpaceButton;
+    QPushButton *showAddButton;
+    QPushButton *showDeleteButton;
     QFrame *showFrame;
     QFrame *showSpaceFrame;
     QTableWidget *showTableWidget;
@@ -93,6 +94,8 @@ signals:
     void ScanInitiated(QString RFID, QString Location);
     void LoggingTest(QString msg, int index);
     void FirstShow();
+    void AddWorker(QString RFID, QString location, QString name, QString access);
+    void DeleteWorker(QString RFID);
 
 public slots:
     void loc1Clicked1();
@@ -108,5 +111,7 @@ public slots:
     void showTable(bool show);
     void hideAdminScreen();
     void showTabToolTips(bool show);
+    void addWorker();
+    void deleteWorker();
 };
 #endif // MAINWINDOW_H
