@@ -15,6 +15,7 @@
 #include <QTableWidgetItem>
 #include <QThread>
 #include <QToolTip>
+#include <QWhatsThis>
 
 //#include "libusb.h"
 
@@ -110,7 +111,7 @@ public slots:
     void sql(QString name, QString RFID, QString loc, QString access);
     void showTable(bool show);
     void hideAdminScreen();
-    void showTabToolTips(bool show);
+    void showTabToolTips();
     void addWorker();
     void deleteWorker();
 };

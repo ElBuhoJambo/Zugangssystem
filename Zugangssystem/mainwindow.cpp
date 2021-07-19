@@ -68,7 +68,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     statusLabel->setFixedWidth(150);
     toolTipBut->setFixedWidth(100);
-    toolTipBut->setCheckable(true);
     statusLabel->setText("Version 1.0");
     //statusLayout->addWidget(spacerLabel,0,Qt::AlignLeft);
     //statusLayout->addWidget(statusLabel,0,Qt::AlignLeft);
@@ -108,6 +107,23 @@ MainWindow::MainWindow(QWidget *parent)
     visualLayout->addItem(logOutSpacer,3,0,1,1);
     logOutButton->hide();
 
+    testLoc1But1->setWhatsThis("Emulate scan for Location 1");
+    testLoc2But1->setWhatsThis("Emulate scan for Location 2");
+    testLoc3But1->setWhatsThis("Emulate scan for Location 3");
+    testLoc1But2->setWhatsThis("Emulate scan for Location 1");
+    testLoc2But2->setWhatsThis("Emulate scan for Location 2");
+    testLoc3But2->setWhatsThis("Emulate scan for Location 3");
+    testTextEdit->setWhatsThis("Reads the RFID from the chip");
+    showTableButton->setWhatsThis("Show the worker table");
+    showAddButton->setWhatsThis("Add a worker via text input");
+    showDeleteButton->setWhatsThis("Delete a worker via text input");
+    showTableWidget->setWhatsThis("Worker table");
+    logOutButton->setWhatsThis("Log out of admin mode");
+    nameLabel->setWhatsThis("Name of the currently scanned worker");
+    locLabel->setWhatsThis("Location of the currently scanned worker");
+    accessLabel->setWhatsThis("Output whether or not access is to this location is granted");
+    timeLabel->setWhatsThis("Time the currently scanned worker scanned in");
+
     connect(openDoor::getInstance(),SIGNAL(Rights(QString, QString)),accessRights::getInstance(),SLOT(checkAccess(QString, QString)));
     connect(accessRights::getInstance(),SIGNAL(SQLRequest(QString, QString)),sqlCheck::getInstance(),SLOT(receiveRequest(QString, QString)));
     connect(accessRights::getInstance(),SIGNAL(Visual(QString, QString, bool)),this, SLOT(visual(QString, QString, bool)));
@@ -128,7 +144,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(showTableButton, SIGNAL(toggled(bool)), this, SLOT(showTable(bool)));
     connect(this, SIGNAL(FirstShow()), sqlCheck::getInstance(), SLOT(showTable()));
     connect(logOutButton, SIGNAL(clicked()),this, SLOT(hideAdminScreen()));
-    connect(toolTipBut, SIGNAL(clicked(bool)), this, SLOT(showTabToolTips(bool)));
+    connect(toolTipBut, SIGNAL(clicked()), this, SLOT(showTabToolTips()));
     connect(showAddButton, SIGNAL(clicked()), this, SLOT(addWorker()));
     connect(showDeleteButton, SIGNAL(clicked()), this, SLOT(deleteWorker()));
 
@@ -147,87 +163,18 @@ MainWindow::~MainWindow()
 void MainWindow::deleteWorker(){
     //Some way of getting a text input
     //Maybe Qt Virtual Keyboard
-    emit DeleteWorker("?");
-
+    //emit DeleteWorker("?");
+    qDebug() << "no worker deleted because no text input";
 }
 
 void MainWindow::addWorker(){
     //Some way of getting a text input?
-    emit AddWorker("0000160302","Location 3","Jambo","true");
+    //emit AddWorker("0000160302","Location 3","Jambo","true");
+    qDebug() << "no worker added because no text input";
 }
 
-void MainWindow::showTabToolTips(bool show){
-    int index = mainTabWidget->currentIndex();
-    toolTip = show;
-
-    switch(index){
-    case 0:
-        while(toolTip){
-            QToolTip::showText(QPoint(80,155),"Scan Location 1 Test", testLoc1But1, QRect(), 1000);
-            delay(1000);
-            QToolTip::showText(QPoint(185,155),"Scan Location 2 Test", testLoc2But1, QRect(), 1000);
-            delay(1000);
-            QToolTip::showText(QPoint(290,155),"Scan Location 3 Test", testLoc3But1, QRect(), 1000);
-            delay(1000);
-            QToolTip::showText(QPoint(80,290),"Scan Location 1 Test", testLoc1But2, QRect(), 1000);
-            delay(1000);
-            QToolTip::showText(QPoint(185,290),"Scan Location 2 Test", testLoc2But2, QRect(), 1000);
-            delay(1000);
-            QToolTip::showText(QPoint(290,290),"Scan Location 3 Test", testLoc3But2, QRect(), 1000);
-            delay(1000);
-            QToolTip::showText(QPoint(600,425),"QLineEdit for scanning the RFID", testTextEdit, QRect(), 2000);
-            delay(2000);
-        }
-        break;
-    case 1:
-        while(toolTip){
-            QToolTip::showText(QPoint(760,30), "Logging Output", loggingTabFrame, QRect(), 1000);
-            delay(1000);
-        }
-        break;
-    case 2:
-        while(toolTip){
-            QToolTip::showText(QPoint(100,100), "Nothing yet", openTabFrame, QRect(), 1000);
-            delay(1000);
-        }
-        break;
-    case 3:
-        while(toolTip){
-            QToolTip::showText(QPoint(100,100), "Nothing yet", rightsTabFrame, QRect(), 1000);
-            delay(1000);
-        }
-        break;
-    case 4:
-        while(toolTip){
-            QToolTip::showText(QPoint(460,55),"Toggle whether the worker table is shown or not!", showTableButton, QRect(), 1300);
-            delay(1300);
-            if(adminLogged){
-                QToolTip::showText(QPoint(700,55),"Add a worker via input", showAddButton, QRect(), 1000);
-                delay(1000);
-                QToolTip::showText(QPoint(770,95),"Delete a worker via input of the RFID", showDeleteButton, QRect(), 1300);
-                delay(1300);
-            }
-            if(showTableWidget->isVisible()){
-                QToolTip::showText(QPoint(400,200),"Worker table", showTableWidget, QRect(), 1000);
-                delay(1000);
-            }
-
-        }
-
-        break;
-    case 5:
-        while(toolTip){
-            QToolTip::showText(QPoint(100,100), "Visual output for the scan", openTabFrame, QRect(), 1000);
-            delay(1000);
-            if(logOutButton->isVisible()){
-                QToolTip::showText(QPoint(400,500), "Logout button for the admin", logOutButton, QRect(), 1000);
-                delay(1000);
-            }
-
-        }
-        break;
-    }
-
+void MainWindow::showTabToolTips(){
+    QWhatsThis::enterWhatsThisMode();
 }
 
 void MainWindow::delay(int millisecondsWait){
