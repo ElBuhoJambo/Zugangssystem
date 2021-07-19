@@ -143,7 +143,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(testTextEdit, SIGNAL(returnPressed()), this, SLOT(scanTest()));
     connect(showTableButton, SIGNAL(toggled(bool)), this, SLOT(showTable(bool)));
     connect(this, SIGNAL(FirstShow()), sqlCheck::getInstance(), SLOT(showTable()));
-    connect(logOutButton, SIGNAL(clicked()),this, SLOT(hideAdminScreen()));
+    connect(logOutButton, SIGNAL(clicked(bool)),this, SLOT(hideAdminScreen(bool)));
     connect(toolTipBut, SIGNAL(clicked()), this, SLOT(showTabToolTips()));
     connect(showAddButton, SIGNAL(clicked()), this, SLOT(addWorker()));
     connect(showDeleteButton, SIGNAL(clicked()), this, SLOT(deleteWorker()));
@@ -165,16 +165,19 @@ void MainWindow::deleteWorker(){
     //Maybe Qt Virtual Keyboard
     //emit DeleteWorker("?");
     qDebug() << "no worker deleted because no text input";
+    emit LoggingTest(";delete worker button pressed", (int)LOG_BUTTON);
 }
 
 void MainWindow::addWorker(){
     //Some way of getting a text input?
     //emit AddWorker("0000160302","Location 3","Jambo","true");
     qDebug() << "no worker added because no text input";
+    emit LoggingTest(";add worker button pressed", (int)LOG_BUTTON);
 }
 
 void MainWindow::showTabToolTips(){
     QWhatsThis::enterWhatsThisMode();
+    emit LoggingTest(";info button pressed", (int)LOG_BUTTON);
 }
 
 void MainWindow::delay(int millisecondsWait){
@@ -190,11 +193,14 @@ void MainWindow::showTable(bool show){
         emit FirstShow();
         firstShow = false;
         showFrame->show();
+        emit LoggingTest(";show table button pressed;first time", (int)LOG_BUTTON);
     }else{
         if(show){
             showFrame->show();
+            emit LoggingTest(";show table button pressed;show", (int)LOG_BUTTON);
         }else{
             showFrame->hide();
+            emit LoggingTest(";show table button pressed;hide", (int)LOG_BUTTON);
         }
     }
 }
@@ -227,14 +233,14 @@ void MainWindow::scanTest(){
         qDebug() << "Admin already logged in";
     }else if(adminLogged && RFID != ADMIN_RFID){
         qDebug() << "Admin is gone";
-        hideAdminScreen();
+        hideAdminScreen(true);
     }else{
         if(RFID == ADMIN_RFID){
             qDebug() << "Admin RFID";
             showAdminScreen();
         }else{
             qDebug() << "Regular worker";
-            hideAdminScreen();
+            hideAdminScreen(true);
         }
     }
 
@@ -249,13 +255,18 @@ void MainWindow::showAdminScreen(){
     emit LoggingTest(";admin logged in",(int)LOG_COMMON);
 }
 
-void MainWindow::hideAdminScreen(){
+void MainWindow::hideAdminScreen(bool chip){
     logOutButton->hide();
     showAddButton->hide();
     showDeleteButton->hide();
     ui->statusbar->showMessage("admin gone");
     adminLogged = false;
+    if(!chip){
+        emit LoggingTest(";log out button pressed",(int)LOG_BUTTON);
+    }
+
     emit LoggingTest(";admin logged out",(int)LOG_COMMON);
+
 }
 
 /**
@@ -296,6 +307,7 @@ void MainWindow::visual(QString name, QString loc, bool access){
  */
 void MainWindow::loc1Clicked1(){
     scanned(QString::number(120721), QString("Location 1"));
+    emit LoggingTest(";emulate location 1 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -304,6 +316,7 @@ void MainWindow::loc1Clicked1(){
  */
 void MainWindow::loc2Clicked1(){
     scanned(QString::number(1207), QString("Location 2"));
+    emit LoggingTest(";emulate location 2 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -312,6 +325,7 @@ void MainWindow::loc2Clicked1(){
  */
 void MainWindow::loc3Clicked1(){
     scanned(QString::number(160302),QString("Location 3"));
+    emit LoggingTest(";emulate location 3 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -320,6 +334,7 @@ void MainWindow::loc3Clicked1(){
  */
 void MainWindow::loc1Clicked2(){
     scanned(QString::number(210712), QString("Location 1"));
+    emit LoggingTest(";emulate location 1 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -328,6 +343,7 @@ void MainWindow::loc1Clicked2(){
  */
 void MainWindow::loc2Clicked2(){
     scanned(QString::number(120316), QString("Location 2"));
+    emit LoggingTest(";emulate location 2 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -336,6 +352,7 @@ void MainWindow::loc2Clicked2(){
  */
 void MainWindow::loc3Clicked2(){
     scanned(QString::number(0712), QString("Location 3"));
+    emit LoggingTest(";emulate location 3 pressed",(int)LOG_BUTTON);
 }
 
 /**

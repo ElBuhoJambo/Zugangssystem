@@ -110,7 +110,7 @@ public slots:
     void logMessage(QString msg);
     void sql(QString name, QString RFID, QString loc, QString access);
     void showTable(bool show);
-    void hideAdminScreen();
+    void hideAdminScreen(bool chip);
     void showTabToolTips();
     void addWorker();
     void deleteWorker();
