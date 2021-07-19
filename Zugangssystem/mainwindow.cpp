@@ -133,6 +133,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(sqlCheck::getInstance(), SIGNAL(ShowTable(QString,QString,QString,QString)), this, SLOT(sql(QString,QString,QString,QString)));
     connect(this, SIGNAL(AddWorker(QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(addWorker(QString, QString, QString, QString)));
     connect(this, SIGNAL(DeleteWorker(QString)), sqlCheck::getInstance(), SLOT(deleteWorker(QString)));
+    connect(sqlCheck::getInstance(), SIGNAL(DeleteRow(QString)), this, SLOT(deleteRowInTable(QString)));
 
     connect(testLoc1But1, SIGNAL(clicked()), this, SLOT(loc1Clicked1()));
     connect(testLoc2But1, SIGNAL(clicked()), this, SLOT(loc2Clicked1()));
@@ -163,14 +164,14 @@ MainWindow::~MainWindow()
 void MainWindow::deleteWorker(){
     //Some way of getting a text input
     //Maybe Qt Virtual Keyboard
-    //emit DeleteWorker("?");
+    emit DeleteWorker("0001907202");
     qDebug() << "no worker deleted because no text input";
     emit LoggingTest(";delete worker button pressed", (int)LOG_BUTTON);
 }
 
 void MainWindow::addWorker(){
     //Some way of getting a text input?
-    //emit AddWorker("0000160302","Location 3","Jambo","true");
+    emit AddWorker("0001907202","Location 1","Simon","true");
     qDebug() << "no worker added because no text input";
     emit LoggingTest(";add worker button pressed", (int)LOG_BUTTON);
 }
@@ -223,6 +224,15 @@ void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
     showTableWidget->setItem(showTableWidget->rowCount()-1, 2, locItem);
     showTableWidget->setItem(showTableWidget->rowCount()-1, 3, accessItem);
 
+}
+
+void MainWindow::deleteRowInTable(QString RFID){
+    QList<QTableWidgetItem *> toRemove = showTableWidget->findItems(RFID,Qt::MatchExactly);
+    if(!toRemove.isEmpty()){
+        showTableWidget->removeRow(toRemove[0]->row());
+    }else{
+        qDebug() << "Nothing removed, no worker deleted";
+    }
 }
 
 void MainWindow::scanTest(){

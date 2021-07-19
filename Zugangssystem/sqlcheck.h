@@ -21,6 +21,7 @@ public:
 signals:
     void Result(bool access, QString RFID, QString loc, QString name);
     void ShowTable(QString name, QString loc, QString RFID, QString access);
+    void DeleteRow(QString RFID);
     void logMessage(QString msg, int index);
 
 public slots:

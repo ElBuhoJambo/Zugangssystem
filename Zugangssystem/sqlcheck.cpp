@@ -40,6 +40,7 @@ void sqlCheck::deleteWorker(QString RFID){
     if(query.exec()){
         qDebug() << "worker deleted successfully";
         emit logMessage(QString(";worker deleted;%1").arg(RFID), (int)LOG_COMMON);
+        emit DeleteRow(RFID);
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
         emit logMessage(QString(";ERR;worked not deleted;no query;%1").arg(RFID), (int)LOG_COMMON);
@@ -64,6 +65,7 @@ void sqlCheck::addWorker(QString RFID, QString location, QString name, QString a
     if(query.exec()){
         qDebug() << "worker added successfully";
         emit logMessage(QString(";worker added;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
+        emit ShowTable(name,RFID,location,QString::number(accessInt));
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
         emit logMessage(QString(";ERR;worked not added;no query;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);

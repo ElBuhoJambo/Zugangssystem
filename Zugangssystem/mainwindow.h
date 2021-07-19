@@ -114,5 +114,6 @@ public slots:
     void showTabToolTips();
     void addWorker();
     void deleteWorker();
+    void deleteRowInTable(QString RFID);
 };
 #endif // MAINWINDOW_H
