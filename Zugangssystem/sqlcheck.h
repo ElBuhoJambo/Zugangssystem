@@ -22,6 +22,7 @@ signals:
     void Result(bool access, QString RFID, QString loc, QString name);
     void ShowTable(QString name, QString loc, QString RFID, QString access);
     void DeleteRow(QString RFID);
+    void UpdateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
     void logMessage(QString msg, int index);
 
 public slots:
@@ -29,6 +30,7 @@ public slots:
     void showTable();
     void addWorker(QString RFID, QString location, QString name, QString access);
     void deleteWorker(QString RFID);
+    void updateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
 
 private:
     sqlCheck();

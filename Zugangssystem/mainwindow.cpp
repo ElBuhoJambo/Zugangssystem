@@ -45,22 +45,32 @@ MainWindow::MainWindow(QWidget *parent)
     showAddButton->hide();
     showDeleteButton = new QPushButton("Delete worker");
     showDeleteButton->hide();
+    showUpdateButton = new QPushButton("Update worker");
+    showUpdateButton->hide();
     showFrame = new QFrame;
     showFrame->setMaximumWidth(460);
     showFrame->hide();
-    showSpaceFrame = new QFrame;
+    showSpaceFrame1 = new QFrame;
+    showSpaceFrame2 = new QFrame;
+    showAdminFrame = new QFrame;
     showTableWidget = new QTableWidget(0,4,this);
     showTableWidget->setColumnWidth(1,125);
     showTableWidget->setColumnWidth(3,84);
     showLayout = new QVBoxLayout;
+    showAdminLayout = new QGridLayout;
+    showAdminLayout->setAlignment(Qt::AlignTop);
     showLayout->setAlignment(Qt::AlignTop);
     showLayout->setSpacing(0);
     showLayout->addWidget(showTableWidget);
-    sqlLayout->addWidget(showTableButton,0,0);
+    sqlLayout->addWidget(showTableButton,0,0, Qt::AlignTop);
     sqlLayout->addWidget(showFrame, 1,0);
-    sqlLayout->addWidget(showAddButton,0,1);
-    sqlLayout->addWidget(showDeleteButton,1,1,Qt::AlignTop);
-    sqlLayout->addWidget(showSpaceFrame, 2,1);
+    showAdminLayout->addWidget(showAddButton,0,0);
+    showAdminLayout->addWidget(showDeleteButton,1,0,Qt::AlignTop);
+    showAdminLayout->addWidget(showUpdateButton,2,0,Qt::AlignTop);
+    sqlLayout->addWidget(showSpaceFrame1, 2,1);
+    sqlLayout->addWidget(showSpaceFrame1, 3,1);
+    sqlLayout->addWidget(showAdminFrame, 0,1,2,1);
+    showAdminFrame->setLayout(showAdminLayout);
     showFrame->setLayout(showLayout);
     sqlTabFrame->setLayout(sqlLayout);
 
@@ -117,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent)
     showTableButton->setWhatsThis("Show the worker table");
     showAddButton->setWhatsThis("Add a worker via text input");
     showDeleteButton->setWhatsThis("Delete a worker via text input");
+    showUpdateButton->setWhatsThis("Update a worker via text input");
     showTableWidget->setWhatsThis("Worker table");
     logOutButton->setWhatsThis("Log out of admin mode");
     nameLabel->setWhatsThis("Name of the currently scanned worker");
@@ -134,6 +145,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(AddWorker(QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(addWorker(QString, QString, QString, QString)));
     connect(this, SIGNAL(DeleteWorker(QString)), sqlCheck::getInstance(), SLOT(deleteWorker(QString)));
     connect(sqlCheck::getInstance(), SIGNAL(DeleteRow(QString)), this, SLOT(deleteRowInTable(QString)));
+    connect(this, SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(updateWorker(QString, QString, QString, QString, QString)));
+    connect(sqlCheck::getInstance(), SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), this, SLOT(updateRowInTable(QString, QString, QString, QString, QString)));
 
     connect(testLoc1But1, SIGNAL(clicked()), this, SLOT(loc1Clicked1()));
     connect(testLoc2But1, SIGNAL(clicked()), this, SLOT(loc2Clicked1()));
@@ -148,6 +161,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(toolTipBut, SIGNAL(clicked()), this, SLOT(showTabToolTips()));
     connect(showAddButton, SIGNAL(clicked()), this, SLOT(addWorker()));
     connect(showDeleteButton, SIGNAL(clicked()), this, SLOT(deleteWorker()));
+    connect(showUpdateButton, SIGNAL(clicked()), this, SLOT(updateWorker()));
 
     connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(Logging::getInstance(), SIGNAL(LogMessageTest(QString)), this, SLOT(logMessage(QString)));
@@ -159,6 +173,13 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::updateWorker(){
+    //Some way of getting a text input
+    emit UpdateWorker("001234567","Location 2","Justin","false","0005155165");
+    qDebug() << "no worker updated because no text input";
+    emit LoggingTest(";update worker button pressed", (int)LOG_BUTTON);
 }
 
 void MainWindow::deleteWorker(){
@@ -231,8 +252,29 @@ void MainWindow::deleteRowInTable(QString RFID){
     if(!toRemove.isEmpty()){
         showTableWidget->removeRow(toRemove[0]->row());
     }else{
-        qDebug() << "Nothing removed, no worker deleted";
+        qDebug() << "Nothing removed, no worker found";
     }
+}
+
+void MainWindow::updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID){
+    QList<QTableWidgetItem *> toUpdate = showTableWidget->findItems(currRFID,Qt::MatchExactly);
+
+    if(access == "true"){
+        access = "Granted";
+    }else{
+        access = "Denied";
+    }
+
+    if(!toUpdate.isEmpty()){
+        showTableWidget->item(toUpdate[0]->row(), 0)->setText(name);
+        showTableWidget->item(toUpdate[0]->row(), 1)->setText(RFID);
+        showTableWidget->item(toUpdate[0]->row(), 2)->setText(location);
+        showTableWidget->item(toUpdate[0]->row(), 3)->setText(access);
+    }else{
+
+    }
+
+
 }
 
 void MainWindow::scanTest(){
@@ -261,6 +303,7 @@ void MainWindow::showAdminScreen(){
     logOutButton->show();
     showAddButton->show();
     showDeleteButton->show();
+    showUpdateButton->show();
     ui->statusbar->showMessage("admin logged in");
     emit LoggingTest(";admin logged in",(int)LOG_COMMON);
 }
@@ -269,6 +312,7 @@ void MainWindow::hideAdminScreen(bool chip){
     logOutButton->hide();
     showAddButton->hide();
     showDeleteButton->hide();
+    showUpdateButton->hide();
     ui->statusbar->showMessage("admin gone");
     adminLogged = false;
     if(!chip){

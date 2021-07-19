@@ -62,10 +62,14 @@ public:
     QLineEdit *testTextEdit;
 
     QPushButton *showTableButton;
+    QGridLayout *showAdminLayout;
     QPushButton *showAddButton;
     QPushButton *showDeleteButton;
+    QPushButton *showUpdateButton;
     QFrame *showFrame;
-    QFrame *showSpaceFrame;
+    QFrame *showAdminFrame;
+    QFrame *showSpaceFrame1;
+    QFrame *showSpaceFrame2;
     QTableWidget *showTableWidget;
     QVBoxLayout *showLayout;
 
@@ -97,6 +101,7 @@ signals:
     void FirstShow();
     void AddWorker(QString RFID, QString location, QString name, QString access);
     void DeleteWorker(QString RFID);
+    void UpdateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
 
 public slots:
     void loc1Clicked1();
@@ -115,5 +120,7 @@ public slots:
     void addWorker();
     void deleteWorker();
     void deleteRowInTable(QString RFID);
+    void updateWorker();
+    void updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID);
 };
 #endif // MAINWINDOW_H

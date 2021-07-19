@@ -31,6 +31,32 @@ sqlCheck::sqlCheck(){
     }
 }
 
+void sqlCheck::updateWorker(QString RFID, QString location, QString name, QString access, QString currRFID){
+    QSqlQuery query;
+    int accessInt;
+    if(access == "true"){
+        accessInt = 1;
+    }else{
+        accessInt = 0;
+    }
+
+    query.prepare("UPDATE worker SET name = ?, RFID = ?, loc = ?, access = ? WHERE RFID = ?");
+    query.addBindValue(name);
+    query.addBindValue(RFID);
+    query.addBindValue(location);
+    query.addBindValue(accessInt);
+    query.addBindValue(currRFID);
+
+    if(query.exec()){
+        qDebug() << "Worker updated successfully";
+        emit logMessage(QString(";worker updated;%1;%2").arg(name).arg(RFID),(int)LOG_COMMON);
+        emit UpdateWorker(RFID, location, name, access, currRFID);
+    }else{
+        qWarning() << "ERROR: " << query.lastError().text();
+        emit logMessage(QString(";ERR;worker not updated;no query;%1").arg(currRFID), (int)LOG_COMMON);
+    }
+}
+
 void sqlCheck::deleteWorker(QString RFID){
     QSqlQuery query;
 
@@ -43,7 +69,7 @@ void sqlCheck::deleteWorker(QString RFID){
         emit DeleteRow(RFID);
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
-        emit logMessage(QString(";ERR;worked not deleted;no query;%1").arg(RFID), (int)LOG_COMMON);
+        emit logMessage(QString(";ERR;worker not deleted;no query;%1").arg(RFID), (int)LOG_COMMON);
     }
 }
 
