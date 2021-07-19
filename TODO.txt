@@ -1,4 +1,1 @@
 TODO:
-Tool Tip no longer rotating through
-Make tool tips on click after clicking info button
-Logging for button presses
