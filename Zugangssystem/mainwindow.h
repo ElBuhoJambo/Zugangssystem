@@ -64,19 +64,24 @@ public:
     QPushButton *testLoc1But2;
     QPushButton *testLoc2But2;
     QPushButton *testLoc3But2;
+    QPushButton *testAdminBut;
     QLineEdit *testTextEdit;
 
     QPushButton *showTableButton;
     QGridLayout *showAdminLayout;
+    QGridLayout *showSortLayout;
     QPushButton *showAddButton;
     QPushButton *showDeleteButton;
     QPushButton *showUpdateButton;
+    QPushButton *showSortByName;
+    QPushButton *showSortByAccess;
     QFrame *showFrame;
     QFrame *showAdminFrame;
-    QFrame *showSpaceFrame1;
-    QFrame *showSpaceFrame2;
+    QFrame *showSortFrame;
+    QFrame *showSpaceFrame;
     QTableWidget *showTableWidget;
     QVBoxLayout *showLayout;
+    QStringList columns = {"Name", "RFID", "Location", "Access"};
 
     QPushButton *logOutButton = new QPushButton("Log out");
     QLabel *nameLabel = new QLabel("");
@@ -115,6 +120,7 @@ public slots:
     void loc1Clicked2();
     void loc2Clicked2();
     void loc3Clicked2();
+    void adminClicked();
     void scanTest();
     void visual(QString name, QString loc, bool access);
     void logMessage(QString msg);
@@ -127,6 +133,8 @@ public slots:
     void deleteRowInTable(QString RFID);
     void updateWorker();
     void updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID);
+    void sortTableByName();
+    void sortTableByAccess();
 
 };
 #endif // MAINWINDOW_H

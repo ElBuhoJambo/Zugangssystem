@@ -1,2 +1,4 @@
 TODO:
 Try to make the virtual keyboard work
+Sort function ascending and descending
+Search function for table

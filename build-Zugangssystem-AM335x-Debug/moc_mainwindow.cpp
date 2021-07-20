@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[37];
-    char stringdata0[373];
+    QByteArrayData data[40];
+    char stringdata0[420];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -53,21 +53,24 @@ QT_MOC_LITERAL(18, 164, 12), // "loc3Clicked1"
 QT_MOC_LITERAL(19, 177, 12), // "loc1Clicked2"
 QT_MOC_LITERAL(20, 190, 12), // "loc2Clicked2"
 QT_MOC_LITERAL(21, 203, 12), // "loc3Clicked2"
-QT_MOC_LITERAL(22, 216, 8), // "scanTest"
-QT_MOC_LITERAL(23, 225, 6), // "visual"
-QT_MOC_LITERAL(24, 232, 3), // "loc"
-QT_MOC_LITERAL(25, 236, 10), // "logMessage"
-QT_MOC_LITERAL(26, 247, 3), // "sql"
-QT_MOC_LITERAL(27, 251, 9), // "showTable"
-QT_MOC_LITERAL(28, 261, 4), // "show"
-QT_MOC_LITERAL(29, 266, 15), // "hideAdminScreen"
-QT_MOC_LITERAL(30, 282, 4), // "chip"
-QT_MOC_LITERAL(31, 287, 15), // "showTabToolTips"
-QT_MOC_LITERAL(32, 303, 9), // "addWorker"
-QT_MOC_LITERAL(33, 313, 12), // "deleteWorker"
-QT_MOC_LITERAL(34, 326, 16), // "deleteRowInTable"
-QT_MOC_LITERAL(35, 343, 12), // "updateWorker"
-QT_MOC_LITERAL(36, 356, 16) // "updateRowInTable"
+QT_MOC_LITERAL(22, 216, 12), // "adminClicked"
+QT_MOC_LITERAL(23, 229, 8), // "scanTest"
+QT_MOC_LITERAL(24, 238, 6), // "visual"
+QT_MOC_LITERAL(25, 245, 3), // "loc"
+QT_MOC_LITERAL(26, 249, 10), // "logMessage"
+QT_MOC_LITERAL(27, 260, 3), // "sql"
+QT_MOC_LITERAL(28, 264, 9), // "showTable"
+QT_MOC_LITERAL(29, 274, 4), // "show"
+QT_MOC_LITERAL(30, 279, 15), // "hideAdminScreen"
+QT_MOC_LITERAL(31, 295, 4), // "chip"
+QT_MOC_LITERAL(32, 300, 15), // "showTabToolTips"
+QT_MOC_LITERAL(33, 316, 9), // "addWorker"
+QT_MOC_LITERAL(34, 326, 12), // "deleteWorker"
+QT_MOC_LITERAL(35, 339, 16), // "deleteRowInTable"
+QT_MOC_LITERAL(36, 356, 12), // "updateWorker"
+QT_MOC_LITERAL(37, 369, 16), // "updateRowInTable"
+QT_MOC_LITERAL(38, 386, 15), // "sortTableByName"
+QT_MOC_LITERAL(39, 402, 17) // "sortTableByAccess"
 
     },
     "MainWindow\0ScanInitiated\0\0RFID\0Location\0"
@@ -76,11 +79,12 @@ QT_MOC_LITERAL(36, 356, 16) // "updateRowInTable"
     "DeleteWorker\0UpdateWorker\0currRFID\0"
     "loc1Clicked1\0loc2Clicked1\0loc3Clicked1\0"
     "loc1Clicked2\0loc2Clicked2\0loc3Clicked2\0"
-    "scanTest\0visual\0loc\0logMessage\0sql\0"
-    "showTable\0show\0hideAdminScreen\0chip\0"
-    "showTabToolTips\0addWorker\0deleteWorker\0"
-    "deleteRowInTable\0updateWorker\0"
-    "updateRowInTable"
+    "adminClicked\0scanTest\0visual\0loc\0"
+    "logMessage\0sql\0showTable\0show\0"
+    "hideAdminScreen\0chip\0showTabToolTips\0"
+    "addWorker\0deleteWorker\0deleteRowInTable\0"
+    "updateWorker\0updateRowInTable\0"
+    "sortTableByName\0sortTableByAccess"
 };
 #undef QT_MOC_LITERAL
 
@@ -90,7 +94,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      24,   14, // methods
+      27,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -98,32 +102,35 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    2,  134,    2, 0x06 /* Public */,
-       5,    2,  139,    2, 0x06 /* Public */,
-       8,    0,  144,    2, 0x06 /* Public */,
-       9,    4,  145,    2, 0x06 /* Public */,
-      13,    1,  154,    2, 0x06 /* Public */,
-      14,    5,  157,    2, 0x06 /* Public */,
+       1,    2,  149,    2, 0x06 /* Public */,
+       5,    2,  154,    2, 0x06 /* Public */,
+       8,    0,  159,    2, 0x06 /* Public */,
+       9,    4,  160,    2, 0x06 /* Public */,
+      13,    1,  169,    2, 0x06 /* Public */,
+      14,    5,  172,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      16,    0,  168,    2, 0x0a /* Public */,
-      17,    0,  169,    2, 0x0a /* Public */,
-      18,    0,  170,    2, 0x0a /* Public */,
-      19,    0,  171,    2, 0x0a /* Public */,
-      20,    0,  172,    2, 0x0a /* Public */,
-      21,    0,  173,    2, 0x0a /* Public */,
-      22,    0,  174,    2, 0x0a /* Public */,
-      23,    3,  175,    2, 0x0a /* Public */,
-      25,    1,  182,    2, 0x0a /* Public */,
-      26,    4,  185,    2, 0x0a /* Public */,
-      27,    1,  194,    2, 0x0a /* Public */,
-      29,    1,  197,    2, 0x0a /* Public */,
-      31,    0,  200,    2, 0x0a /* Public */,
-      32,    0,  201,    2, 0x0a /* Public */,
-      33,    0,  202,    2, 0x0a /* Public */,
-      34,    1,  203,    2, 0x0a /* Public */,
-      35,    0,  206,    2, 0x0a /* Public */,
-      36,    5,  207,    2, 0x0a /* Public */,
+      16,    0,  183,    2, 0x0a /* Public */,
+      17,    0,  184,    2, 0x0a /* Public */,
+      18,    0,  185,    2, 0x0a /* Public */,
+      19,    0,  186,    2, 0x0a /* Public */,
+      20,    0,  187,    2, 0x0a /* Public */,
+      21,    0,  188,    2, 0x0a /* Public */,
+      22,    0,  189,    2, 0x0a /* Public */,
+      23,    0,  190,    2, 0x0a /* Public */,
+      24,    3,  191,    2, 0x0a /* Public */,
+      26,    1,  198,    2, 0x0a /* Public */,
+      27,    4,  201,    2, 0x0a /* Public */,
+      28,    1,  210,    2, 0x0a /* Public */,
+      30,    1,  213,    2, 0x0a /* Public */,
+      32,    0,  216,    2, 0x0a /* Public */,
+      33,    0,  217,    2, 0x0a /* Public */,
+      34,    0,  218,    2, 0x0a /* Public */,
+      35,    1,  219,    2, 0x0a /* Public */,
+      36,    0,  222,    2, 0x0a /* Public */,
+      37,    5,  223,    2, 0x0a /* Public */,
+      38,    0,  234,    2, 0x0a /* Public */,
+      39,    0,  235,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QString,    3,    4,
@@ -141,17 +148,20 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::Bool,   11,   24,   12,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::Bool,   11,   25,   12,
     QMetaType::Void, QMetaType::QString,    6,
-    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::QString,   11,    3,   24,   12,
-    QMetaType::Void, QMetaType::Bool,   28,
-    QMetaType::Void, QMetaType::Bool,   30,
+    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::QString,   11,    3,   25,   12,
+    QMetaType::Void, QMetaType::Bool,   29,
+    QMetaType::Void, QMetaType::Bool,   31,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString,    3,
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::QString,    3,   10,   11,   12,   15,
+    QMetaType::Void,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -174,18 +184,21 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 9: _t->loc1Clicked2(); break;
         case 10: _t->loc2Clicked2(); break;
         case 11: _t->loc3Clicked2(); break;
-        case 12: _t->scanTest(); break;
-        case 13: _t->visual((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< bool(*)>(_a[3]))); break;
-        case 14: _t->logMessage((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 15: _t->sql((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
-        case 16: _t->showTable((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 17: _t->hideAdminScreen((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 18: _t->showTabToolTips(); break;
-        case 19: _t->addWorker(); break;
-        case 20: _t->deleteWorker(); break;
-        case 21: _t->deleteRowInTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 22: _t->updateWorker(); break;
-        case 23: _t->updateRowInTable((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4])),(*reinterpret_cast< QString(*)>(_a[5]))); break;
+        case 12: _t->adminClicked(); break;
+        case 13: _t->scanTest(); break;
+        case 14: _t->visual((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< bool(*)>(_a[3]))); break;
+        case 15: _t->logMessage((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 16: _t->sql((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
+        case 17: _t->showTable((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 18: _t->hideAdminScreen((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 19: _t->showTabToolTips(); break;
+        case 20: _t->addWorker(); break;
+        case 21: _t->deleteWorker(); break;
+        case 22: _t->deleteRowInTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 23: _t->updateWorker(); break;
+        case 24: _t->updateRowInTable((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4])),(*reinterpret_cast< QString(*)>(_a[5]))); break;
+        case 25: _t->sortTableByName(); break;
+        case 26: _t->sortTableByAccess(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -260,13 +273,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 24)
+        if (_id < 27)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 24;
+        _id -= 27;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 24)
+        if (_id < 27)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 24;
+        _id -= 27;
     }
     return _id;
 }

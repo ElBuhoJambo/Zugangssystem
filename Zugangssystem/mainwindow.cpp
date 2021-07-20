@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     testLoc1But2 = new QPushButton("Location 1 \nFaulty RFID");
     testLoc2But2 = new QPushButton("Location 2 \nFaulty RFID");
     testLoc3But2 = new QPushButton("Location 3 \nFaulty RFID");
+    testAdminBut = new QPushButton("Admin Emulation");
     testTextEdit = new QLineEdit;
     testTextEdit->setFocus(Qt::OtherFocusReason);
     testTextEdit->grabKeyboard();
@@ -47,31 +48,39 @@ MainWindow::MainWindow(QWidget *parent)
     showDeleteButton->hide();
     showUpdateButton = new QPushButton("Update worker");
     showUpdateButton->hide();
+    showSortByName = new QPushButton("Sort by name");
+    showSortByAccess = new QPushButton("Sort by access");
     showFrame = new QFrame;
     showFrame->setMaximumWidth(460);
+    showFrame->resize(460,460);
     showFrame->hide();
-    showSpaceFrame1 = new QFrame;
-    showSpaceFrame2 = new QFrame;
+    showSortFrame = new QFrame;
+    showSpaceFrame = new QFrame;
     showAdminFrame = new QFrame;
     showTableWidget = new QTableWidget(0,4,this);
     showTableWidget->setColumnWidth(1,125);
     showTableWidget->setColumnWidth(3,84);
+    showTableWidget->setHorizontalHeaderLabels(columns);
     showLayout = new QVBoxLayout;
     showAdminLayout = new QGridLayout;
+    showSortLayout = new QGridLayout;
     showAdminLayout->setAlignment(Qt::AlignTop);
     showLayout->setAlignment(Qt::AlignTop);
     showLayout->setSpacing(0);
     showLayout->addWidget(showTableWidget);
+    showSortLayout->addWidget(showSortByName,0,0,Qt::AlignBottom);
+    showSortLayout->addWidget(showSortByAccess,1,0);
     sqlLayout->addWidget(showTableButton,0,0, Qt::AlignTop);
     sqlLayout->addWidget(showFrame, 1,0);
     showAdminLayout->addWidget(showAddButton,0,0);
     showAdminLayout->addWidget(showDeleteButton,1,0,Qt::AlignTop);
     showAdminLayout->addWidget(showUpdateButton,2,0,Qt::AlignTop);
-    sqlLayout->addWidget(showSpaceFrame1, 2,1);
-    sqlLayout->addWidget(showSpaceFrame1, 3,1);
+    sqlLayout->addWidget(showSortFrame, 3,1);
+    sqlLayout->addWidget(showSpaceFrame, 2,1);
     sqlLayout->addWidget(showAdminFrame, 0,1,2,1);
     showAdminFrame->setLayout(showAdminLayout);
     showFrame->setLayout(showLayout);
+    showSortFrame->setLayout(showSortLayout);
     sqlTabFrame->setLayout(sqlLayout);
 
     ui->centralwidget->setLayout(mainGridLayout);
@@ -101,6 +110,7 @@ MainWindow::MainWindow(QWidget *parent)
     testLocLayout->addWidget(testLoc1But2,2,1);
     testLocLayout->addWidget(testLoc2But2,2,2);
     testLocLayout->addWidget(testLoc3But2,2,3);
+    testLocLayout->addWidget(testAdminBut,3,2);
     testLocLayout->addWidget(testTextEdit,4,4);
     mainTabFrame->setLayout(testLocLayout);
 
@@ -154,6 +164,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(testLoc1But2, SIGNAL(clicked()), this, SLOT(loc1Clicked2()));
     connect(testLoc2But2, SIGNAL(clicked()), this, SLOT(loc2Clicked2()));
     connect(testLoc3But2, SIGNAL(clicked()), this, SLOT(loc3Clicked2()));
+    connect(testAdminBut, SIGNAL(clicked()), this, SLOT(adminClicked()));
     connect(testTextEdit, SIGNAL(returnPressed()), this, SLOT(scanTest()));
     connect(showTableButton, SIGNAL(toggled(bool)), this, SLOT(showTable(bool)));
     connect(this, SIGNAL(FirstShow()), sqlCheck::getInstance(), SLOT(showTable()));
@@ -162,6 +173,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(showAddButton, SIGNAL(clicked()), this, SLOT(addWorker()));
     connect(showDeleteButton, SIGNAL(clicked()), this, SLOT(deleteWorker()));
     connect(showUpdateButton, SIGNAL(clicked()), this, SLOT(updateWorker()));
+    connect(showSortByName, SIGNAL(clicked()), this, SLOT(sortTableByName()));
+    connect(showSortByAccess, SIGNAL(clicked()), this, SLOT(sortTableByAccess()));
 
     connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(Logging::getInstance(), SIGNAL(LogMessageTest(QString)), this, SLOT(logMessage(QString)));
@@ -340,6 +353,14 @@ void MainWindow::updateRowInTable(QString RFID, QString location, QString name, 
 
 }
 
+void MainWindow::sortTableByName(){
+    showTableWidget->sortItems(0,Qt::AscendingOrder);
+}
+
+void MainWindow::sortTableByAccess(){
+    showTableWidget->sortItems(3,Qt::AscendingOrder);
+}
+
 /**
  * @brief MainWindow::scanTest
  * admin control and scan processing
@@ -467,6 +488,11 @@ void MainWindow::loc2Clicked2(){
 void MainWindow::loc3Clicked2(){
     scanned(QString("000303030"), QString("Location 3"));
     emit LoggingTest("emulate location 3 pressed",(int)LOG_BUTTON);
+}
+
+void MainWindow::adminClicked(){
+    scanned(QString("0004365639"), QString("Location 1"));
+    emit LoggingTest("emulate admin pressed", (int)LOG_BUTTON);
 }
 
 /**
