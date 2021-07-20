@@ -7,12 +7,6 @@
 #include <QFile>
 #include <QTimer>
 #include <QVector>
-#include <QAbstractSocket>
-#include <QUdpSocket>
-#include <QHostInfo>
-#include <QHostAddress>
-#include <QDateTime>
-#include <QEventLoop>
 
 #define LOGGING_LOG_FILE_SIZE   2000000
 #define NAME_PIPE_IN "/tmp/Zugangssystem_Logging"
@@ -42,7 +36,6 @@ public:
 signals:
     void stopCopyLogfiles(void);
     void LogMessageTest(QString msg);
-    void GetCurrentTime();
 
 public slots:
     void logMessage(QString msg, int index = 0);
@@ -51,13 +44,9 @@ public slots:
 
 private slots:
     void checkExternalLogging(void);
-    void on_TimeUpdate_Logging();
-    void readPendingDatagrams();
-    void connectSuccess();
 
 protected:
     void    run() override;
-
 private:
     Logging(QObject *parent = 0);
     ~Logging();
@@ -72,9 +61,6 @@ private:
     QTimer* lPCheckExtLog;
 
     QVector<LOG_QueueEl_t*> lLogQueue;
-
-    QUdpSocket *udpSocket;
-    QDateTime currentTime;
 };
 
 #endif // LOGGING_H
