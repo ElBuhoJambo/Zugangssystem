@@ -31,6 +31,20 @@ sqlCheck::sqlCheck(){
     }
 }
 
+/**
+ * @brief sqlCheck::updateWorker
+ * sql query to update a worker
+ * @param RFID
+ * new RFID
+ * @param location
+ * new location
+ * @param name
+ * new name
+ * @param access
+ * new access status
+ * @param currRFID
+ * old RFID
+ */
 void sqlCheck::updateWorker(QString RFID, QString location, QString name, QString access, QString currRFID){
     QSqlQuery query;
     int accessInt;
@@ -49,14 +63,20 @@ void sqlCheck::updateWorker(QString RFID, QString location, QString name, QStrin
 
     if(query.exec()){
         qDebug() << "Worker updated successfully";
-        emit logMessage(QString(";worker updated;%1;%2").arg(name).arg(RFID),(int)LOG_COMMON);
+        emit logMessage(QString("worker updated;%1;%2").arg(name).arg(RFID),(int)LOG_COMMON);
         emit UpdateWorker(RFID, location, name, access, currRFID);
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
-        emit logMessage(QString(";ERR;worker not updated;no query;%1").arg(currRFID), (int)LOG_COMMON);
+        emit logMessage(QString("ERR;worker not updated;no query;%1").arg(currRFID), (int)LOG_COMMON);
     }
 }
 
+/**
+ * @brief sqlCheck::deleteWorker
+ * sql query to delete a worker
+ * @param RFID
+ * RFID of the worker to delete
+ */
 void sqlCheck::deleteWorker(QString RFID){
     QSqlQuery query;
 
@@ -65,14 +85,26 @@ void sqlCheck::deleteWorker(QString RFID){
 
     if(query.exec()){
         qDebug() << "worker deleted successfully";
-        emit logMessage(QString(";worker deleted;%1").arg(RFID), (int)LOG_COMMON);
+        emit logMessage(QString("worker deleted;%1").arg(RFID), (int)LOG_COMMON);
         emit DeleteRow(RFID);
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
-        emit logMessage(QString(";ERR;worker not deleted;no query;%1").arg(RFID), (int)LOG_COMMON);
+        emit logMessage(QString("ERR;worker not deleted;no query;%1").arg(RFID), (int)LOG_COMMON);
     }
 }
 
+/**
+ * @brief sqlCheck::addWorker
+ * sql query to add a worker
+ * @param RFID
+ * RFID of the worker
+ * @param location
+ * location of the worker
+ * @param name
+ * name of the worker
+ * @param access
+ * access status of the worker
+ */
 void sqlCheck::addWorker(QString RFID, QString location, QString name, QString access){
     QSqlQuery query;
     int accessInt;
@@ -90,14 +122,18 @@ void sqlCheck::addWorker(QString RFID, QString location, QString name, QString a
 
     if(query.exec()){
         qDebug() << "worker added successfully";
-        emit logMessage(QString(";worker added;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
+        emit logMessage(QString("worker added;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
         emit ShowTable(name,RFID,location,QString::number(accessInt));
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
-        emit logMessage(QString(";ERR;worked not added;no query;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
+        emit logMessage(QString("ERR;worked not added;no query;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
     }
 }
 
+/**
+ * @brief sqlCheck::showTable
+ * sql query to show the whole table
+ */
 void sqlCheck::showTable(){
     QSqlQuery query;
     query.prepare("SELECT name, RFID, loc, access FROM worker");
@@ -109,6 +145,14 @@ void sqlCheck::showTable(){
     }
 }
 
+/**
+ * @brief sqlCheck::receiveRequest
+ * emits the results of the scanned worker
+ * @param RFID
+ * scanned RFID
+ * @param loc
+ * location of scan
+ */
 void sqlCheck::receiveRequest(QString RFID, QString loc){
     QStringList results;
     if(RFID.length() == 10){
@@ -124,6 +168,16 @@ void sqlCheck::receiveRequest(QString RFID, QString loc){
     }
 }
 
+/**
+ * @brief sqlCheck::request
+ * sql query to get the scanned worker
+ * @param RFID
+ * scanned RFID
+ * @param loc
+ * location of scan
+ * @return
+ * result of the worker query
+ */
 QStringList sqlCheck::request(QString RFID, QString loc){
     QStringList results;
 
@@ -139,7 +193,7 @@ QStringList sqlCheck::request(QString RFID, QString loc){
     if(query.exec()){
         if(query.next()){
             qDebug() << "DB found" << RFID << query.value(0).toString();
-            emit logMessage(QString(";Worker found for %1;sqlCheck;%2").arg(loc).arg(query.value(0).toString()), (int)LOG_SCAN);
+            emit logMessage(QString("Worker found for %1;sqlCheck;%2").arg(loc).arg(query.value(0).toString()), (int)LOG_SCAN);
             results << query.value(0).toString() << query.value(1).toString();
             return results;
         }else{
@@ -148,23 +202,23 @@ QStringList sqlCheck::request(QString RFID, QString loc){
             if(query.exec()){
                 if(query.next()){
                     qDebug() << "DB not found" << RFID << query.value(0).toString();
-                    emit logMessage(QString(";ERR;DB not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
+                    emit logMessage(QString("ERR;DB not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
                     return QStringList(query.value(0).toString());
                 }else{
                     qDebug() << "Error query next";
-                    emit logMessage(QString(";ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
+                    emit logMessage(QString("ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
                     return QStringList("Worker not found");
                 }
             }else{
                 qDebug() << "Error query execution";
-                emit logMessage(QString(";ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
+                emit logMessage(QString("ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
                 return QStringList("Worker not found");
             }
 
         }
     }else{
         qDebug() << "Error query execution";
-        emit logMessage(QString(";ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
+        emit logMessage(QString("ERR;Worker not found;sqlCheck;").append(RFID), (int)LOG_SCAN);
         return QStringList("Worker not found");
     }
 }

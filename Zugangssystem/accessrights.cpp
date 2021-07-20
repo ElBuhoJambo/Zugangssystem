@@ -11,16 +11,36 @@ accessRights::accessRights()
 
 }
 
+/**
+ * @brief accessRights::checkAccess
+ * emits the signal to check for the access status in the SQLite db
+ * @param RFID
+ * scanned RFID
+ * @param loc
+ * location of scan
+ */
 void accessRights::checkAccess(QString RFID, QString loc){
     if(RFID.length() == 10){
         emit SQLRequest(RFID, loc);
     }else{
         qDebug() << "ERROR RFID in faulty format at accessRights";
-        emit logMessage(QString(";ERR;faulty RFID;checkAccess;").append(RFID), (int)LOG_SCAN);
+        emit logMessage(QString("ERR;faulty RFID;checkAccess;").append(RFID), (int)LOG_SCAN);
     }
 
 }
 
+/**
+ * @brief accessRights::receiveResult
+ * recieves the SQLite results and distriputes them to the other classes
+ * @param access
+ * access status
+ * @param RFID
+ * scanned RFID
+ * @param loc
+ * location of scan
+ * @param name
+ * name of the worker of the RFID
+ */
 void accessRights::receiveResult(bool access, QString RFID, QString loc, QString name){
     emit Door(access, loc);
     emit Visual(name, RFID, access);

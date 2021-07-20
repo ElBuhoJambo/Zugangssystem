@@ -168,13 +168,20 @@ MainWindow::MainWindow(QWidget *parent)
     connect(openDoor::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(accessRights::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(sqlCheck::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
+
+    emit LoggingTest("program started", (int)LOG_COMMON);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+
 }
 
+/**
+ * @brief MainWindow::updateWorker
+ * update a worker via text input
+ */
 void MainWindow::updateWorker(){
     //Some way of getting a text input
     emit UpdateWorker("001234567","Location 2","Justin","false","0005155165");
@@ -182,26 +189,44 @@ void MainWindow::updateWorker(){
     emit LoggingTest(";update worker button pressed", (int)LOG_BUTTON);
 }
 
+/**
+ * @brief MainWindow::deleteWorker
+ * delete a worker via text input
+ */
 void MainWindow::deleteWorker(){
     //Some way of getting a text input
     //Maybe Qt Virtual Keyboard
     emit DeleteWorker("0001907202");
     qDebug() << "no worker deleted because no text input";
-    emit LoggingTest(";delete worker button pressed", (int)LOG_BUTTON);
+    emit LoggingTest("delete worker button pressed", (int)LOG_BUTTON);
 }
 
+/**
+ * @brief MainWindow::addWorker
+ * add a worker via text input
+ */
 void MainWindow::addWorker(){
     //Some way of getting a text input?
     emit AddWorker("0001907202","Location 1","Simon","true");
     qDebug() << "no worker added because no text input";
-    emit LoggingTest(";add worker button pressed", (int)LOG_BUTTON);
+    emit LoggingTest("add worker button pressed", (int)LOG_BUTTON);
 }
 
+/**
+ * @brief MainWindow::showTabToolTips
+ * enter whatsthis mode
+ */
 void MainWindow::showTabToolTips(){
     QWhatsThis::enterWhatsThisMode();
-    emit LoggingTest(";info button pressed", (int)LOG_BUTTON);
+    emit LoggingTest("info button pressed", (int)LOG_BUTTON);
 }
 
+/**
+ * @brief MainWindow::delay
+ * programm sleeps for a certain time without halting the ui
+ * @param millisecondsWait
+ * time of sleep in milliseconds
+ */
 void MainWindow::delay(int millisecondsWait){
     QEventLoop loop;
     QTimer t;
@@ -210,23 +235,41 @@ void MainWindow::delay(int millisecondsWait){
     loop.exec();
 }
 
+/**
+ * @brief MainWindow::showTable
+ * show or hide worker table
+ * @param show
+ * decides whether the table is shown or hidden
+ */
 void MainWindow::showTable(bool show){
     if(firstShow){
         emit FirstShow();
         firstShow = false;
         showFrame->show();
-        emit LoggingTest(";show table button pressed;first time", (int)LOG_BUTTON);
+        emit LoggingTest("show table button pressed;first time", (int)LOG_BUTTON);
     }else{
         if(show){
             showFrame->show();
-            emit LoggingTest(";show table button pressed;show", (int)LOG_BUTTON);
+            emit LoggingTest("show table button pressed;show", (int)LOG_BUTTON);
         }else{
             showFrame->hide();
-            emit LoggingTest(";show table button pressed;hide", (int)LOG_BUTTON);
+            emit LoggingTest("show table button pressed;hide", (int)LOG_BUTTON);
         }
     }
 }
 
+/**
+ * @brief MainWindow::sql
+ * add worker to table
+ * @param name
+ * name of the current worker getting added
+ * @param RFID
+ * RFID of the current worker getting added
+ * @param loc
+ * location of the current worker getting added
+ * @param access
+ * access status of the current worker getting added
+ */
 void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
     showTableWidget->setRowCount(showTableWidget->rowCount()+1);
     QTableWidgetItem *nameItem = new QTableWidgetItem(name);
@@ -247,6 +290,12 @@ void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
 
 }
 
+/**
+ * @brief MainWindow::deleteRowInTable
+ * update the showing table;delete
+ * @param RFID
+ * RFID of the deleted worker
+ */
 void MainWindow::deleteRowInTable(QString RFID){
     QList<QTableWidgetItem *> toRemove = showTableWidget->findItems(RFID,Qt::MatchExactly);
     if(!toRemove.isEmpty()){
@@ -256,6 +305,20 @@ void MainWindow::deleteRowInTable(QString RFID){
     }
 }
 
+/**
+ * @brief MainWindow::updateRowInTable
+ * update the showing table;update
+ * @param RFID
+ * new RFID
+ * @param location
+ * new location
+ * @param name
+ * new name
+ * @param access
+ * new access status
+ * @param currRFID
+ * old RFID
+ */
 void MainWindow::updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID){
     QList<QTableWidgetItem *> toUpdate = showTableWidget->findItems(currRFID,Qt::MatchExactly);
 
@@ -277,6 +340,10 @@ void MainWindow::updateRowInTable(QString RFID, QString location, QString name, 
 
 }
 
+/**
+ * @brief MainWindow::scanTest
+ * admin control and scan processing
+ */
 void MainWindow::scanTest(){
     QString RFID = testTextEdit->text();
     testTextEdit->clear();
@@ -298,6 +365,10 @@ void MainWindow::scanTest(){
 
 }
 
+/**
+ * @brief MainWindow::showAdminScreen
+ * show features only available
+ */
 void MainWindow::showAdminScreen(){
     adminLogged = true;
     logOutButton->show();
@@ -305,9 +376,15 @@ void MainWindow::showAdminScreen(){
     showDeleteButton->show();
     showUpdateButton->show();
     ui->statusbar->showMessage("admin logged in");
-    emit LoggingTest(";admin logged in",(int)LOG_COMMON);
+    emit LoggingTest("admin logged in",(int)LOG_COMMON);
 }
 
+/**
+ * @brief MainWindow::hideAdminScreen
+ * hide features only available for admins
+ * @param chip
+ * for logging only, logged out or different chip scanned
+ */
 void MainWindow::hideAdminScreen(bool chip){
     logOutButton->hide();
     showAddButton->hide();
@@ -316,10 +393,10 @@ void MainWindow::hideAdminScreen(bool chip){
     ui->statusbar->showMessage("admin gone");
     adminLogged = false;
     if(!chip){
-        emit LoggingTest(";log out button pressed",(int)LOG_BUTTON);
+        emit LoggingTest("log out button pressed",(int)LOG_BUTTON);
     }
 
-    emit LoggingTest(";admin logged out",(int)LOG_COMMON);
+    emit LoggingTest("admin logged out",(int)LOG_COMMON);
 
 }
 
@@ -361,7 +438,7 @@ void MainWindow::visual(QString name, QString loc, bool access){
  */
 void MainWindow::loc1Clicked1(){
     scanned(QString::number(120721), QString("Location 1"));
-    emit LoggingTest(";emulate location 1 pressed",(int)LOG_BUTTON);
+    emit LoggingTest("emulate location 1 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -370,7 +447,7 @@ void MainWindow::loc1Clicked1(){
  */
 void MainWindow::loc2Clicked1(){
     scanned(QString::number(1207), QString("Location 2"));
-    emit LoggingTest(";emulate location 2 pressed",(int)LOG_BUTTON);
+    emit LoggingTest("emulate location 2 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -379,7 +456,7 @@ void MainWindow::loc2Clicked1(){
  */
 void MainWindow::loc3Clicked1(){
     scanned(QString::number(160302),QString("Location 3"));
-    emit LoggingTest(";emulate location 3 pressed",(int)LOG_BUTTON);
+    emit LoggingTest("emulate location 3 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -388,7 +465,7 @@ void MainWindow::loc3Clicked1(){
  */
 void MainWindow::loc1Clicked2(){
     scanned(QString::number(210712), QString("Location 1"));
-    emit LoggingTest(";emulate location 1 pressed",(int)LOG_BUTTON);
+    emit LoggingTest("emulate location 1 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -397,7 +474,7 @@ void MainWindow::loc1Clicked2(){
  */
 void MainWindow::loc2Clicked2(){
     scanned(QString::number(120316), QString("Location 2"));
-    emit LoggingTest(";emulate location 2 pressed",(int)LOG_BUTTON);
+    emit LoggingTest("emulate location 2 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -406,7 +483,7 @@ void MainWindow::loc2Clicked2(){
  */
 void MainWindow::loc3Clicked2(){
     scanned(QString::number(0712), QString("Location 3"));
-    emit LoggingTest(";emulate location 3 pressed",(int)LOG_BUTTON);
+    emit LoggingTest("emulate location 3 pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -419,7 +496,7 @@ void MainWindow::scanned(QString RFID, QString loc){
     emit ScanInitiated(RFID, loc);
 
     if(RFID.length() == 10){
-        loc.append(";RFID: ").append(RFID);
+        loc.append("RFID: ").append(RFID);
         emit LoggingTest(loc, 0);
     }else{
         qDebug() << "RFID is in a faulty format";

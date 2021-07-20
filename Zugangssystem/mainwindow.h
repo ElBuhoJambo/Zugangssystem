@@ -16,6 +16,11 @@
 #include <QThread>
 #include <QToolTip>
 #include <QWhatsThis>
+#include <QAbstractSocket>
+#include <QUdpSocket>
+#include <QHostInfo>
+#include <QHostAddress>
+#include <QDateTime>
 
 //#include "libusb.h"
 
@@ -122,5 +127,6 @@ public slots:
     void deleteRowInTable(QString RFID);
     void updateWorker();
     void updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID);
+
 };
 #endif // MAINWINDOW_H

@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = /home/user/larsys/compiler/bin/arm-larsys-linux-gnueabihf-gcc
 CXX           = /home/user/larsys/compiler/bin/arm-larsys-linux-gnueabihf-g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SQL_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SQL_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Os --sysroot=/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Os --sysroot=/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../Zugangssystem -I. -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I. -I../../../compiler/mkspecs/devices/linux-buildroot-g++
+INCPATH       = -I../Zugangssystem -I. -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork -I../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I. -I../../../compiler/mkspecs/devices/linux-buildroot-g++
 QMAKE         = /home/user/larsys/compiler/usr/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = Zugangssystem1.0.0
 DISTDIR = /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/.tmp/Zugangssystem1.0.0
 LINK          = /home/user/larsys/compiler/bin/arm-larsys-linux-gnueabihf-g++
 LFLAGS        = --sysroot=/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot
-LIBS          = $(SUBLIBS) -lQt5Widgets -lQt5Gui -lQt5Sql -lQt5Core -lrt -ldl -latomic -lpthread 
+LIBS          = $(SUBLIBS) -lQt5Widgets -lQt5Gui -lQt5Sql -lQt5Network -lQt5Core -lrt -ldl -latomic -lpthread 
 AR            = /home/user/larsys/compiler/bin/arm-larsys-linux-gnueabihf-ar cqs
 RANLIB        = 
 SED           = sed
@@ -332,6 +332,7 @@ Makefile: ../Zugangssystem/Zugangssystem.pro ../../../compiler/mkspecs/devices/l
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Widgets.prl \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Gui.prl \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Sql.prl \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Network.prl \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Core.prl
 	$(QMAKE) -o Makefile ../Zugangssystem/Zugangssystem.pro -spec devices/linux-buildroot-g++ CONFIG+=debug CONFIG+=qml_debug
 ../../../compiler/mkspecs/features/spec_pre.prf:
@@ -456,6 +457,7 @@ Makefile: ../Zugangssystem/Zugangssystem.pro ../../../compiler/mkspecs/devices/l
 ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Widgets.prl:
 ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Gui.prl:
 ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Sql.prl:
+../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Network.prl:
 ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ../Zugangssystem/Zugangssystem.pro -spec devices/linux-buildroot-g++ CONFIG+=debug CONFIG+=qml_debug
@@ -559,10 +561,52 @@ moc_accessrights.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/i
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiodevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../Zugangssystem/logging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QThread \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfile.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfiledevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h \
 		../Zugangssystem/accessrights.h \
 		moc_predefs.h \
 		../../../compiler/bin/moc
-	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/accessrights.h -o moc_accessrights.cpp
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/accessrights.h -o moc_accessrights.cpp
 
 moc_logging.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qstring.h \
@@ -628,10 +672,35 @@ moc_logging.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/includ
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h \
 		../Zugangssystem/logging.h \
 		moc_predefs.h \
 		../../../compiler/bin/moc
-	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/logging.h -o moc_logging.cpp
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/logging.h -o moc_logging.cpp
 
 moc_mainwindow.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QMainWindow \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qmainwindow.h \
@@ -783,10 +852,22 @@ moc_mainwindow.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/inc
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QToolTip \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qtooltip.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QWhatsThis \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qwhatsthis.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
 		../Zugangssystem/mainwindow.h \
 		moc_predefs.h \
 		../../../compiler/bin/moc
-	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/mainwindow.h -o moc_mainwindow.cpp
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/mainwindow.h -o moc_mainwindow.cpp
 
 moc_opendoor.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
@@ -838,10 +919,52 @@ moc_opendoor.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/inclu
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiodevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../Zugangssystem/logging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QThread \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfile.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfiledevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h \
 		../Zugangssystem/opendoor.h \
 		moc_predefs.h \
 		../../../compiler/bin/moc
-	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/opendoor.h -o moc_opendoor.cpp
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/opendoor.h -o moc_opendoor.cpp
 
 moc_sqlcheck.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QObject \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject.h \
@@ -915,10 +1038,37 @@ moc_sqlcheck.cpp: ../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/inclu
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../Zugangssystem/logging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QThread \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfile.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfiledevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h \
 		../Zugangssystem/sqlcheck.h \
 		moc_predefs.h \
 		../../../compiler/bin/moc
-	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/sqlcheck.h -o moc_sqlcheck.cpp
+	/home/user/larsys/compiler/bin/moc $(DEFINES) --include /home/user/larsys/qt/Zugangssystem/build-Zugangssystem-AM335x-Debug/moc_predefs.h -I/home/user/larsys/compiler/mkspecs/devices/linux-buildroot-g++ -I/home/user/larsys/qt/Zugangssystem/Zugangssystem -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5 -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtGui -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore -I. -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0 -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/arm-larsys-linux-gnueabihf -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include/c++/7.4.0/backward -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include -I/home/user/larsys/compiler-2019.02.4/lib/gcc/arm-larsys-linux-gnueabihf/7.4.0/include-fixed -I/home/user/larsys/compiler-2019.02.4/arm-larsys-linux-gnueabihf/include -I/home/user/larsys/compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include ../Zugangssystem/sqlcheck.h -o moc_sqlcheck.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -991,7 +1141,49 @@ accessrights.o: ../Zugangssystem/accessrights.cpp ../Zugangssystem/accessrights.
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiodevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../Zugangssystem/logging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QThread \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfile.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfiledevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o accessrights.o ../Zugangssystem/accessrights.cpp
 
 logging.o: ../Zugangssystem/logging.cpp ../Zugangssystem/logging.h \
@@ -1059,20 +1251,32 @@ logging.o: ../Zugangssystem/logging.cpp ../Zugangssystem/logging.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o logging.o ../Zugangssystem/logging.cpp
 
 main.o: ../Zugangssystem/main.cpp ../Zugangssystem/mainwindow.h \
@@ -1226,6 +1430,18 @@ main.o: ../Zugangssystem/main.cpp ../Zugangssystem/mainwindow.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QToolTip \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qtooltip.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QWhatsThis \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qwhatsthis.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QApplication \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qapplication.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcoreapplication.h \
@@ -1386,6 +1602,18 @@ mainwindow.o: ../Zugangssystem/mainwindow.cpp ../Zugangssystem/mainwindow.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QToolTip \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qtooltip.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QWhatsThis \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/qwhatsthis.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
 		ui_mainwindow.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVariant \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtWidgets/QApplication \
@@ -1413,8 +1641,6 @@ mainwindow.o: ../Zugangssystem/mainwindow.cpp ../Zugangssystem/mainwindow.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/QSqlError \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtSql/qsqlerror.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
-		../Zugangssystem/accessrights.h \
-		../Zugangssystem/opendoor.h \
 		../Zugangssystem/logging.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
@@ -1423,7 +1649,10 @@ mainwindow.o: ../Zugangssystem/mainwindow.cpp ../Zugangssystem/mainwindow.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../Zugangssystem/accessrights.h \
+		../Zugangssystem/opendoor.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../Zugangssystem/mainwindow.cpp
 
 opendoor.o: ../Zugangssystem/opendoor.cpp ../Zugangssystem/opendoor.h \
@@ -1476,7 +1705,49 @@ opendoor.o: ../Zugangssystem/opendoor.cpp ../Zugangssystem/opendoor.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmetatype.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvarlengtharray.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontainerfwd.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qobject_impl.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDebug \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdebug.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qhash.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qmap.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtextstream.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qiodevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qlocale.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvariant.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qshareddata.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qvector.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qpoint.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../Zugangssystem/logging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QThread \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfile.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfiledevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o opendoor.o ../Zugangssystem/opendoor.cpp
 
 sqlcheck.o: ../Zugangssystem/sqlcheck.cpp ../Zugangssystem/sqlcheck.h \
@@ -1551,7 +1822,34 @@ sqlcheck.o: ../Zugangssystem/sqlcheck.cpp ../Zugangssystem/sqlcheck.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qset.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qcontiguouscache.h \
 		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer.h \
-		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		../Zugangssystem/logging.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QString \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QQueue \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qqueue.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QThread \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qthread.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QFile \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfile.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qfiledevice.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QTimer \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qtimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qbasictimer.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QVector \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QAbstractSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetworkglobal.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qtnetwork-config.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QUdpSocket \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qudpsocket.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostaddress.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostInfo \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/qhostinfo.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtNetwork/QHostAddress \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QDateTime \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qdatetime.h \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/QEventLoop \
+		../../../compiler/arm-larsys-linux-gnueabihf/sysroot/usr/include/qt5/QtCore/qeventloop.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o sqlcheck.o ../Zugangssystem/sqlcheck.cpp
 
 moc_accessrights.o: moc_accessrights.cpp 
