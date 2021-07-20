@@ -43,6 +43,8 @@ Logging::Logging(QObject *parent)
     logMessage("App;Logging available - waiting for timestamp",(int)LOG_COMMON);
     lIsTimeValid = false;
 
+    connect(this, SIGNAL(GetCurrentTime()), this, SLOT(on_TimeUpdate_Logging()));
+
     start();
 }
 
@@ -56,6 +58,65 @@ Logging::~Logging()
         lPLogFile[i]->close();
     }
     close(lFdPipeIn);
+    udpSocket->close();
+}
+
+void Logging::on_TimeUpdate_Logging(){
+    QHostInfo info = QHostInfo::fromName("0.pool.ntp.org");
+    QString ipAddress = info.addresses().first().toString();
+    qDebug() << ipAddress;
+    udpSocket = new QUdpSocket(this);
+
+    connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
+    connect(udpSocket, SIGNAL(connected()), this, SLOT(connectSuccess()));
+    udpSocket->abort();
+    udpSocket->connectToHost("0.pool.ntp.org", 123);
+    qDebug() << "hier log";
+}
+
+
+void Logging::readPendingDatagrams(){
+    QByteArray newTime;
+    QDateTime Epoch(QDate(1900, 1, 1));
+    QDateTime unixStart(QDate(1970, 1, 1));
+    quint64 seconds = 0;
+
+    while(udpSocket->hasPendingDatagrams()){
+        QByteArray byteArray;
+        byteArray.append(udpSocket->read(48));
+        qDebug() << (QString::number(byteArray.size()));
+
+        QByteArray lastbyteArray(byteArray.right(8));
+
+        seconds = 0;
+        for(int i = 0; i <= 3; i++){
+            seconds = (seconds << 8) | lastbyteArray[i];
+        }
+
+        qDebug() << (QString::number(seconds, 10));
+    }
+
+    QDateTime newestTime;
+    quint64 diffe = seconds - (quint64) Epoch.secsTo(unixStart) + 3600;
+    newestTime.setTime_t(diffe);
+    qDebug() << (QString::number((quint64) Epoch.secsTo(unixStart), 10));
+    qDebug() << (newestTime.toString());
+
+    if(diffe < 2081376000){
+        Logging::currentTime = newestTime;
+    }else{
+        qDebug() << "Time invalid";
+    }
+
+
+}
+
+void Logging::connectSuccess(){
+    qDebug() << "Connected";
+    QByteArray timeRequest(48, 0);
+    timeRequest[0] = '\x23';
+    udpSocket->flush();
+    udpSocket->write(timeRequest);
 }
 
 /* Cyclic part of the logging thread
@@ -139,9 +200,10 @@ void Logging::logMessage(QString msg,int index)
         /* keep the file closed */
         if (pLogFile->open(QIODevice::Append))
         {
-            QDateTime time = QDateTime::currentDateTime();
+            qDebug() << currentTime;
+            emit GetCurrentTime();
 
-            QString message = time.toString("yyyyMMdd;hhmmss;") + msg + "\n";
+            QString message = currentTime.toString("yyyyMMdd;hhmmss;") + msg + "\n";
             pLogFile->write(message.toLatin1(),message.length());
             pLogFile->close();
             /* sync with the disc to avoid losing data on power down */
