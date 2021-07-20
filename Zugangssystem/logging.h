@@ -38,6 +38,7 @@ public:
     static Logging* getInstance(void);
     void setLogFileSize(quint32 const maxFileSize);
     QString getLogFileName(int index);
+    QDateTime getCurrTime();
 
 signals:
     void stopCopyLogfiles(void);

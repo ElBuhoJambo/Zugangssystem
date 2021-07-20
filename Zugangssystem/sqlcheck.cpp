@@ -158,10 +158,14 @@ void sqlCheck::receiveRequest(QString RFID, QString loc){
     if(RFID.length() == 10){
         qDebug() << "RFID is in correct format at sqlCheck";
         results = request(RFID, loc);
+        if(results.size() == 1){
+            emit Result(false, RFID, loc, results.at(0));
+            return;
+        }
         if(results.at(1).toInt()){
             emit Result(true, RFID, loc, results.at(0));
         }else{
-            emit Result(true, RFID, loc, results.at(0));
+            emit Result(false, RFID, loc, results.at(0));
         }
     }else{
         qDebug() << "RFID is in faulty format at sqlCheck";

@@ -27,12 +27,12 @@ MainWindow::MainWindow(QWidget *parent)
     sqlLayout = new QGridLayout;
     visualLayout = new QGridLayout;
 
-    testLoc1But1 = new QPushButton("Location 1");
-    testLoc2But1 = new QPushButton("Location 2");
-    testLoc3But1 = new QPushButton("Location 3");
-    testLoc1But2 = new QPushButton("Location 1");
-    testLoc2But2 = new QPushButton("Location 2");
-    testLoc3But2 = new QPushButton("Location 3");
+    testLoc1But1 = new QPushButton("Location 1 \nCorrect RFID");
+    testLoc2But1 = new QPushButton("Location 2 \nCorrect RFID");
+    testLoc3But1 = new QPushButton("Location 3 \nCorrect RFID");
+    testLoc1But2 = new QPushButton("Location 1 \nFaulty RFID");
+    testLoc2But2 = new QPushButton("Location 2 \nFaulty RFID");
+    testLoc3But2 = new QPushButton("Location 3 \nFaulty RFID");
     testTextEdit = new QLineEdit;
     testTextEdit->setFocus(Qt::OtherFocusReason);
     testTextEdit->grabKeyboard();
@@ -184,7 +184,7 @@ MainWindow::~MainWindow()
  */
 void MainWindow::updateWorker(){
     //Some way of getting a text input
-    emit UpdateWorker("001234567","Location 2","Justin","false","0005155165");
+    //emit UpdateWorker("001234567","Location 2","Justin","false","0005155165");
     qDebug() << "no worker updated because no text input";
     emit LoggingTest(";update worker button pressed", (int)LOG_BUTTON);
 }
@@ -196,7 +196,7 @@ void MainWindow::updateWorker(){
 void MainWindow::deleteWorker(){
     //Some way of getting a text input
     //Maybe Qt Virtual Keyboard
-    emit DeleteWorker("0001907202");
+    //emit DeleteWorker("0001907202");
     qDebug() << "no worker deleted because no text input";
     emit LoggingTest("delete worker button pressed", (int)LOG_BUTTON);
 }
@@ -207,7 +207,7 @@ void MainWindow::deleteWorker(){
  */
 void MainWindow::addWorker(){
     //Some way of getting a text input?
-    emit AddWorker("0001907202","Location 1","Simon","true");
+    //emit AddWorker("0001907202","Location 1","Simon","true");
     qDebug() << "no worker added because no text input";
     emit LoggingTest("add worker button pressed", (int)LOG_BUTTON);
 }
@@ -348,21 +348,6 @@ void MainWindow::scanTest(){
     QString RFID = testTextEdit->text();
     testTextEdit->clear();
     scanned(RFID, QString("Location 1"));
-    if(adminLogged && RFID == ADMIN_RFID){
-        qDebug() << "Admin already logged in";
-    }else if(adminLogged && RFID != ADMIN_RFID){
-        qDebug() << "Admin is gone";
-        hideAdminScreen(true);
-    }else{
-        if(RFID == ADMIN_RFID){
-            qDebug() << "Admin RFID";
-            showAdminScreen();
-        }else{
-            qDebug() << "Regular worker";
-            hideAdminScreen(true);
-        }
-    }
-
 }
 
 /**
@@ -412,7 +397,7 @@ void MainWindow::hideAdminScreen(bool chip){
  * False if not
  */
 void MainWindow::visual(QString name, QString loc, bool access){
-    QDateTime curTime = QDateTime::currentDateTime();
+    QDateTime curTime = Logging::getInstance()->getCurrTime();
     nameLabel->setText(QString("Willkommen %1").arg(name));
     locLabel->setText(loc);
     if(access){
@@ -421,8 +406,6 @@ void MainWindow::visual(QString name, QString loc, bool access){
         accessLabel->setText("Access denied");
     }
     timeLabel->setText(QString("Einstechzeit: %1").arg(curTime.toString("hh:mm:ss")));
-
-    locLabel->setStyleSheet("");
 
     visualLayout->addWidget(nameLabel, 1, 0);
     visualLayout->addWidget(locLabel, 2, 0);
@@ -437,7 +420,7 @@ void MainWindow::visual(QString name, QString loc, bool access){
  * slot for scan at location 1
  */
 void MainWindow::loc1Clicked1(){
-    scanned(QString::number(120721), QString("Location 1"));
+    scanned(QString("0001010101"), QString("Location 1"));
     emit LoggingTest("emulate location 1 pressed",(int)LOG_BUTTON);
 }
 
@@ -446,7 +429,7 @@ void MainWindow::loc1Clicked1(){
  * slot for scan at location 2
  */
 void MainWindow::loc2Clicked1(){
-    scanned(QString::number(1207), QString("Location 2"));
+    scanned(QString("0002020202"), QString("Location 2"));
     emit LoggingTest("emulate location 2 pressed",(int)LOG_BUTTON);
 }
 
@@ -455,7 +438,7 @@ void MainWindow::loc2Clicked1(){
  * slot for scan at location 3
  */
 void MainWindow::loc3Clicked1(){
-    scanned(QString::number(160302),QString("Location 3"));
+    scanned(QString("0003030303"),QString("Location 3"));
     emit LoggingTest("emulate location 3 pressed",(int)LOG_BUTTON);
 }
 
@@ -464,7 +447,7 @@ void MainWindow::loc3Clicked1(){
  * slot for scan at location 1
  */
 void MainWindow::loc1Clicked2(){
-    scanned(QString::number(210712), QString("Location 1"));
+    scanned(QString("000101010"), QString("Location 1"));
     emit LoggingTest("emulate location 1 pressed",(int)LOG_BUTTON);
 }
 
@@ -473,7 +456,7 @@ void MainWindow::loc1Clicked2(){
  * slot for scan at location 2
  */
 void MainWindow::loc2Clicked2(){
-    scanned(QString::number(120316), QString("Location 2"));
+    scanned(QString("000202020"), QString("Location 2"));
     emit LoggingTest("emulate location 2 pressed",(int)LOG_BUTTON);
 }
 
@@ -482,7 +465,7 @@ void MainWindow::loc2Clicked2(){
  * slot for scan at location 3
  */
 void MainWindow::loc3Clicked2(){
-    scanned(QString::number(0712), QString("Location 3"));
+    scanned(QString("000303030"), QString("Location 3"));
     emit LoggingTest("emulate location 3 pressed",(int)LOG_BUTTON);
 }
 
@@ -493,6 +476,22 @@ void MainWindow::loc3Clicked2(){
  * Location that the chip was scanned at
  */
 void MainWindow::scanned(QString RFID, QString loc){
+    qDebug() << "----------------------";
+    if(adminLogged && RFID == ADMIN_RFID){
+        qDebug() << "Admin already logged in";
+    }else if(adminLogged && RFID != ADMIN_RFID){
+        qDebug() << "Admin is gone";
+        hideAdminScreen(true);
+    }else{
+        if(RFID == ADMIN_RFID){
+            qDebug() << "Admin RFID";
+            showAdminScreen();
+        }else{
+            qDebug() << "Regular worker";
+            //hideAdminScreen(true);
+        }
+    }
+
     emit ScanInitiated(RFID, loc);
 
     if(RFID.length() == 10){

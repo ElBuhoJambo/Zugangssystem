@@ -61,17 +61,20 @@ Logging::~Logging()
     udpSocket->close();
 }
 
+QDateTime Logging::getCurrTime(){
+    return currentTime;
+}
+
 void Logging::on_TimeUpdate_Logging(){
     QHostInfo info = QHostInfo::fromName("0.pool.ntp.org");
     QString ipAddress = info.addresses().first().toString();
-    qDebug() << ipAddress;
+    //qDebug() << ipAddress;
     udpSocket = new QUdpSocket(this);
 
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
     connect(udpSocket, SIGNAL(connected()), this, SLOT(connectSuccess()));
     udpSocket->abort();
     udpSocket->connectToHost("0.pool.ntp.org", 123);
-    qDebug() << "hier log";
 }
 
 
@@ -84,7 +87,7 @@ void Logging::readPendingDatagrams(){
     while(udpSocket->hasPendingDatagrams()){
         QByteArray byteArray;
         byteArray.append(udpSocket->read(48));
-        qDebug() << (QString::number(byteArray.size()));
+        //qDebug() << (QString::number(byteArray.size()));
 
         QByteArray lastbyteArray(byteArray.right(8));
 
@@ -93,26 +96,27 @@ void Logging::readPendingDatagrams(){
             seconds = (seconds << 8) | lastbyteArray[i];
         }
 
-        qDebug() << (QString::number(seconds, 10));
+        //qDebug() << (QString::number(seconds, 10));
     }
 
     QDateTime newestTime;
     quint64 diffe = seconds - (quint64) Epoch.secsTo(unixStart) + 3600;
     newestTime.setTime_t(diffe);
-    qDebug() << (QString::number((quint64) Epoch.secsTo(unixStart), 10));
-    qDebug() << (newestTime.toString());
+    //qDebug() << (QString::number((quint64) Epoch.secsTo(unixStart), 10));
+    //qDebug() << (newestTime.toString());
 
     if(diffe < 2081376000){
         Logging::currentTime = newestTime;
+        qDebug() << newestTime.toString();
     }else{
-        qDebug() << "Time invalid";
+        //qDebug() << "Time invalid";
     }
 
 
 }
 
 void Logging::connectSuccess(){
-    qDebug() << "Connected";
+    //qDebug() << "Connected";
     QByteArray timeRequest(48, 0);
     timeRequest[0] = '\x23';
     udpSocket->flush();
@@ -200,7 +204,6 @@ void Logging::logMessage(QString msg,int index)
         /* keep the file closed */
         if (pLogFile->open(QIODevice::Append))
         {
-            qDebug() << currentTime;
             emit GetCurrentTime();
 
             QString message = currentTime.toString("yyyyMMdd;hhmmss;") + msg + "\n";
