@@ -73,8 +73,14 @@ public:
     QPushButton *showAddButton;
     QPushButton *showDeleteButton;
     QPushButton *showUpdateButton;
-    QPushButton *showSortByName;
-    QPushButton *showSortByAccess;
+    QPushButton *showEmulateSearch;
+    QPushButton *showSortByNameAsc;
+    QPushButton *showSortByNameDesc;
+    QPushButton *showSortByAccessAsc;
+    QPushButton *showSortByAccessDesc;
+    QLineEdit *showSearchTable;
+    QLabel *showSortByName;
+    QLabel *showSortByAccess;
     QFrame *showFrame;
     QFrame *showAdminFrame;
     QFrame *showSortFrame;
@@ -133,8 +139,12 @@ public slots:
     void deleteRowInTable(QString RFID);
     void updateWorker();
     void updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID);
-    void sortTableByName();
-    void sortTableByAccess();
+    void sortTableByNameAsc();
+    void sortTableByAccessAsc();
+    void sortTableByNameDesc();
+    void sortTableByAccessDesc();
+    void searchInTable(QString term);
+    void emulateSearch(bool toggle);
 
 };
 #endif // MAINWINDOW_H

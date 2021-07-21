@@ -43,13 +43,18 @@ MainWindow::MainWindow(QWidget *parent)
     showTableButton->setCheckable(true);
     showTableButton->setFixedWidth(460);
     showAddButton = new QPushButton("Add worker");
-    showAddButton->hide();
     showDeleteButton = new QPushButton("Delete worker");
-    showDeleteButton->hide();
     showUpdateButton = new QPushButton("Update worker");
-    showUpdateButton->hide();
-    showSortByName = new QPushButton("Sort by name");
-    showSortByAccess = new QPushButton("Sort by access");
+    showEmulateSearch = new QPushButton("Emulate a search");
+    showEmulateSearch->setCheckable(true);
+    showSortByNameAsc = new QPushButton("Ascending");
+    showSortByAccessAsc = new QPushButton("Ascending");
+    showSortByNameDesc = new QPushButton("Descending");
+    showSortByAccessDesc = new QPushButton("Descending");
+    showSearchTable = new QLineEdit();
+    showSearchTable->setPlaceholderText("RFID");
+    showSortByName = new QLabel("Sort by name");
+    showSortByAccess = new QLabel("Sort by access");
     showFrame = new QFrame;
     showFrame->setMaximumWidth(460);
     showFrame->resize(460,460);
@@ -57,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     showSortFrame = new QFrame;
     showSpaceFrame = new QFrame;
     showAdminFrame = new QFrame;
+    showAdminFrame->hide();
     showTableWidget = new QTableWidget(0,4,this);
     showTableWidget->setColumnWidth(1,125);
     showTableWidget->setColumnWidth(3,84);
@@ -68,13 +74,19 @@ MainWindow::MainWindow(QWidget *parent)
     showLayout->setAlignment(Qt::AlignTop);
     showLayout->setSpacing(0);
     showLayout->addWidget(showTableWidget);
-    showSortLayout->addWidget(showSortByName,0,0,Qt::AlignBottom);
-    showSortLayout->addWidget(showSortByAccess,1,0);
+    showSortLayout->addWidget(showSearchTable,0,0,1,2,Qt::AlignBottom);
+    showSortLayout->addWidget(showSortByName,1,0,Qt::AlignBottom);
+    showSortLayout->addWidget(showSortByAccess,1,1,Qt::AlignBottom);
+    showSortLayout->addWidget(showSortByNameAsc,2,0,Qt::AlignBottom);
+    showSortLayout->addWidget(showSortByAccessAsc,2,1,Qt::AlignBottom);
+    showSortLayout->addWidget(showSortByNameDesc,3,0);
+    showSortLayout->addWidget(showSortByAccessDesc,3,1);
     sqlLayout->addWidget(showTableButton,0,0, Qt::AlignTop);
     sqlLayout->addWidget(showFrame, 1,0);
     showAdminLayout->addWidget(showAddButton,0,0);
     showAdminLayout->addWidget(showDeleteButton,1,0,Qt::AlignTop);
     showAdminLayout->addWidget(showUpdateButton,2,0,Qt::AlignTop);
+    showAdminLayout->addWidget(showEmulateSearch,3,0,Qt::AlignTop);
     sqlLayout->addWidget(showSortFrame, 3,1);
     sqlLayout->addWidget(showSpaceFrame, 2,1);
     sqlLayout->addWidget(showAdminFrame, 0,1,2,1);
@@ -173,8 +185,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(showAddButton, SIGNAL(clicked()), this, SLOT(addWorker()));
     connect(showDeleteButton, SIGNAL(clicked()), this, SLOT(deleteWorker()));
     connect(showUpdateButton, SIGNAL(clicked()), this, SLOT(updateWorker()));
-    connect(showSortByName, SIGNAL(clicked()), this, SLOT(sortTableByName()));
-    connect(showSortByAccess, SIGNAL(clicked()), this, SLOT(sortTableByAccess()));
+    connect(showEmulateSearch, SIGNAL(toggled(bool)), this, SLOT(emulateSearch(bool)));
+    connect(showSortByNameAsc, SIGNAL(clicked()), this, SLOT(sortTableByNameAsc()));
+    connect(showSortByAccessAsc, SIGNAL(clicked()), this, SLOT(sortTableByAccessAsc()));
+    connect(showSortByNameDesc, SIGNAL(clicked()), this, SLOT(sortTableByNameDesc()));
+    connect(showSortByAccessDesc, SIGNAL(clicked()), this, SLOT(sortTableByAccessDesc()));
+    connect(showSearchTable, SIGNAL(textChanged(QString)), this, SLOT(searchInTable(QString)));
 
     connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(Logging::getInstance(), SIGNAL(LogMessageTest(QString)), this, SLOT(logMessage(QString)));
@@ -353,12 +369,51 @@ void MainWindow::updateRowInTable(QString RFID, QString location, QString name, 
 
 }
 
-void MainWindow::sortTableByName(){
+/**
+ * @brief MainWindow::sortTableByNameAsc
+ * does what it says on the tin
+ */
+void MainWindow::sortTableByNameAsc(){
     showTableWidget->sortItems(0,Qt::AscendingOrder);
 }
-
-void MainWindow::sortTableByAccess(){
+/**
+ * @brief MainWindow::sortTableByAccessAsc
+ * does what it says on the tin
+ */
+void MainWindow::sortTableByAccessAsc(){
     showTableWidget->sortItems(3,Qt::AscendingOrder);
+}
+/**
+ * @brief MainWindow::sortTableByNameDesc
+ * does what it says on the tin
+ */
+void MainWindow::sortTableByNameDesc(){
+    showTableWidget->sortItems(0,Qt::DescendingOrder);
+}
+/**
+ * @brief MainWindow::sortTableByAccessDesc
+ * does what it says on the tin
+ */
+void MainWindow::sortTableByAccessDesc(){
+    showTableWidget->sortItems(3,Qt::DescendingOrder);
+}
+
+void MainWindow::searchInTable(QString term){
+    QList<QTableWidgetItem *> search = showTableWidget->findItems(term, Qt::MatchExactly);
+    if(!search.isEmpty()){
+        showTableWidget->selectRow(search[0]->row());
+    }else{
+        qDebug() << "Worker not found, search";
+    }
+}
+
+void MainWindow::emulateSearch(bool toggle){
+    if(toggle){
+        showSearchTable->setText("0004787864");
+    }else{
+        showSearchTable->setText("0000160302");
+    }
+
 }
 
 /**
@@ -378,9 +433,7 @@ void MainWindow::scanTest(){
 void MainWindow::showAdminScreen(){
     adminLogged = true;
     logOutButton->show();
-    showAddButton->show();
-    showDeleteButton->show();
-    showUpdateButton->show();
+    showAdminFrame->show();
     ui->statusbar->showMessage("admin logged in");
     emit LoggingTest("admin logged in",(int)LOG_COMMON);
 }
@@ -393,9 +446,7 @@ void MainWindow::showAdminScreen(){
  */
 void MainWindow::hideAdminScreen(bool chip){
     logOutButton->hide();
-    showAddButton->hide();
-    showDeleteButton->hide();
-    showUpdateButton->hide();
+    showAdminFrame->hide();
     ui->statusbar->showMessage("admin gone");
     adminLogged = false;
     if(!chip){

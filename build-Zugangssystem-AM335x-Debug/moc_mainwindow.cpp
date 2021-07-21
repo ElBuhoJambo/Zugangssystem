@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[40];
-    char stringdata0[420];
+    QByteArrayData data[46];
+    char stringdata0[508];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -69,8 +69,14 @@ QT_MOC_LITERAL(34, 326, 12), // "deleteWorker"
 QT_MOC_LITERAL(35, 339, 16), // "deleteRowInTable"
 QT_MOC_LITERAL(36, 356, 12), // "updateWorker"
 QT_MOC_LITERAL(37, 369, 16), // "updateRowInTable"
-QT_MOC_LITERAL(38, 386, 15), // "sortTableByName"
-QT_MOC_LITERAL(39, 402, 17) // "sortTableByAccess"
+QT_MOC_LITERAL(38, 386, 18), // "sortTableByNameAsc"
+QT_MOC_LITERAL(39, 405, 20), // "sortTableByAccessAsc"
+QT_MOC_LITERAL(40, 426, 19), // "sortTableByNameDesc"
+QT_MOC_LITERAL(41, 446, 21), // "sortTableByAccessDesc"
+QT_MOC_LITERAL(42, 468, 13), // "searchInTable"
+QT_MOC_LITERAL(43, 482, 4), // "term"
+QT_MOC_LITERAL(44, 487, 13), // "emulateSearch"
+QT_MOC_LITERAL(45, 501, 6) // "toggle"
 
     },
     "MainWindow\0ScanInitiated\0\0RFID\0Location\0"
@@ -84,7 +90,10 @@ QT_MOC_LITERAL(39, 402, 17) // "sortTableByAccess"
     "hideAdminScreen\0chip\0showTabToolTips\0"
     "addWorker\0deleteWorker\0deleteRowInTable\0"
     "updateWorker\0updateRowInTable\0"
-    "sortTableByName\0sortTableByAccess"
+    "sortTableByNameAsc\0sortTableByAccessAsc\0"
+    "sortTableByNameDesc\0sortTableByAccessDesc\0"
+    "searchInTable\0term\0emulateSearch\0"
+    "toggle"
 };
 #undef QT_MOC_LITERAL
 
@@ -94,7 +103,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      27,   14, // methods
+      31,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -102,35 +111,39 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    2,  149,    2, 0x06 /* Public */,
-       5,    2,  154,    2, 0x06 /* Public */,
-       8,    0,  159,    2, 0x06 /* Public */,
-       9,    4,  160,    2, 0x06 /* Public */,
-      13,    1,  169,    2, 0x06 /* Public */,
-      14,    5,  172,    2, 0x06 /* Public */,
+       1,    2,  169,    2, 0x06 /* Public */,
+       5,    2,  174,    2, 0x06 /* Public */,
+       8,    0,  179,    2, 0x06 /* Public */,
+       9,    4,  180,    2, 0x06 /* Public */,
+      13,    1,  189,    2, 0x06 /* Public */,
+      14,    5,  192,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      16,    0,  183,    2, 0x0a /* Public */,
-      17,    0,  184,    2, 0x0a /* Public */,
-      18,    0,  185,    2, 0x0a /* Public */,
-      19,    0,  186,    2, 0x0a /* Public */,
-      20,    0,  187,    2, 0x0a /* Public */,
-      21,    0,  188,    2, 0x0a /* Public */,
-      22,    0,  189,    2, 0x0a /* Public */,
-      23,    0,  190,    2, 0x0a /* Public */,
-      24,    3,  191,    2, 0x0a /* Public */,
-      26,    1,  198,    2, 0x0a /* Public */,
-      27,    4,  201,    2, 0x0a /* Public */,
-      28,    1,  210,    2, 0x0a /* Public */,
-      30,    1,  213,    2, 0x0a /* Public */,
-      32,    0,  216,    2, 0x0a /* Public */,
-      33,    0,  217,    2, 0x0a /* Public */,
-      34,    0,  218,    2, 0x0a /* Public */,
-      35,    1,  219,    2, 0x0a /* Public */,
-      36,    0,  222,    2, 0x0a /* Public */,
-      37,    5,  223,    2, 0x0a /* Public */,
-      38,    0,  234,    2, 0x0a /* Public */,
-      39,    0,  235,    2, 0x0a /* Public */,
+      16,    0,  203,    2, 0x0a /* Public */,
+      17,    0,  204,    2, 0x0a /* Public */,
+      18,    0,  205,    2, 0x0a /* Public */,
+      19,    0,  206,    2, 0x0a /* Public */,
+      20,    0,  207,    2, 0x0a /* Public */,
+      21,    0,  208,    2, 0x0a /* Public */,
+      22,    0,  209,    2, 0x0a /* Public */,
+      23,    0,  210,    2, 0x0a /* Public */,
+      24,    3,  211,    2, 0x0a /* Public */,
+      26,    1,  218,    2, 0x0a /* Public */,
+      27,    4,  221,    2, 0x0a /* Public */,
+      28,    1,  230,    2, 0x0a /* Public */,
+      30,    1,  233,    2, 0x0a /* Public */,
+      32,    0,  236,    2, 0x0a /* Public */,
+      33,    0,  237,    2, 0x0a /* Public */,
+      34,    0,  238,    2, 0x0a /* Public */,
+      35,    1,  239,    2, 0x0a /* Public */,
+      36,    0,  242,    2, 0x0a /* Public */,
+      37,    5,  243,    2, 0x0a /* Public */,
+      38,    0,  254,    2, 0x0a /* Public */,
+      39,    0,  255,    2, 0x0a /* Public */,
+      40,    0,  256,    2, 0x0a /* Public */,
+      41,    0,  257,    2, 0x0a /* Public */,
+      42,    1,  258,    2, 0x0a /* Public */,
+      44,    1,  261,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QString,    3,    4,
@@ -162,6 +175,10 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::QString,    3,   10,   11,   12,   15,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   43,
+    QMetaType::Void, QMetaType::Bool,   45,
 
        0        // eod
 };
@@ -197,8 +214,12 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 22: _t->deleteRowInTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 23: _t->updateWorker(); break;
         case 24: _t->updateRowInTable((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4])),(*reinterpret_cast< QString(*)>(_a[5]))); break;
-        case 25: _t->sortTableByName(); break;
-        case 26: _t->sortTableByAccess(); break;
+        case 25: _t->sortTableByNameAsc(); break;
+        case 26: _t->sortTableByAccessAsc(); break;
+        case 27: _t->sortTableByNameDesc(); break;
+        case 28: _t->sortTableByAccessDesc(); break;
+        case 29: _t->searchInTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 30: _t->emulateSearch((*reinterpret_cast< bool(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -273,13 +294,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 27)
+        if (_id < 31)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 27;
+        _id -= 31;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 27)
+        if (_id < 31)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 27;
+        _id -= 31;
     }
     return _id;
 }
