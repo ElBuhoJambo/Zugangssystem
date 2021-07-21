@@ -52,7 +52,7 @@ public slots:
 
 private slots:
     void checkExternalLogging(void);
-    void on_TimeUpdate_Logging();
+    void timeUpdate_Logging();
     void readPendingDatagrams();
     void connectSuccess();
 

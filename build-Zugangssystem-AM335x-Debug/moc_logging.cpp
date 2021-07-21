@@ -22,7 +22,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Logging_t {
     QByteArrayData data[15];
-    char stringdata0[196];
+    char stringdata0[193];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -43,15 +43,15 @@ QT_MOC_LITERAL(8, 77, 12), // "copyLogfiles"
 QT_MOC_LITERAL(9, 90, 11), // "destination"
 QT_MOC_LITERAL(10, 102, 14), // "logTimeIsvalid"
 QT_MOC_LITERAL(11, 117, 20), // "checkExternalLogging"
-QT_MOC_LITERAL(12, 138, 21), // "on_TimeUpdate_Logging"
-QT_MOC_LITERAL(13, 160, 20), // "readPendingDatagrams"
-QT_MOC_LITERAL(14, 181, 14) // "connectSuccess"
+QT_MOC_LITERAL(12, 138, 18), // "timeUpdate_Logging"
+QT_MOC_LITERAL(13, 157, 20), // "readPendingDatagrams"
+QT_MOC_LITERAL(14, 178, 14) // "connectSuccess"
 
     },
     "Logging\0stopCopyLogfiles\0\0LogMessageTest\0"
     "msg\0GetCurrentTime\0logMessage\0index\0"
     "copyLogfiles\0destination\0logTimeIsvalid\0"
-    "checkExternalLogging\0on_TimeUpdate_Logging\0"
+    "checkExternalLogging\0timeUpdate_Logging\0"
     "readPendingDatagrams\0connectSuccess"
 };
 #undef QT_MOC_LITERAL
@@ -116,7 +116,7 @@ void Logging::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 5: _t->copyLogfiles((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 6: _t->logTimeIsvalid(); break;
         case 7: _t->checkExternalLogging(); break;
-        case 8: _t->on_TimeUpdate_Logging(); break;
+        case 8: _t->timeUpdate_Logging(); break;
         case 9: _t->readPendingDatagrams(); break;
         case 10: _t->connectSuccess(); break;
         default: ;

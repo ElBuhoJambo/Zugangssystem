@@ -43,7 +43,7 @@ Logging::Logging(QObject *parent)
     logMessage("App;Logging available - waiting for timestamp",(int)LOG_COMMON);
     lIsTimeValid = false;
 
-    connect(this, SIGNAL(GetCurrentTime()), this, SLOT(on_TimeUpdate_Logging()));
+    connect(this, SIGNAL(GetCurrentTime()), this, SLOT(timeUpdate_Logging()));
 
     start();
 }
@@ -65,7 +65,7 @@ QDateTime Logging::getCurrTime(){
     return currentTime;
 }
 
-void Logging::on_TimeUpdate_Logging(){
+void Logging::timeUpdate_Logging(){
     QHostInfo info = QHostInfo::fromName("0.pool.ntp.org");
     QString ipAddress = info.addresses().first().toString();
     //qDebug() << ipAddress;
