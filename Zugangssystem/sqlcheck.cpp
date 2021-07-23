@@ -145,6 +145,19 @@ void sqlCheck::showTable(){
     }
 }
 
+void sqlCheck::getNames(){
+    QStringList result;
+    QSqlQuery query;
+    query.prepare("SELECT name FROM worker");
+    if(!query.exec()){
+        qWarning() << "ERROR: " << query.lastError().text();
+    }
+    while(query.next()){
+        result.append(query.value(0).toString());
+    }
+    emit GetNames(result);
+}
+
 /**
  * @brief sqlCheck::receiveRequest
  * emits the results of the scanned worker

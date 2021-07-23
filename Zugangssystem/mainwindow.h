@@ -13,9 +13,11 @@
 #include <QLineEdit>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+
 #include <QThread>
 #include <QToolTip>
 #include <QWhatsThis>
+
 #include <QAbstractSocket>
 #include <QUdpSocket>
 #include <QHostInfo>
@@ -41,6 +43,7 @@ public:
     void scanned(QString RFID, QString loc);
     void showAdminScreen();
     void delay(int millisecondsWait);
+    void setupWorkerSheets();
 
     QGridLayout *mainGridLayout;
     QTabWidget *mainTabWidget;
@@ -50,12 +53,14 @@ public:
     QFrame *rightsTabFrame;
     QFrame *sqlTabFrame;
     QFrame *visualTabFrame;
+    QFrame *excelTabFrame;
 
     QGridLayout *loggingLayout;
     QGridLayout *openLayout;
     QGridLayout *rightsLayout;
     QGridLayout *sqlLayout;
     QGridLayout *visualLayout;
+    QGridLayout *excelLayout;
 
     QGridLayout *testLocLayout;
     QPushButton *testLoc1But1;
@@ -102,6 +107,9 @@ public:
     QWidget *statusWidget = new QWidget;
     QHBoxLayout *statusLayout = new QHBoxLayout(statusWidget);
 
+    QTabWidget *excelTable;
+    QFrame *excelWorkerTab;
+
     int loc;
     int currentScan = 0;
     bool firstShow = true;
@@ -118,6 +126,7 @@ signals:
     void AddWorker(QString RFID, QString location, QString name, QString access);
     void DeleteWorker(QString RFID);
     void UpdateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
+    void GetWorker();
 
 public slots:
     void loc1Clicked1();
