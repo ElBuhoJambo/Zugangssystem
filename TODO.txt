@@ -1,3 +1,5 @@
 TODO:
 Try to make the virtual keyboard work
-Qtxlsx 
+Finish Excel Handling
+init excel table properly
+signals and slots between excelhandling and sqlcheck, and between excelhandling and mainwindow
