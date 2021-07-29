@@ -43,7 +43,6 @@ public:
     void scanned(QString RFID, QString loc);
     void showAdminScreen();
     void delay(int millisecondsWait);
-    void setupWorkerSheets();
 
     QGridLayout *mainGridLayout;
     QTabWidget *mainTabWidget;
@@ -53,14 +52,14 @@ public:
     QFrame *rightsTabFrame;
     QFrame *sqlTabFrame;
     QFrame *visualTabFrame;
-    QFrame *excelTabFrame;
+    QFrame *csvTabFrame;
 
     QGridLayout *loggingLayout;
     QGridLayout *openLayout;
     QGridLayout *rightsLayout;
     QGridLayout *sqlLayout;
     QGridLayout *visualLayout;
-    QGridLayout *excelLayout;
+    QGridLayout *csvLayout;
 
     QGridLayout *testLocLayout;
     QPushButton *testLoc1But1;
@@ -106,9 +105,6 @@ public:
     QSpacerItem *logOutSpacer = new QSpacerItem(1, 400);
     QWidget *statusWidget = new QWidget;
     QHBoxLayout *statusLayout = new QHBoxLayout(statusWidget);
-
-    QTabWidget *excelTable;
-    QFrame *excelWorkerTab;
 
     int loc;
     int currentScan = 0;

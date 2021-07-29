@@ -19,7 +19,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     accessrights.cpp \
-    excelhandling.cpp \
     logging.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -28,7 +27,6 @@ SOURCES += \
 
 HEADERS += \
     accessrights.h \
-    excelhandling.h \
     logging.h \
     mainwindow.h \
     opendoor.h \

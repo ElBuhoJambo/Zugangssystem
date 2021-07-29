@@ -5,7 +5,6 @@
 #include "accessrights.h"
 #include "opendoor.h"
 #include "logging.h"
-#include "excelhandling.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,14 +20,14 @@ MainWindow::MainWindow(QWidget *parent)
     rightsTabFrame = new QFrame;
     sqlTabFrame = new QFrame;
     visualTabFrame = new QFrame;
-    excelTabFrame = new QFrame;
+    csvTabFrame = new QFrame;
 
     loggingLayout = new QGridLayout;
     openLayout = new QGridLayout;
     rightsLayout = new QGridLayout;
     sqlLayout = new QGridLayout;
     visualLayout = new QGridLayout;
-    excelLayout = new QGridLayout;
+    csvLayout = new QGridLayout;
 
     testLoc1But1 = new QPushButton("Location 1 \nCorrect RFID");
     testLoc2But1 = new QPushButton("Location 2 \nCorrect RFID");
@@ -98,9 +97,6 @@ MainWindow::MainWindow(QWidget *parent)
     showSortFrame->setLayout(showSortLayout);
     sqlTabFrame->setLayout(sqlLayout);
 
-    excelTable = new QTabWidget;
-    excelWorkerTab = new QFrame;
-
     ui->centralwidget->setLayout(mainGridLayout);
 
     statusLabel->setFixedWidth(150);
@@ -118,7 +114,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainTabWidget->addTab(openTabFrame, "Öffne Tür");
     mainTabWidget->addTab(rightsTabFrame, "Rechte");
     mainTabWidget->addTab(sqlTabFrame, "SQL");
-    mainTabWidget->addTab(excelTabFrame, "Excel");
+    mainTabWidget->addTab(csvTabFrame, "CSV");
     mainTabWidget->addTab(visualTabFrame, "Visual on Screen");
 
     mainGridLayout->addWidget(mainTabWidget);
@@ -145,11 +141,6 @@ MainWindow::MainWindow(QWidget *parent)
     visualLayout->addWidget(logOutButton,10,0, 1, 1, Qt::AlignBottom);
     visualLayout->addItem(logOutSpacer,3,0,1,1);
     logOutButton->hide();
-
-    excelLayout->addWidget(excelTable);
-    excelTabFrame->setLayout(excelLayout);
-    excelTable->setTabPosition(QTabWidget::South);
-    setupWorkerSheets();
 
     testLoc1But1->setWhatsThis("Emulate scan for Location 1");
     testLoc2But1->setWhatsThis("Emulate scan for Location 2");
@@ -181,8 +172,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(sqlCheck::getInstance(), SIGNAL(DeleteRow(QString)), this, SLOT(deleteRowInTable(QString)));
     connect(this, SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(updateWorker(QString, QString, QString, QString, QString)));
     connect(sqlCheck::getInstance(), SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), this, SLOT(updateRowInTable(QString, QString, QString, QString, QString)));
-    connect(sqlCheck::getInstance(), SIGNAL(GetNames(QStringList)), ExcelHandling::getInstance(), SLOT(recieveNames(QStringList)));
-    connect(ExcelHandling::getInstance(), SIGNAL(GetNames()), sqlCheck::getInstance(), SLOT(getNames()));
 
     connect(testLoc1But1, SIGNAL(clicked()), this, SLOT(loc1Clicked1()));
     connect(testLoc2But1, SIGNAL(clicked()), this, SLOT(loc2Clicked1()));
@@ -219,17 +208,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 
-}
-
-void MainWindow::setupWorkerSheets(){
-    qDebug() << "GOT IN";
-    emit GetWorker();
-    QStringList tabNames;
-
-    for(int i = 0; i < tabNames.size(); i++){
-        QFrame *workerTab = new QFrame;
-        excelTable->addTab(workerTab, tabNames.at(i));
-    }
 }
 
 /**
@@ -330,7 +308,6 @@ void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
     QTableWidgetItem *rfidItem = new QTableWidgetItem(RFID);
     QTableWidgetItem *locItem = new QTableWidgetItem(loc);
     QTableWidgetItem *accessItem = new QTableWidgetItem();
-    ExcelHandling::getInstance()->addWorker(name);
 
     if(access == "1"){
         accessItem->setText("Granted");
@@ -505,7 +482,7 @@ void MainWindow::visual(QString name, QString loc, bool access){
     visualLayout->addWidget(accessLabel, 1, 2);
     visualLayout->addWidget(timeLabel,2,2);
 
-    mainTabWidget->setCurrentIndex(5);
+    mainTabWidget->setCurrentIndex(6);
 }
 
 /**
