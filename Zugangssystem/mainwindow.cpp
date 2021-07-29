@@ -5,6 +5,7 @@
 #include "accessrights.h"
 #include "opendoor.h"
 #include "logging.h"
+#include "csvhandling.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -97,6 +98,10 @@ MainWindow::MainWindow(QWidget *parent)
     showSortFrame->setLayout(showSortLayout);
     sqlTabFrame->setLayout(sqlLayout);
 
+    writeToFile = new QPushButton("Write to CSV file");
+    fillCsvTable = new QPushButton("Fill table");
+    csvTable = new QTableWidget(0,2,this);
+
     ui->centralwidget->setLayout(mainGridLayout);
 
     statusLabel->setFixedWidth(150);
@@ -138,6 +143,11 @@ MainWindow::MainWindow(QWidget *parent)
     loggingLayout->setSpacing(0);
     loggingTabFrame->setLayout(loggingLayout);
 
+    csvLayout->addWidget(writeToFile,0,0);
+    csvLayout->addWidget(fillCsvTable,0,1);
+    csvLayout->addWidget(csvTable,1,0,1,2,Qt::AlignTop);
+    csvTabFrame->setLayout(csvLayout);
+
     visualLayout->addWidget(logOutButton,10,0, 1, 1, Qt::AlignBottom);
     visualLayout->addItem(logOutSpacer,3,0,1,1);
     logOutButton->hide();
@@ -154,6 +164,8 @@ MainWindow::MainWindow(QWidget *parent)
     showDeleteButton->setWhatsThis("Delete a worker via text input");
     showUpdateButton->setWhatsThis("Update a worker via text input");
     showTableWidget->setWhatsThis("Worker table");
+    writeToFile->setWhatsThis("Add an entry to the csv manually");
+    csvTable->setWhatsThis("CSV-File of a worker");
     logOutButton->setWhatsThis("Log out of admin mode");
     nameLabel->setWhatsThis("Name of the currently scanned worker");
     locLabel->setWhatsThis("Location of the currently scanned worker");
@@ -172,6 +184,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(sqlCheck::getInstance(), SIGNAL(DeleteRow(QString)), this, SLOT(deleteRowInTable(QString)));
     connect(this, SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(updateWorker(QString, QString, QString, QString, QString)));
     connect(sqlCheck::getInstance(), SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), this, SLOT(updateRowInTable(QString, QString, QString, QString, QString)));
+    connect(csvHandling::getInstance(), SIGNAL(WriteToTable(QString)), this, SLOT(updateCSVTable(QString)));
+    connect(this, SIGNAL(WriteToFile(const QString &, QString)), csvHandling::getInstance(), SLOT(WriteToFile(const QString &, QString)));
+    connect(this, SIGNAL(FillCSVTable(const QString&)), csvHandling::getInstance(), SLOT(readWholeFile(const QString&)));
+    connect(csvHandling::getInstance(), SIGNAL(FillTable(QList<QStringList>)), this, SLOT(fillCSVTable(QList<QStringList>)));
+    connect(this, SIGNAL(GetCurrentTime(bool)), Logging::getInstance(), SLOT(getCurrTime(bool)));
+    connect(Logging::getInstance(), SIGNAL(SendCurrentTime(QDateTime)), this, SLOT(writeToFileFuc(QDateTime)));
 
     connect(testLoc1But1, SIGNAL(clicked()), this, SLOT(loc1Clicked1()));
     connect(testLoc2But1, SIGNAL(clicked()), this, SLOT(loc2Clicked1()));
@@ -194,6 +212,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(showSortByNameDesc, SIGNAL(clicked()), this, SLOT(sortTableByNameDesc()));
     connect(showSortByAccessDesc, SIGNAL(clicked()), this, SLOT(sortTableByAccessDesc()));
     connect(showSearchTable, SIGNAL(textChanged(QString)), this, SLOT(searchInTable(QString)));
+    connect(writeToFile, SIGNAL(clicked()), this, SLOT(emulateWriteToFile()));
+    connect(fillCsvTable, SIGNAL(clicked()), this, SLOT(fillCSVTable()));
 
     connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(Logging::getInstance(), SIGNAL(LogMessageTest(QString)), this, SLOT(logMessage(QString)));
@@ -208,6 +228,65 @@ MainWindow::~MainWindow()
 {
     delete ui;
 
+}
+
+void MainWindow::fillCSVTable(){
+    QString filePath = QDir::currentPath() + "/test.csv";
+    emit FillCSVTable(filePath);
+}
+
+void MainWindow::fillCSVTable(QList<QStringList> data){
+    if(data.isEmpty()){
+        qWarning() << "CSV is empty";
+        return;
+    }
+
+    if(data.size() > csvTable->rowCount()){
+        csvTable->setRowCount(data.size());
+    }
+
+    for(int i = 0; i < data.size(); i++){
+        if(data.at(i).size() > csvTable->columnCount()){
+            csvTable->setColumnCount(data.at(i).size());
+        }
+    }
+
+    for(int i = 0; i < data.size(); i++){
+        for(int j = 0; j < data.at(i).size(); j++){
+            QTableWidgetItem *item = new QTableWidgetItem(data.at(i).at(j));
+            csvTable->setItem(i,j,item);
+        }
+    }
+    csvShow = true;
+}
+
+void MainWindow::updateCSVTable(QString data){
+    if(data.isEmpty()){
+        qWarning() << "CSV is empty";
+        return;
+    }
+    if(csvShow){
+        QStringList dataList = data.split(QLatin1Char(','));
+        QTableWidgetItem *itemTime = new QTableWidgetItem(dataList.at(0));
+        QTableWidgetItem *itemDate = new QTableWidgetItem(dataList.at(1));
+
+        csvTable->setRowCount(csvTable->rowCount()+1);
+        csvTable->setItem(csvTable->rowCount()-1,0, itemTime);
+        csvTable->setItem(csvTable->rowCount()-1,1, itemDate);
+    }else{
+        qDebug() << "table not yet shown";
+    }
+
+}
+
+void MainWindow::emulateWriteToFile(){
+    QString filePath = QDir::currentPath() + "/test.csv";
+    emit WriteToFile(filePath, "12:38,29.07.2021");
+}
+
+void MainWindow::writeToFileFuc(QDateTime time){
+    QString filePath = QDir::currentPath() + "/test.csv";
+    emit WriteToFile(filePath, time.toString("hh:mm,dd.MM.yyyy"));
 }
 
 /**
@@ -568,6 +647,7 @@ void MainWindow::scanned(QString RFID, QString loc){
     }
 
     emit ScanInitiated(RFID, loc);
+    emit GetCurrentTime(true);
 
     if(RFID.length() == 10){
         loc.append("RFID: ").append(RFID);

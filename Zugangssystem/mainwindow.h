@@ -24,6 +24,8 @@
 #include <QHostAddress>
 #include <QDateTime>
 
+#include <QDir>
+
 //#include "libusb.h"
 
 #define ADMIN_RFID "0004365639"
@@ -93,6 +95,10 @@ public:
     QVBoxLayout *showLayout;
     QStringList columns = {"Name", "RFID", "Location", "Access"};
 
+    QPushButton *writeToFile;
+    QPushButton *fillCsvTable;
+    QTableWidget *csvTable;
+
     QPushButton *logOutButton = new QPushButton("Log out");
     QLabel *nameLabel = new QLabel("");
     QLabel *locLabel = new QLabel("");
@@ -111,6 +117,7 @@ public:
     bool firstShow = true;
     bool adminLogged = false;
     bool toolTip = false;
+    bool csvShow = false;
 
 private:
     Ui::MainWindow *ui;
@@ -123,6 +130,10 @@ signals:
     void DeleteWorker(QString RFID);
     void UpdateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
     void GetWorker();
+    void WriteToFile(const QString &filePath, QString data);
+    void FillCSVTable(const QString &filePath);
+    void GetCurrentTime(bool csv);
+    void SaveCurrentTime(QDateTime time);
 
 public slots:
     void loc1Clicked1();
@@ -150,6 +161,12 @@ public slots:
     void sortTableByAccessDesc();
     void searchInTable(QString term);
     void emulateSearch(bool toggle);
+    void emulateWriteToFile();
+    void writeToFileFuc(QDateTime time);
+    void updateCSVTable(QString data);
+    void fillCSVTable();
+    void fillCSVTable(QList<QStringList> data);
+
 
 };
 #endif // MAINWINDOW_H

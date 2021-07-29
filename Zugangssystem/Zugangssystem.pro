@@ -19,6 +19,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     accessrights.cpp \
+    csvhandling.cpp \
     logging.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -27,6 +28,7 @@ SOURCES += \
 
 HEADERS += \
     accessrights.h \
+    csvhandling.h \
     logging.h \
     mainwindow.h \
     opendoor.h \
@@ -40,4 +42,4 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-include(qtxlsx/src/xlsx/qtxlsx.pri)
+include(ThirdParty/qtcsv/qtcsv.pri)

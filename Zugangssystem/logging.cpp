@@ -65,6 +65,12 @@ QDateTime Logging::getCurrTime(){
     return currentTime;
 }
 
+void Logging::getCurrTime(bool csv){
+    if(csv){
+        emit SendCurrentTime(currentTime);
+    }
+}
+
 void Logging::timeUpdate_Logging(){
     QHostInfo info = QHostInfo::fromName("0.pool.ntp.org");
     QString ipAddress = info.addresses().first().toString();
