@@ -101,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
     writeToFile = new QPushButton("Write to CSV file");
     fillCsvTable = new QPushButton("Fill table");
     csvTable = new QTableWidget(0,2,this);
+    csvTable->setColumnWidth(1,155);
 
     ui->centralwidget->setLayout(mainGridLayout);
 
@@ -145,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     csvLayout->addWidget(writeToFile,0,0);
     csvLayout->addWidget(fillCsvTable,0,1);
-    csvLayout->addWidget(csvTable,1,0,1,2,Qt::AlignTop);
+    csvLayout->addWidget(csvTable,1,0,1,2);
     csvTabFrame->setLayout(csvLayout);
 
     visualLayout->addWidget(logOutButton,10,0, 1, 1, Qt::AlignBottom);
