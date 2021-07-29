@@ -2,6 +2,11 @@
 
 accessRights* accessRights::aInstance = new accessRights();
 
+/**
+ * @brief accessRights::getInstance
+ * returns instance for use in other classes
+ * @return
+ */
 accessRights* accessRights::getInstance(){
     return aInstance;
 }
@@ -20,6 +25,8 @@ accessRights::accessRights()
  * location of scan
  */
 void accessRights::checkAccess(QString RFID, QString loc){
+
+    //checks if RFID is in the correct format
     if(RFID.length() == 10){
         emit SQLRequest(RFID, loc);
     }else{

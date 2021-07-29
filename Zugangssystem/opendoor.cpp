@@ -2,6 +2,11 @@
 
 openDoor* openDoor::oInstance = new openDoor();
 
+/**
+ * @brief openDoor::getInstance
+ *returns instance for use in other classes
+ * @return
+ */
 openDoor* openDoor::getInstance(){
     return oInstance;
 }

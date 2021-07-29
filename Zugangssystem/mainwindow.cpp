@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //TabWidget and tab definition
     mainGridLayout = new QGridLayout;
     mainTabWidget = new QTabWidget;
     mainTabFrame = new QFrame;
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     visualTabFrame = new QFrame;
     csvTabFrame = new QFrame;
 
+    //Layout of tabs definition
     loggingLayout = new QGridLayout;
     openLayout = new QGridLayout;
     rightsLayout = new QGridLayout;
@@ -30,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     visualLayout = new QGridLayout;
     csvLayout = new QGridLayout;
 
+    //Definitons for main screen which is for emulation
     testLoc1But1 = new QPushButton("Location 1 \nCorrect RFID");
     testLoc2But1 = new QPushButton("Location 2 \nCorrect RFID");
     testLoc3But1 = new QPushButton("Location 3 \nCorrect RFID");
@@ -42,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     testTextEdit->grabKeyboard();
     testLocLayout = new QGridLayout;
 
+    //Definitions and property changes for sql screen which is for displaying the worker table
     showTableButton = new QPushButton("Show worker table");
     showTableButton->setCheckable(true);
     showTableButton->setFixedWidth(460);
@@ -98,6 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
     showSortFrame->setLayout(showSortLayout);
     sqlTabFrame->setLayout(sqlLayout);
 
+    //Definitions for csv tab which is for the displaying the csv file in a table
     writeToFile = new QPushButton("Write to CSV file");
     fillCsvTable = new QPushButton("Fill table");
     csvTable = new QTableWidget(0,2,this);
@@ -105,16 +110,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->centralwidget->setLayout(mainGridLayout);
 
+    //statusbar setup
     statusLabel->setFixedWidth(150);
     toolTipBut->setFixedWidth(100);
     statusLabel->setText("Version 1.0");
     //statusLayout->addWidget(spacerLabel,0,Qt::AlignLeft);
     //statusLayout->addWidget(statusLabel,0,Qt::AlignLeft);
     //statusLayout->addWidget(toolTipBut,0,Qt::AlignCenter);
-
     ui->statusbar->addWidget(statusLabel,0);
     ui->statusbar->addPermanentWidget(toolTipBut,1);
 
+    //tabwidget and tab setup for main tabwidget
     mainTabWidget->addTab(mainTabFrame, "Hauptmenu");
     mainTabWidget->addTab(loggingTabFrame, "Logging");
     mainTabWidget->addTab(openTabFrame, "Öffne Tür");
@@ -125,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     mainGridLayout->addWidget(mainTabWidget);
 
+    //emulation/main screen setup
     testLocLayout->addWidget(testLoc1But1,1,1);
     testLocLayout->addWidget(testLoc2But1,1,2);
     testLocLayout->addWidget(testLoc3But1,1,3);
@@ -135,24 +142,26 @@ MainWindow::MainWindow(QWidget *parent)
     testLocLayout->addWidget(testTextEdit,4,4);
     mainTabFrame->setLayout(testLocLayout);
 
+    //visual setup for showing the current worker
     visualLayout->setAlignment(Qt::AlignTop);
     visualLayout->setSpacing(0);
     visualTabFrame->setLayout(visualLayout);
+    visualLayout->addWidget(logOutButton,10,0, 1, 1, Qt::AlignBottom);
+    visualLayout->addItem(logOutSpacer,3,0,1,1);
+    logOutButton->hide();
 
-
+    //setup for displaying every log
     loggingLayout->setAlignment(Qt::AlignTop);
     loggingLayout->setSpacing(0);
     loggingTabFrame->setLayout(loggingLayout);
 
+    //setup for csv screen
     csvLayout->addWidget(writeToFile,0,0);
     csvLayout->addWidget(fillCsvTable,0,1);
     csvLayout->addWidget(csvTable,1,0,1,2);
     csvTabFrame->setLayout(csvLayout);
 
-    visualLayout->addWidget(logOutButton,10,0, 1, 1, Qt::AlignBottom);
-    visualLayout->addItem(logOutSpacer,3,0,1,1);
-    logOutButton->hide();
-
+    //setting every WhatsThis text
     testLoc1But1->setWhatsThis("Emulate scan for Location 1");
     testLoc2But1->setWhatsThis("Emulate scan for Location 2");
     testLoc3But1->setWhatsThis("Emulate scan for Location 3");
@@ -173,6 +182,7 @@ MainWindow::MainWindow(QWidget *parent)
     accessLabel->setWhatsThis("Output whether or not access is to this location is granted");
     timeLabel->setWhatsThis("Time the currently scanned worker scanned in");
 
+    //connecting signals and slots used for sending data between and in classes
     connect(openDoor::getInstance(),SIGNAL(Rights(QString, QString)),accessRights::getInstance(),SLOT(checkAccess(QString, QString)));
     connect(accessRights::getInstance(),SIGNAL(SQLRequest(QString, QString)),sqlCheck::getInstance(),SLOT(receiveRequest(QString, QString)));
     connect(accessRights::getInstance(),SIGNAL(Visual(QString, QString, bool)),this, SLOT(visual(QString, QString, bool)));
@@ -180,6 +190,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(sqlCheck::getInstance(),SIGNAL(Result(bool, QString, QString, QString)),accessRights::getInstance(), SLOT(receiveResult(bool, QString, QString, QString)));
     connect(this, SIGNAL(ScanInitiated(QString, QString)), openDoor::getInstance(), SLOT(checkAccess(QString, QString)));
     connect(sqlCheck::getInstance(), SIGNAL(ShowTable(QString,QString,QString,QString)), this, SLOT(sql(QString,QString,QString,QString)));
+    connect(this, SIGNAL(FirstShow()), sqlCheck::getInstance(), SLOT(showTable()));
     connect(this, SIGNAL(AddWorker(QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(addWorker(QString, QString, QString, QString)));
     connect(this, SIGNAL(DeleteWorker(QString)), sqlCheck::getInstance(), SLOT(deleteWorker(QString)));
     connect(sqlCheck::getInstance(), SIGNAL(DeleteRow(QString)), this, SLOT(deleteRowInTable(QString)));
@@ -192,6 +203,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(GetCurrentTime(bool)), Logging::getInstance(), SLOT(getCurrTime(bool)));
     connect(Logging::getInstance(), SIGNAL(SendCurrentTime(QDateTime)), this, SLOT(writeToFileFuc(QDateTime)));
 
+    //connecting signals and slots for button clicks
     connect(testLoc1But1, SIGNAL(clicked()), this, SLOT(loc1Clicked1()));
     connect(testLoc2But1, SIGNAL(clicked()), this, SLOT(loc2Clicked1()));
     connect(testLoc3But1, SIGNAL(clicked()), this, SLOT(loc3Clicked1()));
@@ -201,7 +213,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(testAdminBut, SIGNAL(clicked()), this, SLOT(adminClicked()));
     connect(testTextEdit, SIGNAL(returnPressed()), this, SLOT(scanTest()));
     connect(showTableButton, SIGNAL(toggled(bool)), this, SLOT(showTable(bool)));
-    connect(this, SIGNAL(FirstShow()), sqlCheck::getInstance(), SLOT(showTable()));
     connect(logOutButton, SIGNAL(clicked(bool)),this, SLOT(hideAdminScreen(bool)));
     connect(toolTipBut, SIGNAL(clicked()), this, SLOT(showTabToolTips()));
     connect(showAddButton, SIGNAL(clicked()), this, SLOT(addWorker()));
@@ -216,6 +227,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(writeToFile, SIGNAL(clicked()), this, SLOT(emulateWriteToFile()));
     connect(fillCsvTable, SIGNAL(clicked()), this, SLOT(fillCSVTable()));
 
+    //connecting signals and slots for logging in the classes
     connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(Logging::getInstance(), SIGNAL(LogMessageTest(QString)), this, SLOT(logMessage(QString)));
     connect(openDoor::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
@@ -231,27 +243,39 @@ MainWindow::~MainWindow()
 
 }
 
+/**
+ * @brief MainWindow::fillCSVTable
+ * send signal to gather data for table
+ */
 void MainWindow::fillCSVTable(){
     QString filePath = QDir::currentPath() + "/test.csv";
     emit FillCSVTable(filePath);
 }
 
+/**
+ * @brief MainWindow::fillCSVTable
+ * fill table with recieved csv data
+ * @param data
+ * csv-file
+ */
 void MainWindow::fillCSVTable(QList<QStringList> data){
+    //check if csv file is empty
     if(data.isEmpty()){
         qWarning() << "CSV is empty";
         return;
     }
 
+    //make sure that the tablewidget is big enough for the csv file and enlarged if needed
     if(data.size() > csvTable->rowCount()){
         csvTable->setRowCount(data.size());
     }
-
     for(int i = 0; i < data.size(); i++){
         if(data.at(i).size() > csvTable->columnCount()){
             csvTable->setColumnCount(data.at(i).size());
         }
     }
 
+    //fill the table with the csv file
     for(int i = 0; i < data.size(); i++){
         for(int j = 0; j < data.at(i).size(); j++){
             QTableWidgetItem *item = new QTableWidgetItem(data.at(i).at(j));
@@ -261,11 +285,20 @@ void MainWindow::fillCSVTable(QList<QStringList> data){
     csvShow = true;
 }
 
+/**
+ * @brief MainWindow::updateCSVTable
+ * update new entry in table after scan
+ * @param data
+ * last scan to append
+ */
 void MainWindow::updateCSVTable(QString data){
+    //check if csv file is empty
     if(data.isEmpty()){
         qWarning() << "CSV is empty";
         return;
     }
+
+    //append last entry into table but only if the full table is already shown
     if(csvShow){
         QStringList dataList = data.split(QLatin1Char(','));
         QTableWidgetItem *itemTime = new QTableWidgetItem(dataList.at(0));
@@ -280,11 +313,21 @@ void MainWindow::updateCSVTable(QString data){
 
 }
 
+/**
+ * @brief MainWindow::emulateWriteToFile
+ * emulate a scan but only for the csv file
+ */
 void MainWindow::emulateWriteToFile(){
     QString filePath = QDir::currentPath() + "/test.csv";
     emit WriteToFile(filePath, "12:38,29.07.2021");
 }
 
+/**
+ * @brief MainWindow::writeToFileFuc
+ * write into csv file after scan
+ * @param time
+ * time of the scan
+ */
 void MainWindow::writeToFileFuc(QDateTime time){
     QString filePath = QDir::currentPath() + "/test.csv";
     emit WriteToFile(filePath, time.toString("hh:mm,dd.MM.yyyy"));
@@ -354,6 +397,7 @@ void MainWindow::delay(int millisecondsWait){
  * decides whether the table is shown or hidden
  */
 void MainWindow::showTable(bool show){
+    //only if the table hasn't been shown yet fill it up again, if it's not the first time just show or hide the widget
     if(firstShow){
         emit FirstShow();
         firstShow = false;
@@ -372,7 +416,7 @@ void MainWindow::showTable(bool show){
 
 /**
  * @brief MainWindow::sql
- * add worker to table
+ * make items for table and append them to the table therefore adding a worker
  * @param name
  * name of the current worker getting added
  * @param RFID
@@ -478,6 +522,12 @@ void MainWindow::sortTableByAccessDesc(){
     showTableWidget->sortItems(3,Qt::DescendingOrder);
 }
 
+/**
+ * @brief MainWindow::searchInTable
+ * search for a certain worker in the table doesn't matter with what criterium
+ * @param term
+ * cirterium for search, can be name, RFID, anything
+ */
 void MainWindow::searchInTable(QString term){
     QList<QTableWidgetItem *> search = showTableWidget->findItems(term, Qt::MatchExactly);
     if(!search.isEmpty()){
@@ -487,6 +537,12 @@ void MainWindow::searchInTable(QString term){
     }
 }
 
+/**
+ * @brief MainWindow::emulateSearch
+ * emulate a search in the worker table
+ * @param toggle
+ * decides which rfid should be searched for
+ */
 void MainWindow::emulateSearch(bool toggle){
     if(toggle){
         showSearchTable->setText("0004787864");
@@ -507,7 +563,7 @@ void MainWindow::scanTest(){
 
 /**
  * @brief MainWindow::showAdminScreen
- * show features only available
+ * show features only available for admins
  */
 void MainWindow::showAdminScreen(){
     adminLogged = true;
@@ -619,6 +675,10 @@ void MainWindow::loc3Clicked2(){
     emit LoggingTest("emulate location 3 pressed",(int)LOG_BUTTON);
 }
 
+/**
+ * @brief MainWindow::adminClicked
+ * slot for scan of admin
+ */
 void MainWindow::adminClicked(){
     scanned(QString("0004365639"), QString("Location 1"));
     emit LoggingTest("emulate admin pressed", (int)LOG_BUTTON);
@@ -632,6 +692,12 @@ void MainWindow::adminClicked(){
  */
 void MainWindow::scanned(QString RFID, QString loc){
     qDebug() << "----------------------";
+
+    //Check for all possible cases and does what needs to be done accordingly
+    //1.admin is logged in and tries to login again
+    //2.admin is logged in and someone else scans in
+    //3.admin is not logged in and scans in
+    //4.admin is not logged in and someone else scans in
     if(adminLogged && RFID == ADMIN_RFID){
         qDebug() << "Admin already logged in";
     }else if(adminLogged && RFID != ADMIN_RFID){
@@ -647,9 +713,11 @@ void MainWindow::scanned(QString RFID, QString loc){
         }
     }
 
+    //initiates the chain reaction to all classes and saves the time in the csv file
     emit ScanInitiated(RFID, loc);
     emit GetCurrentTime(true);
 
+    //checks if the recieved RFID is in the correct format
     if(RFID.length() == 10){
         loc.append("RFID: ").append(RFID);
         emit LoggingTest(loc, 0);

@@ -61,16 +61,31 @@ Logging::~Logging()
     udpSocket->close();
 }
 
+/**
+ * @brief Logging::getCurrTime
+ * get the last time saved in current time
+ * @return
+ */
 QDateTime Logging::getCurrTime(){
     return currentTime;
 }
 
+/**
+ * @brief Logging::getCurrTime
+ * emit the last time saved in current time
+ * @param csv
+ * safety
+ */
 void Logging::getCurrTime(bool csv){
     if(csv){
         emit SendCurrentTime(currentTime);
     }
 }
 
+/**
+ * @brief Logging::timeUpdate_Logging
+ * establish connection to ntp server
+ */
 void Logging::timeUpdate_Logging(){
     QHostInfo info = QHostInfo::fromName("0.pool.ntp.org");
     QString ipAddress = info.addresses().first().toString();
@@ -83,13 +98,17 @@ void Logging::timeUpdate_Logging(){
     udpSocket->connectToHost("0.pool.ntp.org", 123);
 }
 
-
+/**
+ * @brief Logging::readPendingDatagrams
+ * read the data of the ntp server, check if it's valid and save it
+ */
 void Logging::readPendingDatagrams(){
     QByteArray newTime;
     QDateTime Epoch(QDate(1900, 1, 1));
     QDateTime unixStart(QDate(1970, 1, 1));
     quint64 seconds = 0;
 
+    //read the data and save it in array
     while(udpSocket->hasPendingDatagrams()){
         QByteArray byteArray;
         byteArray.append(udpSocket->read(48));
@@ -105,6 +124,7 @@ void Logging::readPendingDatagrams(){
         //qDebug() << (QString::number(seconds, 10));
     }
 
+    //calculate the current date and time
     QDateTime newestTime;
     quint64 diffe = seconds - (quint64) Epoch.secsTo(unixStart) + 3600;
     newestTime.setTime_t(diffe);
@@ -121,6 +141,10 @@ void Logging::readPendingDatagrams(){
 
 }
 
+/**
+ * @brief Logging::connectSuccess
+ * connection to ntp server established
+ */
 void Logging::connectSuccess(){
     //qDebug() << "Connected";
     QByteArray timeRequest(48, 0);

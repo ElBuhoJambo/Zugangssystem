@@ -2,10 +2,19 @@
 
 sqlCheck* sqlCheck::sInstance = new sqlCheck();
 
+/**
+ * @brief sqlCheck::getInstance
+ * returns instance for use in other classes
+ * @return
+ */
 sqlCheck* sqlCheck::getInstance(){
     return sInstance;
 }
 
+/**
+ * @brief sqlCheck::sqlCheck
+ * establish connection to the database
+ */
 sqlCheck::sqlCheck(){
     const QString DRIVER("QSQLITE");
 
@@ -54,13 +63,13 @@ void sqlCheck::updateWorker(QString RFID, QString location, QString name, QStrin
         accessInt = 0;
     }
 
+    //perpare the query and execute it, if successfully emits the results
     query.prepare("UPDATE worker SET name = ?, RFID = ?, loc = ?, access = ? WHERE RFID = ?");
     query.addBindValue(name);
     query.addBindValue(RFID);
     query.addBindValue(location);
     query.addBindValue(accessInt);
     query.addBindValue(currRFID);
-
     if(query.exec()){
         qDebug() << "Worker updated successfully";
         emit logMessage(QString("worker updated;%1;%2").arg(name).arg(RFID),(int)LOG_COMMON);
@@ -80,9 +89,9 @@ void sqlCheck::updateWorker(QString RFID, QString location, QString name, QStrin
 void sqlCheck::deleteWorker(QString RFID){
     QSqlQuery query;
 
+    //perpare the query and execute it, if successfully emits the results
     query.prepare("DELETE FROM worker WHERE RFID = ?");
     query.addBindValue(RFID);
-
     if(query.exec()){
         qDebug() << "worker deleted successfully";
         emit logMessage(QString("worker deleted;%1").arg(RFID), (int)LOG_COMMON);
@@ -114,12 +123,12 @@ void sqlCheck::addWorker(QString RFID, QString location, QString name, QString a
         accessInt = 0;
     }
 
+    //perpare the query and execute it, if successfully emits the results
     query.prepare("INSERT INTO worker(name, RFID, loc, access) VALUES(?, ?, ?, ?)");
     query.addBindValue(name);
     query.addBindValue(RFID);
     query.addBindValue(location);
     query.addBindValue(accessInt);
-
     if(query.exec()){
         qDebug() << "worker added successfully";
         emit logMessage(QString("worker added;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
@@ -136,6 +145,7 @@ void sqlCheck::addWorker(QString RFID, QString location, QString name, QString a
  */
 void sqlCheck::showTable(){
     QSqlQuery query;
+    //perpare the query and execute it, if successfully emits the results
     query.prepare("SELECT name, RFID, loc, access FROM worker");
     if(!query.exec()){
         qWarning() << "ERROR: " << query.lastError().text();
@@ -145,9 +155,14 @@ void sqlCheck::showTable(){
     }
 }
 
+/**
+ * @brief sqlCheck::getNames
+ * get every name in the database
+ */
 void sqlCheck::getNames(){
     QStringList result;
     QSqlQuery query;
+    //perpare the query and execute it, if successfully emits the results
     query.prepare("SELECT name FROM worker");
     if(!query.exec()){
         qWarning() << "ERROR: " << query.lastError().text();
@@ -204,9 +219,9 @@ QStringList sqlCheck::request(QString RFID, QString loc){
     }
 
     QSqlQuery query;
+    //perpare the query and execute it, if successfully emits the results
     query.prepare("SELECT name, access FROM worker WHERE RFID = ?");
     query.addBindValue(RFID);
-
     if(query.exec()){
         if(query.next()){
             qDebug() << "DB found" << RFID << query.value(0).toString();
