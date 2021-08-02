@@ -9,6 +9,8 @@
 #include <QFile>
 #include <QSocketNotifier>
 
+#include "logging.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -30,6 +32,7 @@ protected:
 
 signals:
     void ChipScanned(QString rfid);
+    void logMessage(QString msg, int index);
 
 private slots:
     void handleNotification(int socket);

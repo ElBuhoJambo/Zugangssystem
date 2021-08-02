@@ -229,6 +229,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(openDoor::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(accessRights::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(sqlCheck::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
+    connect(Scanner::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
+    connect(csvHandling::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
 
     emit LoggingTest("program started", (int)LOG_COMMON);
 }
@@ -678,10 +680,12 @@ void MainWindow::adminClicked(){
     emit LoggingTest("emulate admin pressed", (int)LOG_BUTTON);
 }
 
-/**
- * @brief MainWindow::scanned
+/*!
+ * \brief MainWindow::scanned
  * function for scan processing
- * @param loc
+ * \param RFID
+ * RFID of the scanned chip
+ * \param loc
  * Location that the chip was scanned at
  */
 void MainWindow::scanned(QString RFID, QString loc){
@@ -720,11 +724,10 @@ void MainWindow::scanned(QString RFID, QString loc){
         //emit LoggingTest(QString("UID is in a faulty format; UID: ").append(QString::number(UID)), 1);
     }
 }
-
-/**
- * @brief MainWindow::logTest
+/*!
+ * \brief MainWindow::logMessage
  * test function for logging
- * @param msg
+ * \param msg
  * Message that was logged
  */
 void MainWindow::logMessage(QString msg){

@@ -4,6 +4,7 @@
 #include "qtcsv/variantdata.h"
 #include "qtcsv/reader.h"
 #include "qtcsv/writer.h"
+#include "logging.h"
 
 #include <QDebug>
 
@@ -23,6 +24,7 @@ public slots:
 signals:
     void WriteToTable(QString data);
     void FillTable(QList<QStringList> data);
+    void logMessage(QString msg, int index);
 
 private:
     csvHandling();

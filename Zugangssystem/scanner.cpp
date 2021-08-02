@@ -20,6 +20,10 @@ void Scanner::run(){
     QThread::exec();
 }
 
+/**
+ * @brief Scanner::initScanner
+ * initialize the timer to check up on the keyboard event file
+ */
 void Scanner::initScanner(void){
     notificationEnabled = false;
     sScannerFile = new QFile(defaultPath);
@@ -31,6 +35,11 @@ void Scanner::initScanner(void){
     sCheckScanner->start();
 }
 
+/**
+ * @brief Scanner::checkScannerData
+ * check if the keyboard is connected or not
+ * if it is connected, activate event handling
+ */
 void Scanner::checkScannerData(){
     if(sScannerFile->exists()){
         if(notificationEnabled){
@@ -41,7 +50,7 @@ void Scanner::checkScannerData(){
         if(-1 != fd){
             sNotifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
             connect(sNotifier, SIGNAL(activated(int)), this, SLOT(handleNotification(int)));
-            qDebug() << "Scanner connected";
+            emit logMessage("scanner connected;Scanner", (int)LOG_SCAN);
             notificationEnabled = true;
         }
     }else{
@@ -50,12 +59,18 @@ void Scanner::checkScannerData(){
             disconnect(sNotifier, SIGNAL(activated(int)), this, SLOT(handleNotification(int)));
             delete sNotifier;
             close(fd);
-            qDebug() << "Scanner disconnect";
+            emit logMessage("scanner disconnected;Scanner", (int)LOG_SCAN);
             notificationEnabled = false;
         }
     }
 }
 
+/**
+ * @brief Scanner::handleNotification
+ * check if the keyboard is still connected or if the event was the disconnect
+ * if still connected than read the data and save it
+ * @param socket
+ */
 void Scanner::handleNotification(int socket){
     if(!sScannerFile->exists()){
         if(notificationEnabled){
@@ -63,7 +78,7 @@ void Scanner::handleNotification(int socket){
             disconnect(sNotifier, SIGNAL(activated(int)), this, SLOT(handleNotification(int)));
             delete sNotifier;
             close(fd);
-            qDebug() << "Scanner disconnect";
+            emit logMessage("scanner disconnected;Scanner", (int)LOG_SCAN);
             notificationEnabled = false;
         }
         return;
@@ -84,6 +99,7 @@ void Scanner::handleNotification(int socket){
         buffer++;
         if(buffer == 10){
             emit ChipScanned(rfid);
+            emit logMessage("RFID read an processed;Scanner", (int)LOG_SCAN);
             i = 0;
             rfid.clear();
             buffer = 0;
@@ -91,6 +107,14 @@ void Scanner::handleNotification(int socket){
     }
 }
 
+/**
+ * @brief Scanner::saveInCorrectFormat
+ * correct the raw data in the it's right format
+ * @param code
+ * current data to convert
+ * @return
+ * converted data
+ */
 int Scanner::saveInCorrectFormat(int code){
     switch(code){
     case 11:

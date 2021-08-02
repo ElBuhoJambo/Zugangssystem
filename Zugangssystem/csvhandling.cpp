@@ -59,9 +59,10 @@ void csvHandling::readWholeFile(const QString& filePath){
     WholeProcessor processor;
     if(!QtCSV::Reader::readToProcessor(filePath, processor)){
         qWarning() << "Failed to read file";
+        emit logMessage("Failed to read csv file;csvHandling", (int)LOG_COMMON);
         return;
     }
-    qDebug() << processor.data.size();
+    emit logMessage("Read csv file successful;csvHandling", (int)LOG_COMMON);
     emit FillTable(processor.data);
 }
 
@@ -108,6 +109,7 @@ void csvHandling::readLastEntry(const QString& filePath){
     LastEntryProcessor processor;
     if(false == QtCSV::Reader::readToProcessor(filePath, processor)){
         qDebug() << "Failed to read file";
+        emit logMessage("Failed to read csv file;csvHandling", (int)LOG_COMMON);
         return;
     }
     emit WriteToTable(processor.data.at(processor.data.size()-1).join(","));
@@ -130,8 +132,10 @@ void csvHandling::WriteToFile(const QString &filePath, QString data){
 
     if(!QtCSV::Writer::write(filePath, varData, ",", "\"", QtCSV::Writer::WriteMode::APPEND, {}, {})){
         qDebug() << "Failed to write to file: " << filePath;
+        emit logMessage("Failed to write to csv file;csvHandling", (int)LOG_COMMON);
     }
 
     qDebug() << "Write to " << filePath << " is okay";
+    emit logMessage("Write to csv file successfull;csvHandling", (int)LOG_COMMON);
     readLastEntry(filePath);
 }
