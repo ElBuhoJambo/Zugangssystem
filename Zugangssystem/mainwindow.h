@@ -71,7 +71,6 @@ public:
     QPushButton *testLoc2But2;
     QPushButton *testLoc3But2;
     QPushButton *testAdminBut;
-    QLineEdit *testTextEdit;
 
     QPushButton *showTableButton;
     QGridLayout *showAdminLayout;
@@ -143,7 +142,7 @@ public slots:
     void loc2Clicked2();
     void loc3Clicked2();
     void adminClicked();
-    void scanTest();
+    void scanTest(QString rfid);
     void visual(QString name, QString loc, bool access);
     void logMessage(QString msg);
     void sql(QString name, QString RFID, QString loc, QString access);

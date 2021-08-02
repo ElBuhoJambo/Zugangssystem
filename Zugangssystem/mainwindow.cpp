@@ -6,6 +6,7 @@
 #include "opendoor.h"
 #include "logging.h"
 #include "csvhandling.h"
+#include "scanner.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -40,9 +41,6 @@ MainWindow::MainWindow(QWidget *parent)
     testLoc2But2 = new QPushButton("Location 2 \nFaulty RFID");
     testLoc3But2 = new QPushButton("Location 3 \nFaulty RFID");
     testAdminBut = new QPushButton("Admin Emulation");
-    testTextEdit = new QLineEdit;
-    testTextEdit->setFocus(Qt::OtherFocusReason);
-    testTextEdit->grabKeyboard();
     testLocLayout = new QGridLayout;
 
     //Definitions and property changes for sql screen which is for displaying the worker table
@@ -139,7 +137,6 @@ MainWindow::MainWindow(QWidget *parent)
     testLocLayout->addWidget(testLoc2But2,2,2);
     testLocLayout->addWidget(testLoc3But2,2,3);
     testLocLayout->addWidget(testAdminBut,3,2);
-    testLocLayout->addWidget(testTextEdit,4,4);
     mainTabFrame->setLayout(testLocLayout);
 
     //visual setup for showing the current worker
@@ -168,7 +165,6 @@ MainWindow::MainWindow(QWidget *parent)
     testLoc1But2->setWhatsThis("Emulate scan for Location 1");
     testLoc2But2->setWhatsThis("Emulate scan for Location 2");
     testLoc3But2->setWhatsThis("Emulate scan for Location 3");
-    testTextEdit->setWhatsThis("Reads the RFID from the chip");
     showTableButton->setWhatsThis("Show the worker table");
     showAddButton->setWhatsThis("Add a worker via text input");
     showDeleteButton->setWhatsThis("Delete a worker via text input");
@@ -202,6 +198,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(csvHandling::getInstance(), SIGNAL(FillTable(QList<QStringList>)), this, SLOT(fillCSVTable(QList<QStringList>)));
     connect(this, SIGNAL(GetCurrentTime(bool)), Logging::getInstance(), SLOT(getCurrTime(bool)));
     connect(Logging::getInstance(), SIGNAL(SendCurrentTime(QDateTime)), this, SLOT(writeToFileFuc(QDateTime)));
+    connect(Scanner::getInstance(), SIGNAL(ChipScanned(QString)), this, SLOT(scanTest(QString)));
 
     //connecting signals and slots for button clicks
     connect(testLoc1But1, SIGNAL(clicked()), this, SLOT(loc1Clicked1()));
@@ -211,7 +208,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(testLoc2But2, SIGNAL(clicked()), this, SLOT(loc2Clicked2()));
     connect(testLoc3But2, SIGNAL(clicked()), this, SLOT(loc3Clicked2()));
     connect(testAdminBut, SIGNAL(clicked()), this, SLOT(adminClicked()));
-    connect(testTextEdit, SIGNAL(returnPressed()), this, SLOT(scanTest()));
     connect(showTableButton, SIGNAL(toggled(bool)), this, SLOT(showTable(bool)));
     connect(logOutButton, SIGNAL(clicked(bool)),this, SLOT(hideAdminScreen(bool)));
     connect(toolTipBut, SIGNAL(clicked()), this, SLOT(showTabToolTips()));
@@ -555,10 +551,8 @@ void MainWindow::emulateSearch(bool toggle){
  * @brief MainWindow::scanTest
  * admin control and scan processing
  */
-void MainWindow::scanTest(){
-    QString RFID = testTextEdit->text();
-    testTextEdit->clear();
-    scanned(RFID, QString("Location 1"));
+void MainWindow::scanTest(QString rfid){
+    scanned(rfid, QString("Location 1"));
 }
 
 /**
