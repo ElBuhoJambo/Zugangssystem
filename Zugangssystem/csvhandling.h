@@ -13,24 +13,39 @@ class csvHandling : public QObject
 {
     Q_OBJECT
 
-    //function to access class in any other class
 public:
     static csvHandling* getInstance(void);
 
-    //slots for reading the bottom most row,
-    //writing in the csv file at the bottom of the file,
-    //and reading the whole file
 public slots:
     void readLastEntry(const QString& filePath);
     void WriteToFile(const QString &filePath, QString data);
     void readWholeFile(const QString& filePath);
 
-    //signals for writing in the csv file,
-    //sending the whole file,
-    //and logging
 signals:
+    /**
+     * @brief WriteToTable
+     * emits to send the last line of the csv file of a specific worker to add it to the table
+     * @param data
+     * data of the read line
+     */
     void WriteToTable(QString data);
+
+    /**
+     * @brief FillTable
+     * emits to send the whole csv file of a specific worker to fill the table
+     * @param data
+     * data of the csv file
+     */
     void FillTable(QList<QStringList> data);
+
+    /**
+     * @brief logMessage
+     * emits to log a certain event
+     * @param msg
+     * logging message
+     * @param index
+     * specifies which file it should be logged in
+     */
     void logMessage(QString msg, int index);
 
     //constructor and instance for use in other classes

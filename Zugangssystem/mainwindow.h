@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QMessageBox>
 
 #include <QThread>
 #include <QToolTip>
@@ -25,6 +26,8 @@
 #include <QDateTime>
 
 #include <QDir>
+
+#include "math.h"
 
 //#include "libusb.h"
 
@@ -97,6 +100,10 @@ public:
     QPushButton *writeToFile;
     QPushButton *fillCsvTable;
     QTableWidget *csvTable;
+    QPushButton *calcWeeklyHours;
+    QPushButton *calcMonthlyHours;
+    QPushButton *calcOvertime;
+    QPushButton *calcNeededTime;
 
     QPushButton *logOutButton = new QPushButton("Log out");
     QLabel *nameLabel = new QLabel("");
@@ -117,22 +124,109 @@ public:
     bool adminLogged = false;
     bool toolTip = false;
     bool csvShow = false;
+    bool hourBox = true;
 
 private:
     Ui::MainWindow *ui;
 
 signals:
+    /**
+     * @brief ScanInitiated
+     * emits when a chip was scanned or a button to emulate was pressed to start the checking process
+     * @param RFID
+     * scanned RFID
+     * @param Location
+     * location of scan
+     */
     void ScanInitiated(QString RFID, QString Location);
+
+    /**
+     * @brief LoggingTest
+     * emits to log a certain event
+     * @param msg
+     * logging message
+     * @param index
+     * specifies which file it should be logged in
+     */
     void LoggingTest(QString msg, int index);
+
+    /**
+     * @brief FirstShow
+     * emits when the worker table gets shown for the first time to fill it up
+     */
     void FirstShow();
+
+    /**
+     * @brief AddWorker
+     * emits to add a worker to the database and table
+     * @param RFID
+     * RFID of worker
+     * @param location
+     * location of worker
+     * @param name
+     * name of worker
+     * @param access
+     * access status of worker
+     */
     void AddWorker(QString RFID, QString location, QString name, QString access);
+
+    /**
+     * @brief DeleteWorker
+     * emits to delete a worker from the database and table
+     * @param RFID
+     * RFID of worker to be deleted
+     */
     void DeleteWorker(QString RFID);
+
+    /**
+     * @brief UpdateWorker
+     * emits to update worker in the database and table
+     * @param RFID
+     * new or same RFID
+     * @param location
+     * new or same location
+     * @param name
+     * new or same name
+     * @param access
+     * new or same access status
+     * @param currRFID
+     * current RFID
+     */
     void UpdateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
+
+    /**
+     * @brief GetWorker
+     * emits to get all names of the worker
+     */
     void GetWorker();
+
+    /**
+     * @brief WriteToFile
+     * emits to write to csv file when chip was scanned
+     * @param filePath
+     * filepath of the csv file for the worker
+     * @param data
+     * data to write into the csv file
+     */
     void WriteToFile(const QString &filePath, QString data);
+
+    /**
+     * @brief FillCSVTable
+     * emits to fill the table with the data of the csv file of the worker
+     * @param filePath
+     * filepath of the csv file for the worker
+     */
     void FillCSVTable(const QString &filePath);
+
+    /**
+     * @brief GetCurrentTime
+     * emits to get the last saved time
+     * @param csv
+     * always true
+     * @param name
+     * name of the current worker
+     */
     void GetCurrentTime(bool csv,QString name);
-    void SaveCurrentTime(QDateTime time);
 
 public slots:
     void loc1Clicked1();
@@ -165,6 +259,10 @@ public slots:
     void updateCSVTable(QString data);
     void fillCSVTable();
     void fillCSVTable(QList<QStringList> data);
+    double calcWeekHours();
+    void calcMonthHours();
+    void calcOverTime();
+    void calcNeedTime();
 
 
 };

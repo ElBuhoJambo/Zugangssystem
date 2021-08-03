@@ -105,6 +105,10 @@ MainWindow::MainWindow(QWidget *parent)
     fillCsvTable = new QPushButton("Fill table");
     csvTable = new QTableWidget(0,2,this);
     csvTable->setColumnWidth(1,155);
+    calcWeeklyHours = new QPushButton("Hours this week");
+    calcMonthlyHours = new QPushButton("Hours this month");
+    calcOvertime = new QPushButton("Overtime");
+    calcNeededTime = new QPushButton("Needed time");
 
     ui->centralwidget->setLayout(mainGridLayout);
 
@@ -154,9 +158,13 @@ MainWindow::MainWindow(QWidget *parent)
     loggingTabFrame->setLayout(loggingLayout);
 
     //setup for csv screen
-    csvLayout->addWidget(writeToFile,0,0);
-    csvLayout->addWidget(fillCsvTable,0,1);
-    csvLayout->addWidget(csvTable,1,0,1,2);
+    csvLayout->addWidget(writeToFile,0,0,1,2);
+    csvLayout->addWidget(fillCsvTable,0,2,1,2);
+    csvLayout->addWidget(csvTable,1,0,1,4);
+    csvLayout->addWidget(calcWeeklyHours,2,0);
+    csvLayout->addWidget(calcMonthlyHours,2,1);
+    csvLayout->addWidget(calcOvertime,2,2);
+    csvLayout->addWidget(calcNeededTime,2,3);
     csvTabFrame->setLayout(csvLayout);
 
     //setting every WhatsThis text
@@ -181,6 +189,10 @@ MainWindow::MainWindow(QWidget *parent)
     writeToFile->setWhatsThis("Add an entry to the csv manually");
     fillCsvTable->setWhatsThis("Fill the table with the CSV-File of the current worker");
     csvTable->setWhatsThis("CSV-File of a worker");
+    calcWeeklyHours->setWhatsThis("Calculates the current hours of this week");
+    calcMonthlyHours->setWhatsThis("Calculates the current hours of this month");
+    calcOvertime->setWhatsThis("Calculates the current overtime hours of this month");
+    calcNeededTime->setWhatsThis("Calculates the current hours still needed of this week");
     logOutButton->setWhatsThis("Log out of admin mode");
     nameLabel->setWhatsThis("Name of the currently scanned worker");
     locLabel->setWhatsThis("Location of the currently scanned worker");
@@ -231,6 +243,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(showSearchTable, SIGNAL(textChanged(QString)), this, SLOT(searchInTable(QString)));
     connect(writeToFile, SIGNAL(clicked()), this, SLOT(emulateWriteToFile()));
     connect(fillCsvTable, SIGNAL(clicked()), this, SLOT(fillCSVTable()));
+    connect(calcWeeklyHours, SIGNAL(clicked()), this, SLOT(calcWeekHours()));
+    connect(calcMonthlyHours, SIGNAL(clicked()), this, SLOT(calcMonthHours()));
+    connect(calcOvertime, SIGNAL(clicked()), this, SLOT(calcOverTime()));
+    connect(calcNeededTime, SIGNAL(clicked()), this, SLOT(calcNeedTime()));
 
     //connecting signals and slots for logging in the classes
     connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
@@ -248,6 +264,118 @@ MainWindow::~MainWindow()
 {
     delete ui;
 
+}
+
+/**
+ * @brief MainWindow::calcWeekHours
+ * calculates the current hours saved in the current week of the current worker
+ * @return
+ * calculated hours rounded to the nearest quarter
+ */
+double MainWindow::calcWeekHours(){
+    double weekTime = 0;
+    for(int i = csvTable->rowCount()-1; i > 0; i--){
+        QString sDate1 = csvTable->item(i,1)->text();
+        QString sTime1 = csvTable->item(i,0)->text();
+        QDateTime dDate1 = QDateTime::fromString(sDate1, "dd.MM.yyyy");
+        QDateTime tDate1 = QDateTime::fromString(sTime1, "hh:mm");
+        double h1 = tDate1.toString("hh").toDouble() + (tDate1.toString("mm").toDouble() / 60);
+        h1 = std::round(h1*4)/4;
+        QString sDate2 = csvTable->item(i-1,1)->text();
+        QString sTime2 = csvTable->item(i-1,0)->text();
+        QDateTime dDate2 = QDateTime::fromString(sDate2, "dd.MM.yyyy");
+        QDateTime tDate2 = QDateTime::fromString(sTime2, "hh:mm");
+        double h2 = tDate2.toString("hh").toDouble() + (tDate2.toString("mm").toDouble() / 60);
+        h2 = std::round(h2*4)/4;
+        if(dDate1.toString("dd.MM.yyyy") != dDate2.toString("dd.MM.yyyy")){
+            qDebug() << "Day incomplete";
+        }else{
+            weekTime = weekTime + (h1 - h2);
+        }
+        if(dDate1.toString("ddd") == "Mon" && dDate2.toString("ddd") != "Mon"){
+            qDebug() << "week done";
+            break;
+        }
+    }
+    if(hourBox){
+        QMessageBox hourBox;
+        hourBox.setText(QString("Hours this week: %1h").arg(weekTime));
+        hourBox.exec();
+    }
+    return weekTime;
+}
+
+/**
+ * @brief MainWindow::calcMonthHours
+ * calculates the current hours saved in the current month of the current worker
+ */
+void MainWindow::calcMonthHours(){
+    double weekTime = 0;
+    for(int i = csvTable->rowCount()-1; i > 0; i--){
+        QString sDate1 = csvTable->item(i,1)->text();
+        QString sTime1 = csvTable->item(i,0)->text();
+        QDateTime dDate1 = QDateTime::fromString(sDate1, "dd.MM.yyyy");
+        QDateTime tDate1 = QDateTime::fromString(sTime1, "hh:mm");
+        double h1 = tDate1.toString("hh").toDouble() + (tDate1.toString("mm").toDouble() / 60);
+        h1 = std::round(h1*4)/4;
+        QString sDate2 = csvTable->item(i-1,1)->text();
+        QString sTime2 = csvTable->item(i-1,0)->text();
+        QDateTime dDate2 = QDateTime::fromString(sDate2, "dd.MM.yyyy");
+        QDateTime tDate2 = QDateTime::fromString(sTime2, "hh:mm");
+        double h2 = tDate2.toString("hh").toDouble() + (tDate2.toString("mm").toDouble() / 60);
+        h2 = std::round(h2*4)/4;
+        if(dDate1.toString("dd.MM.yyyy") != dDate2.toString("dd.MM.yyyy")){
+            qDebug() << "Day incomplete";
+        }else{
+            weekTime = weekTime + (h1 - h2);
+
+        }
+        if(dDate1.toString("MM") != dDate2.toString("MM")){
+            qDebug() << "month done";
+            break;
+        }
+    }
+    QMessageBox monthBox;
+    monthBox.setText(QString("Hours this month: %1h").arg(weekTime));
+    monthBox.exec();
+}
+
+/**
+ * @brief MainWindow::calcOverTime
+ * calculates the amount of hours done overtime if any
+ */
+void MainWindow::calcOverTime(){
+    hourBox = false;
+    double weekTime = calcWeekHours();
+    hourBox = true;
+    QMessageBox overBox;
+
+    if(weekTime <= 38.5){
+        overBox.setText("No overtime yet");
+        overBox.exec();
+    }else{
+        overBox.setText(QString("Overtime this week: %1h").arg(weekTime-38.5));
+        overBox.exec();
+    }
+}
+
+/**
+ * @brief MainWindow::calcNeedTime
+ * calculates the amount of hours still needed if any
+ */
+void MainWindow::calcNeedTime(){
+    hourBox = false;
+    double weekTime = calcWeekHours();
+    hourBox = true;
+    QMessageBox needBox;
+
+    if(weekTime >= 38.5){
+        needBox.setText("Hour minimum already reached");
+        needBox.exec();
+    }else{
+        needBox.setText(QString("Needed hours this week: %1h").arg(38.5 - weekTime));
+        needBox.exec();
+    }
 }
 
 /**
@@ -346,6 +474,8 @@ void MainWindow::writeToFileFuc(QDateTime time, QString name){
         csvTable->setRowCount(0);
         csvShow = false;
     }
+
+    qDebug() << time << name;
 
     QString filePath = QString(QDir::currentPath() + "/%1.csv").arg(name);
     emit WriteToFile(filePath, time.toString("hh:mm,dd.MM.yyyy"));

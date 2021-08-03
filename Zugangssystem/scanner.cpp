@@ -2,6 +2,11 @@
 
 Scanner* Scanner::sInstance = new Scanner();
 
+/**
+ * @brief Scanner::getInstance
+ * returns instance for use in other classes
+ * @return
+ */
 Scanner* Scanner::getInstance(void){
     return sInstance;
 }
@@ -15,6 +20,11 @@ Scanner::~Scanner(){
 
 }
 
+/**
+ * @brief Scanner::run
+ * run function for thread
+ * initializes scanner
+ */
 void Scanner::run(){
     initScanner();
     QThread::exec();
