@@ -125,11 +125,14 @@ void csvHandling::readLastEntry(const QString& filePath){
  * data to write in the csv file
  */
 void csvHandling::WriteToFile(const QString &filePath, QString data){
+    //split the data and put it in an arraylist
     QStringList dataList = data.split(QLatin1Char(','));
 
+    //put the stringlist in an extra list
     QtCSV::VariantData varData;
     varData.addRow(dataList);
 
+    //append the data onto the csv file and check if it worked
     if(!QtCSV::Writer::write(filePath, varData, ",", "\"", QtCSV::Writer::WriteMode::APPEND, {}, {})){
         qDebug() << "Failed to write to file: " << filePath;
         emit logMessage("Failed to write to csv file;csvHandling", (int)LOG_COMMON);

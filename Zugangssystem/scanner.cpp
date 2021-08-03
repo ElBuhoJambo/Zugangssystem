@@ -28,6 +28,7 @@ void Scanner::initScanner(void){
     notificationEnabled = false;
     sScannerFile = new QFile(defaultPath);
 
+    //timer for checking every 100ms to check for the keyboard/scanner
     sCheckScanner = new QTimer(this);
     sCheckScanner->setInterval(100);
     sCheckScanner->setSingleShot(false);
@@ -46,6 +47,7 @@ void Scanner::checkScannerData(){
             return;
         }
 
+        //open the input event file and connect the signal for any event happening for the file to handleNotification
         fd = open(defaultPath.toUtf8().data(), O_RDONLY | O_NONBLOCK);
         if(-1 != fd){
             sNotifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
@@ -54,6 +56,7 @@ void Scanner::checkScannerData(){
             notificationEnabled = true;
         }
     }else{
+        //if the keyboard got disconnected, disable all connection and check up on the input event file
         if(notificationEnabled){
             sNotifier->setEnabled(false);
             disconnect(sNotifier, SIGNAL(activated(int)), this, SLOT(handleNotification(int)));
@@ -67,11 +70,12 @@ void Scanner::checkScannerData(){
 
 /**
  * @brief Scanner::handleNotification
- * check if the keyboard is still connected or if the event was the disconnect
+ * check if the scanner is still connected or if the event was the disconnect
  * if still connected than read the data and save it
  * @param socket
  */
 void Scanner::handleNotification(int socket){
+    //check if the event is the disconnection of the scanner
     if(!sScannerFile->exists()){
         if(notificationEnabled){
             sNotifier->setEnabled(false);
@@ -84,6 +88,7 @@ void Scanner::handleNotification(int socket){
         return;
     }
 
+    //read the input data and save it in the correct format
     if(read(fd, &event, sizeof(event)) == sizeof(event)){
         if(event.type != EV_SYN){
             if(event.value == 1 && event.code != 28){
@@ -95,6 +100,7 @@ void Scanner::handleNotification(int socket){
         }
     }
 
+    //check if the whole rfid has gotten read and if it had been read 10 times
     if(rfid.size() == 10){
         buffer++;
         if(buffer == 10){
@@ -116,6 +122,9 @@ void Scanner::handleNotification(int socket){
  * converted data
  */
 int Scanner::saveInCorrectFormat(int code){
+    /* the raw data is generally just one to big than the actual expected value */
+    /* there are certain exception, like an code 11 means it is a 0 */
+    /* the string of the rfid ends with an enter which is sent as the code 28 but this case shouldn't get here, if it does the -1 will signal that there was a mistake */
     switch(code){
     case 11:
         return 0;

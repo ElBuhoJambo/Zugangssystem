@@ -23,21 +23,29 @@ class Scanner : public QThread
 {
     Q_OBJECT
 
+    //function to access class in any other class
 public:
     static Scanner* getInstance(void);
     int saveInCorrectFormat(int code);
 
+    //run function for thread
 protected:
     void run() override;
 
+    //signals for sending the scanned RFID,
+    //and logging
 signals:
     void ChipScanned(QString rfid);
     void logMessage(QString msg, int index);
 
+    //slots for handling the input events,
+    //and checking on the scanner
 private slots:
     void handleNotification(int socket);
     void checkScannerData();
 
+    //constructor and instance for use in other classes,
+    //and initializing the timer for checking on the scanner
 private:
     Scanner(QObject *parent = 0);
     ~Scanner();
