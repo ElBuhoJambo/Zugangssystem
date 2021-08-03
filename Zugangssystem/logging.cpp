@@ -76,9 +76,9 @@ QDateTime Logging::getCurrTime(){
  * @param csv
  * safety
  */
-void Logging::getCurrTime(bool csv){
+void Logging::getCurrTime(bool csv, QString name){
     if(csv){
-        emit SendCurrentTime(currentTime);
+        emit SendCurrentTime(currentTime, name);
     }
 }
 

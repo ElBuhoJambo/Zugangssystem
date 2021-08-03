@@ -44,13 +44,13 @@ signals:
     void stopCopyLogfiles(void);
     void LogMessageTest(QString msg);
     void GetCurrentTime();
-    void SendCurrentTime(QDateTime time);
+    void SendCurrentTime(QDateTime time, QString name);
 
 public slots:
     void logMessage(QString msg, int index = 0);
     void copyLogfiles(QString destination);
     void logTimeIsvalid(void);
-    void getCurrTime(bool csv);
+    void getCurrTime(bool csv, QString name);
 
 private slots:
     void checkExternalLogging(void);

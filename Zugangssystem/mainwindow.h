@@ -131,7 +131,7 @@ signals:
     void GetWorker();
     void WriteToFile(const QString &filePath, QString data);
     void FillCSVTable(const QString &filePath);
-    void GetCurrentTime(bool csv);
+    void GetCurrentTime(bool csv,QString name);
     void SaveCurrentTime(QDateTime time);
 
 public slots:
@@ -161,7 +161,7 @@ public slots:
     void searchInTable(QString term);
     void emulateSearch(bool toggle);
     void emulateWriteToFile();
-    void writeToFileFuc(QDateTime time);
+    void writeToFileFuc(QDateTime time, QString name);
     void updateCSVTable(QString data);
     void fillCSVTable();
     void fillCSVTable(QList<QStringList> data);

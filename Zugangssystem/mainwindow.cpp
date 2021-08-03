@@ -128,6 +128,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainTabWidget->addTab(visualTabFrame, "Visual on Screen");
 
     mainGridLayout->addWidget(mainTabWidget);
+    mainTabWidget->setFixedSize(790,550);
 
     //emulation/main screen setup
     testLocLayout->addWidget(testLoc1But1,1,1);
@@ -196,8 +197,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(WriteToFile(const QString &, QString)), csvHandling::getInstance(), SLOT(WriteToFile(const QString &, QString)));
     connect(this, SIGNAL(FillCSVTable(const QString&)), csvHandling::getInstance(), SLOT(readWholeFile(const QString&)));
     connect(csvHandling::getInstance(), SIGNAL(FillTable(QList<QStringList>)), this, SLOT(fillCSVTable(QList<QStringList>)));
-    connect(this, SIGNAL(GetCurrentTime(bool)), Logging::getInstance(), SLOT(getCurrTime(bool)));
-    connect(Logging::getInstance(), SIGNAL(SendCurrentTime(QDateTime)), this, SLOT(writeToFileFuc(QDateTime)));
+    connect(this, SIGNAL(GetCurrentTime(bool, QString)), Logging::getInstance(), SLOT(getCurrTime(bool, QString)));
+    connect(Logging::getInstance(), SIGNAL(SendCurrentTime(QDateTime, QString)), this, SLOT(writeToFileFuc(QDateTime, QString)));
     connect(Scanner::getInstance(), SIGNAL(ChipScanned(QString)), this, SLOT(scanTest(QString)));
 
     //connecting signals and slots for button clicks
@@ -246,8 +247,11 @@ MainWindow::~MainWindow()
  * send signal to gather data for table
  */
 void MainWindow::fillCSVTable(){
-    QString filePath = QDir::currentPath() + "/test.csv";
+    QString name = nameLabel->text();
+    name.replace("Willkommen ","");
+    QString filePath = QDir::currentPath() + "/" + name + ".csv";
     emit FillCSVTable(filePath);
+    emit LoggingTest("fill csv table button pressed", (int)LOG_BUTTON);
 }
 
 /**
@@ -262,6 +266,7 @@ void MainWindow::fillCSVTable(QList<QStringList> data){
         qWarning() << "CSV is empty";
         return;
     }
+    csvTable->setRowCount(0);
 
     //make sure that the tablewidget is big enough for the csv file and enlarged if needed
     if(data.size() > csvTable->rowCount()){
@@ -316,8 +321,8 @@ void MainWindow::updateCSVTable(QString data){
  * emulate a scan but only for the csv file
  */
 void MainWindow::emulateWriteToFile(){
-    QString filePath = QDir::currentPath() + "/test.csv";
-    emit WriteToFile(filePath, "12:38,29.07.2021");
+    emit GetCurrentTime(true, "Workernotfound");
+    emit LoggingTest("emulate write in csv file button pressed", (int)LOG_BUTTON);
 }
 
 /**
@@ -326,8 +331,15 @@ void MainWindow::emulateWriteToFile(){
  * @param time
  * time of the scan
  */
-void MainWindow::writeToFileFuc(QDateTime time){
-    QString filePath = QDir::currentPath() + "/test.csv";
+void MainWindow::writeToFileFuc(QDateTime time, QString name){
+
+    if(csvTable->accessibleName() != name){
+        csvTable->setAccessibleName(name);
+        csvTable->setRowCount(0);
+        csvShow = false;
+    }
+
+    QString filePath = QString(QDir::currentPath() + "/%1.csv").arg(name);
     emit WriteToFile(filePath, time.toString("hh:mm,dd.MM.yyyy"));
 }
 
@@ -503,6 +515,7 @@ void MainWindow::updateRowInTable(QString RFID, QString location, QString name, 
  */
 void MainWindow::sortTableByNameAsc(){
     showTableWidget->sortItems(0,Qt::AscendingOrder);
+    emit LoggingTest("sort by name ascending pressed",(int)LOG_BUTTON);
 }
 /**
  * @brief MainWindow::sortTableByAccessAsc
@@ -510,6 +523,7 @@ void MainWindow::sortTableByNameAsc(){
  */
 void MainWindow::sortTableByAccessAsc(){
     showTableWidget->sortItems(3,Qt::AscendingOrder);
+    emit LoggingTest("sort by access ascending pressed",(int)LOG_BUTTON);
 }
 /**
  * @brief MainWindow::sortTableByNameDesc
@@ -517,6 +531,7 @@ void MainWindow::sortTableByAccessAsc(){
  */
 void MainWindow::sortTableByNameDesc(){
     showTableWidget->sortItems(0,Qt::DescendingOrder);
+    emit LoggingTest("sort by name descending pressed",(int)LOG_BUTTON);
 }
 /**
  * @brief MainWindow::sortTableByAccessDesc
@@ -524,6 +539,7 @@ void MainWindow::sortTableByNameDesc(){
  */
 void MainWindow::sortTableByAccessDesc(){
     showTableWidget->sortItems(3,Qt::DescendingOrder);
+    emit LoggingTest("sort by access descending pressed",(int)LOG_BUTTON);
 }
 
 /**
@@ -552,8 +568,10 @@ void MainWindow::searchInTable(QString term){
 void MainWindow::emulateSearch(bool toggle){
     if(toggle){
         showSearchTable->setText("0004787864");
+        emit LoggingTest("emulate search 1 pressed",(int)LOG_BUTTON);
     }else{
         showSearchTable->setText("0000160302");
+        emit LoggingTest("emulate search 2 pressed",(int)LOG_BUTTON);
     }
 }
 
@@ -607,6 +625,11 @@ void MainWindow::hideAdminScreen(bool chip){
  * False if not
  */
 void MainWindow::visual(QString name, QString loc, bool access){
+
+    QString filePath = name.simplified();
+    filePath.replace(" ","");
+    emit GetCurrentTime(true, filePath);
+
     //fill labels with data
     QDateTime curTime = Logging::getInstance()->getCurrTime();
     nameLabel->setText(QString("Willkommen %1").arg(name));
@@ -724,7 +747,6 @@ void MainWindow::scanned(QString RFID, QString loc){
 
     //initiates the chain reaction to all classes and saves the time in the csv file
     emit ScanInitiated(RFID, loc);
-    emit GetCurrentTime(true);
 
     //checks if the recieved RFID is in the correct format
     if(RFID.length() == 10){

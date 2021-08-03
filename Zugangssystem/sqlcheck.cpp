@@ -18,6 +18,7 @@ sqlCheck* sqlCheck::getInstance(){
 sqlCheck::sqlCheck(){
     const QString DRIVER("QSQLITE");
 
+    //set the driver of the database and try to open the correct database
     if(QSqlDatabase::isDriverAvailable(DRIVER)){
         sDB = QSqlDatabase::addDatabase(DRIVER);
         qDebug() << "Driver set successfully";
