@@ -367,7 +367,7 @@ void MainWindow::addWorker(){
 
 /**
  * @brief MainWindow::showTabToolTips
- * enter whatsthis mode
+ * enter whatsthis mode to enable showing tool tips
  */
 void MainWindow::showTabToolTips(){
     QWhatsThis::enterWhatsThisMode();
@@ -425,6 +425,7 @@ void MainWindow::showTable(bool show){
  * access status of the current worker getting added
  */
 void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
+    //create items to add to table with correct data
     showTableWidget->setRowCount(showTableWidget->rowCount()+1);
     QTableWidgetItem *nameItem = new QTableWidgetItem(name);
     QTableWidgetItem *rfidItem = new QTableWidgetItem(RFID);
@@ -437,6 +438,7 @@ void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
         accessItem->setText("Denied");
     }
 
+    //add the items to the correct (last)row and column
     showTableWidget->setItem(showTableWidget->rowCount()-1, 0, nameItem);
     showTableWidget->setItem(showTableWidget->rowCount()-1, 1, rfidItem);
     showTableWidget->setItem(showTableWidget->rowCount()-1, 2, locItem);
@@ -450,7 +452,9 @@ void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
  * RFID of the deleted worker
  */
 void MainWindow::deleteRowInTable(QString RFID){
+    //find the item with the exact RFID
     QList<QTableWidgetItem *> toRemove = showTableWidget->findItems(RFID,Qt::MatchExactly);
+    //remove whole row of worker if it exist
     if(!toRemove.isEmpty()){
         showTableWidget->removeRow(toRemove[0]->row());
     }else{
@@ -473,6 +477,7 @@ void MainWindow::deleteRowInTable(QString RFID){
  * old RFID
  */
 void MainWindow::updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID){
+    //find the item with the exact RFID
     QList<QTableWidgetItem *> toUpdate = showTableWidget->findItems(currRFID,Qt::MatchExactly);
 
     if(access == "true"){
@@ -481,6 +486,7 @@ void MainWindow::updateRowInTable(QString RFID, QString location, QString name, 
         access = "Denied";
     }
 
+    //overwrite the whole row if the worker/RFID exists
     if(!toUpdate.isEmpty()){
         showTableWidget->item(toUpdate[0]->row(), 0)->setText(name);
         showTableWidget->item(toUpdate[0]->row(), 1)->setText(RFID);
@@ -527,7 +533,9 @@ void MainWindow::sortTableByAccessDesc(){
  * cirterium for search, can be name, RFID, anything
  */
 void MainWindow::searchInTable(QString term){
+    //find the worker with the exact term, doesn't matter if name, RFID or anything else
     QList<QTableWidgetItem *> search = showTableWidget->findItems(term, Qt::MatchExactly);
+    //highlight the whole row if the term is found
     if(!search.isEmpty()){
         showTableWidget->selectRow(search[0]->row());
     }else{
@@ -599,6 +607,7 @@ void MainWindow::hideAdminScreen(bool chip){
  * False if not
  */
 void MainWindow::visual(QString name, QString loc, bool access){
+    //fill labels with data
     QDateTime curTime = Logging::getInstance()->getCurrTime();
     nameLabel->setText(QString("Willkommen %1").arg(name));
     locLabel->setText(loc);
@@ -609,11 +618,13 @@ void MainWindow::visual(QString name, QString loc, bool access){
     }
     timeLabel->setText(QString("Einstechzeit: %1").arg(curTime.toString("hh:mm:ss")));
 
+    //overwrite the current layout with the new data
     visualLayout->addWidget(nameLabel, 1, 0);
     visualLayout->addWidget(locLabel, 2, 0);
     visualLayout->addWidget(accessLabel, 1, 2);
     visualLayout->addWidget(timeLabel,2,2);
 
+    //switch to the visual tab
     mainTabWidget->setCurrentIndex(6);
 }
 
@@ -731,6 +742,7 @@ void MainWindow::scanned(QString RFID, QString loc){
  * Message that was logged
  */
 void MainWindow::logMessage(QString msg){
+    //add the last logged message for visual output in the logging tab
     QString log = msg.remove(msg.length()-1, msg.length());
     QLabel *testLabel = new QLabel(log);
     loggingLayout->addWidget(testLabel, currentScan, 0);
