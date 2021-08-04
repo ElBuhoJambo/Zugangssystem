@@ -1,13 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "sqlcheck.h"
-#include "accessrights.h"
-#include "opendoor.h"
-#include "logging.h"
-#include "csvhandling.h"
-#include "scanner.h"
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -58,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     showSortByAccessDesc = new QPushButton("Descending");
     showSearchTable = new QLineEdit();
     showSearchTable->setPlaceholderText("RFID");
+    showSearchTable->setFocusPolicy(Qt::NoFocus);
     showSortByName = new QLabel("Sort by name");
     showSortByAccess = new QLabel("Sort by access");
     showFrame = new QFrame;
@@ -72,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent)
     showTableWidget->setColumnWidth(1,125);
     showTableWidget->setColumnWidth(3,84);
     showTableWidget->setHorizontalHeaderLabels(columns);
+    showTableWidget->setSelectionMode(QAbstractItemView::MultiSelection);
     showLayout = new QVBoxLayout;
     showAdminLayout = new QGridLayout;
     showSortLayout = new QGridLayout;
@@ -109,6 +104,10 @@ MainWindow::MainWindow(QWidget *parent)
     calcMonthlyHours = new QPushButton("Hours this month");
     calcOvertime = new QPushButton("Overtime");
     calcNeededTime = new QPushButton("Needed time");
+
+    lineEditKeyboard = new Keyboard(this);
+    lineEditKeyboard->hide();
+    lineEditKeyboard->setGeometry(0,300,800,300);
 
     ui->centralwidget->setLayout(mainGridLayout);
 
@@ -166,6 +165,8 @@ MainWindow::MainWindow(QWidget *parent)
     csvLayout->addWidget(calcOvertime,2,2);
     csvLayout->addWidget(calcNeededTime,2,3);
     csvTabFrame->setLayout(csvLayout);
+
+    ui->centralwidget->setStyleSheet("background-color: #E9E9E9;");
 
     //setting every WhatsThis text
     testLoc1But1->setWhatsThis("Emulate scan for Location 1");
@@ -258,6 +259,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(Scanner::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
     connect(csvHandling::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
 
+    QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
+    foreach(QLineEdit* lineEdit, lineEditList)
+    {
+        connect(lineEdit,SIGNAL(selectionChanged()),this,SLOT(showKeyboardLineEdit()));
+    }
+
     emit LoggingTest("program started", (int)LOG_COMMON);
 }
 
@@ -265,6 +272,12 @@ MainWindow::~MainWindow()
 {
     delete ui;
 
+}
+
+void MainWindow::showKeyboardLineEdit(){
+    QLineEdit *line = (QLineEdit *)sender();
+    lineEditKeyboard->setLineEdit(line);
+    lineEditKeyboard->show();
 }
 
 /**
@@ -691,11 +704,25 @@ void MainWindow::sortTableByAccessDesc(){
  * cirterium for search, can be name, RFID, anything
  */
 void MainWindow::searchInTable(QString term){
+    QList<QTableWidgetItem *> selected = showTableWidget->selectedItems();
+    int row = -1;
+    if(!selected.isEmpty()){
+        for(int i = 0; i < selected.size(); i++){
+            if(row != selected[i]->row()){
+                row = selected[i]->row();
+                showTableWidget->selectRow(row);
+            }
+        }
+    }else{
+        qDebug() << "non prev selected, search";
+    }
     //find the worker with the exact term, doesn't matter if name, RFID or anything else
-    QList<QTableWidgetItem *> search = showTableWidget->findItems(term, Qt::MatchExactly);
+    QList<QTableWidgetItem *> search = showTableWidget->findItems(term, Qt::MatchStartsWith);
     //highlight the whole row if the term is found
     if(!search.isEmpty()){
-        showTableWidget->selectRow(search[0]->row());
+        for(int i = 0; i < search.size(); i++){
+            showTableWidget->selectRow(search[i]->row());
+        }
     }else{
         qDebug() << "Worker not found, search";
     }

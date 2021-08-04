@@ -27,6 +27,14 @@
 
 #include <QDir>
 
+#include "sqlcheck.h"
+#include "accessrights.h"
+#include "opendoor.h"
+#include "logging.h"
+#include "csvhandling.h"
+#include "scanner.h"
+#include "keyboard/keyboard.h"
+
 #include "math.h"
 
 //#include "libusb.h"
@@ -117,6 +125,8 @@ public:
     QSpacerItem *logOutSpacer = new QSpacerItem(1, 400);
     QWidget *statusWidget = new QWidget;
     QHBoxLayout *statusLayout = new QHBoxLayout(statusWidget);
+
+    Keyboard *lineEditKeyboard;
 
     int loc;
     int currentScan = 0;
@@ -272,7 +282,7 @@ public slots:
     void calcMonthHours();
     void calcOverTime();
     void calcNeedTime();
-
+    void showKeyboardLineEdit();
 
 };
 #endif // MAINWINDOW_H

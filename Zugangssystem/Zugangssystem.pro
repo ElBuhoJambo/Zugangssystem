@@ -19,6 +19,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     accessrights.cpp \
     csvhandling.cpp \
+    keyboard/keyboard.cpp \
     logging.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -29,6 +30,8 @@ SOURCES += \
 HEADERS += \
     accessrights.h \
     csvhandling.h \
+    keyboard/keyboard.h \
+    keyboard/ui_keyboard.h \
     logging.h \
     mainwindow.h \
     opendoor.h \
@@ -36,6 +39,7 @@ HEADERS += \
     sqlcheck.h
 
 FORMS += \
+    keyboard/keyboard.ui \
     mainwindow.ui
 
 # Default rules for deployment.
