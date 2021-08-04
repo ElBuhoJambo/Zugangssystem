@@ -213,6 +213,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(sqlCheck::getInstance(), SIGNAL(DeleteRow(QString)), this, SLOT(deleteRowInTable(QString)));
     connect(this, SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(updateWorker(QString, QString, QString, QString, QString)));
     connect(sqlCheck::getInstance(), SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), this, SLOT(updateRowInTable(QString, QString, QString, QString, QString)));
+    connect(this, SIGNAL(PutCurrentOnTop(QString)), this, SLOT(putCurrentOnTop(QString)));
     connect(csvHandling::getInstance(), SIGNAL(WriteToTable(QString)), this, SLOT(updateCSVTable(QString)));
     connect(this, SIGNAL(WriteToFile(const QString &, QString)), csvHandling::getInstance(), SLOT(WriteToFile(const QString &, QString)));
     connect(this, SIGNAL(FillCSVTable(const QString&)), csvHandling::getInstance(), SLOT(readWholeFile(const QString&)));
@@ -383,11 +384,16 @@ void MainWindow::calcNeedTime(){
  * send signal to gather data for table
  */
 void MainWindow::fillCSVTable(){
-    QString name = nameLabel->text();
-    name.replace("Willkommen ","");
-    QString filePath = QDir::currentPath() + "/" + name + ".csv";
-    emit FillCSVTable(filePath);
-    emit LoggingTest("fill csv table button pressed", (int)LOG_BUTTON);
+    if(!nameLabel->text().isEmpty()){
+        QString name = nameLabel->text();
+        name.replace("Willkommen ","");
+        QString filePath = QDir::currentPath() + "/" + name + ".csv";
+        emit FillCSVTable(filePath);
+        //emit FillCSVTable(QString(QDir::currentPath() + "/test.csv"));
+        emit LoggingTest("fill csv table button pressed", (int)LOG_BUTTON);
+    }else{
+        emit LoggingTest("fill csv table button pressed;no worker", (int)LOG_BUTTON);
+    }
 }
 
 /**
@@ -474,8 +480,6 @@ void MainWindow::writeToFileFuc(QDateTime time, QString name){
         csvTable->setRowCount(0);
         csvShow = false;
     }
-
-    qDebug() << time << name;
 
     QString filePath = QString(QDir::currentPath() + "/%1.csv").arg(name);
     emit WriteToFile(filePath, time.toString("hh:mm,dd.MM.yyyy"));
@@ -714,6 +718,47 @@ void MainWindow::emulateSearch(bool toggle){
 }
 
 /**
+ * @brief MainWindow::putCurrentOnTop
+ * puts the currently scanned worker on top of the sql table
+ * @param RFID
+ * scanned RFID
+ */
+void MainWindow::putCurrentOnTop(QString RFID){
+    if(firstShow){
+        emit FirstShow();
+        firstShow = false;
+        showFrame->show();
+        emit LoggingTest("first show for scan", (int)LOG_SCAN);
+    }
+    QList<QTableWidgetItem *> search = showTableWidget->findItems(RFID, Qt::MatchExactly);
+    if(search[0]->row() == 0){
+        return;
+    }else{
+        int row = search[0]->row();
+        QTableWidgetItem *temp1 = showTableWidget->takeItem(0,0);
+        QTableWidgetItem *temp2 = showTableWidget->takeItem(0,1);
+        QTableWidgetItem *temp3 = showTableWidget->takeItem(0,2);
+        QTableWidgetItem *temp4 = showTableWidget->takeItem(0,3);
+
+        QTableWidgetItem *curr1 = showTableWidget->takeItem(row,0);
+        QTableWidgetItem *curr2 = showTableWidget->takeItem(row,1);
+        QTableWidgetItem *curr3 = showTableWidget->takeItem(row,2);
+        QTableWidgetItem *curr4 = showTableWidget->takeItem(row,3);
+
+        showTableWidget->setItem(0,0,curr1);
+        showTableWidget->setItem(0,1,curr2);
+        showTableWidget->setItem(0,2,curr3);
+        showTableWidget->setItem(0,3,curr4);
+
+        showTableWidget->setItem(row,0,temp1);
+        showTableWidget->setItem(row,1,temp2);
+        showTableWidget->setItem(row,2,temp3);
+        showTableWidget->setItem(row,3,temp4);
+
+    }
+}
+
+/**
  * @brief MainWindow::scanTest
  * admin control and scan processing
  */
@@ -890,6 +935,7 @@ void MainWindow::scanned(QString RFID, QString loc){
     if(RFID.length() == 10){
         loc.append("RFID: ").append(RFID);
         emit LoggingTest(loc, 0);
+        emit PutCurrentOnTop(RFID);
     }else{
         qDebug() << "RFID is in a faulty format";
         //emit LoggingTest(QString("UID is in a faulty format; UID: ").append(QString::number(UID)), 1);

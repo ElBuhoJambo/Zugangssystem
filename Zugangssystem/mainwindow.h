@@ -228,6 +228,14 @@ signals:
      */
     void GetCurrentTime(bool csv,QString name);
 
+    /**
+     * @brief PutCurrentOnTop
+     * emits to put the current worker on top of the sql table
+     * @param RFID
+     * RFID of the worker
+     */
+    void PutCurrentOnTop(QString RFID);
+
 public slots:
     void loc1Clicked1();
     void loc2Clicked1();
@@ -254,6 +262,7 @@ public slots:
     void sortTableByAccessDesc();
     void searchInTable(QString term);
     void emulateSearch(bool toggle);
+    void putCurrentOnTop(QString RFID);
     void emulateWriteToFile();
     void writeToFileFuc(QDateTime time, QString name);
     void updateCSVTable(QString data);
