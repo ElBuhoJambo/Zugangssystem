@@ -1,3 +1,4 @@
 TODO:
 Keyboard integration current program/in general
 database development
+!sql admin buttons working with keyboard!

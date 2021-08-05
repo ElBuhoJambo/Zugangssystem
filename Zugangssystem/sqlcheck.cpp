@@ -36,6 +36,9 @@ sqlCheck::sqlCheck(){
         /*if(!query.exec("INSERT INTO worker(name, RFID, loc, access) VALUES('Magda', '0004787793', 'Location 1', '1')")){
             qWarning() << "ERROR: " << query.lastError().text();
         }*/
+        if(!query.exec("UPDATE worker SET name = 'Daniel', RFID = '0004365639', loc = 'Location 1', access = '1' WHERE id = 3")){
+                    qWarning() << "ERROR: " << query.lastError().text();
+        }
     }else{
         qDebug() << "Driver Error";
     }
@@ -56,12 +59,22 @@ sqlCheck::sqlCheck(){
  * old RFID
  */
 void sqlCheck::updateWorker(QString RFID, QString location, QString name, QString access, QString currRFID){
+    QStringList currData = request(currRFID, "Location 1");
     QSqlQuery query;
-    int accessInt;
-    if(access == "true"){
-        accessInt = 1;
-    }else{
-        accessInt = 0;
+
+    int accessInt = access.toInt();
+
+    if(RFID.isEmpty()){
+        RFID = currRFID;
+    }
+    if(location.isEmpty()){
+        location = "Location 1";
+    }
+    if(name.isEmpty()){
+        name = currData.at(0);
+    }
+    if(access.isEmpty()){
+        accessInt = currData.at(1).toInt();
     }
 
     //perpare the query and execute it, if successfully emits the results
@@ -117,12 +130,7 @@ void sqlCheck::deleteWorker(QString RFID){
  */
 void sqlCheck::addWorker(QString RFID, QString location, QString name, QString access){
     QSqlQuery query;
-    int accessInt;
-    if(access == "true"){
-        accessInt = 1;
-    }else{
-        accessInt = 0;
-    }
+    int accessInt = access.toInt();
 
     //perpare the query and execute it, if successfully emits the results
     query.prepare("INSERT INTO worker(name, RFID, loc, access) VALUES(?, ?, ?, ?)");

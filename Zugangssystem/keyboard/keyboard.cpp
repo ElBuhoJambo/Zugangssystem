@@ -47,7 +47,14 @@ Keyboard::Keyboard(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
+    ui->escape->setText("Esc");
+    ui->clear->setText("CE");
+    ui->backButton->setText("<=");
+    ui->shift->setText("^");
+    ui->enterButton->setText("<_|");
+    ui->escape->setMaximumWidth(42);
+    ui->clear->setMaximumWidth(42);
+    ui->backButton->setMaximumWidth(42);
 
     connect ( ui->Buttonq, SIGNAL( clicked() ), this, SLOT( keyboardHandler() ) );
     connect ( ui->Buttonw, SIGNAL( clicked() ), this, SLOT( keyboardHandler() ) );

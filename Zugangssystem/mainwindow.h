@@ -14,6 +14,7 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>
+#include <QDialogButtonBox>
 
 #include <QThread>
 #include <QToolTip>
@@ -90,6 +91,13 @@ public:
     QPushButton *showDeleteButton;
     QPushButton *showUpdateButton;
     QPushButton *showEmulateSearch;
+    QLineEdit *showAdminLineEdit;
+    QLineEdit *showAdminRFIDLineEdit;
+    QLineEdit *showAdminNameLineEdit;
+    QLineEdit *showAdminLocationLineEdit;
+    QLineEdit *showAdminAccessLineEdit;
+    QPushButton *showAdminSubmit;
+    QPushButton *showAdminCancel;
     QPushButton *showSortByNameAsc;
     QPushButton *showSortByNameDesc;
     QPushButton *showSortByAccessAsc;
@@ -104,6 +112,7 @@ public:
     QTableWidget *showTableWidget;
     QVBoxLayout *showLayout;
     QStringList columns = {"Name", "RFID", "Location", "Access"};
+    QString currAdminEdit;
 
     QPushButton *writeToFile;
     QPushButton *fillCsvTable;
@@ -125,6 +134,10 @@ public:
     QSpacerItem *logOutSpacer = new QSpacerItem(1, 400);
     QWidget *statusWidget = new QWidget;
     QHBoxLayout *statusLayout = new QHBoxLayout(statusWidget);
+
+    QRegExp RFID;
+    QRegExp name;
+    QRegExp access;
 
     Keyboard *lineEditKeyboard;
 
@@ -283,6 +296,8 @@ public slots:
     void calcOverTime();
     void calcNeedTime();
     void showKeyboardLineEdit();
+    void adminAccept();
+    void adminCancel();
 
 };
 #endif // MAINWINDOW_H

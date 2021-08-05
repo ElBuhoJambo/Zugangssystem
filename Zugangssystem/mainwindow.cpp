@@ -7,6 +7,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    RFID.setPattern("[0-9]{,10}");
+    name.setPattern("^[a-zA-Z\\s,.'-]+$");
+    access.setPattern("[01]");
+
     //TabWidget and tab definition
     mainGridLayout = new QGridLayout;
     mainTabWidget = new QTabWidget;
@@ -45,6 +49,20 @@ MainWindow::MainWindow(QWidget *parent)
     showUpdateButton = new QPushButton("Update worker");
     showEmulateSearch = new QPushButton("Emulate a search");
     showEmulateSearch->setCheckable(true);
+    showAdminLineEdit = new QLineEdit;
+    showAdminRFIDLineEdit = new QLineEdit;
+    showAdminNameLineEdit = new QLineEdit;
+    showAdminLocationLineEdit = new QLineEdit;
+    showAdminAccessLineEdit = new QLineEdit;
+    showAdminSubmit = new QPushButton("Submit");
+    showAdminCancel = new QPushButton("Cancel");
+    showAdminLineEdit->hide();
+    showAdminRFIDLineEdit->hide();
+    showAdminNameLineEdit->hide();
+    showAdminLocationLineEdit->hide();
+    showAdminAccessLineEdit->hide();
+    showAdminSubmit->hide();
+    showAdminCancel->hide();
     showSortByNameAsc = new QPushButton("Ascending");
     showSortByAccessAsc = new QPushButton("Ascending");
     showSortByNameDesc = new QPushButton("Descending");
@@ -83,10 +101,17 @@ MainWindow::MainWindow(QWidget *parent)
     showSortLayout->addWidget(showSortByAccessDesc,3,1);
     sqlLayout->addWidget(showTableButton,0,0, Qt::AlignTop);
     sqlLayout->addWidget(showFrame, 1,0);
-    showAdminLayout->addWidget(showAddButton,0,0);
-    showAdminLayout->addWidget(showDeleteButton,1,0,Qt::AlignTop);
-    showAdminLayout->addWidget(showUpdateButton,2,0,Qt::AlignTop);
-    showAdminLayout->addWidget(showEmulateSearch,3,0,Qt::AlignTop);
+    showAdminLayout->addWidget(showAddButton,0,0,1,2);
+    showAdminLayout->addWidget(showDeleteButton,1,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showUpdateButton,2,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showEmulateSearch,3,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminLineEdit,4,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminRFIDLineEdit,5,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminNameLineEdit,6,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminLocationLineEdit,7,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminAccessLineEdit,8,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminSubmit,9,0,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminCancel,9,1,Qt::AlignTop);
     sqlLayout->addWidget(showSortFrame, 3,1);
     sqlLayout->addWidget(showSpaceFrame, 2,1);
     sqlLayout->addWidget(showAdminFrame, 0,1,2,1);
@@ -166,7 +191,7 @@ MainWindow::MainWindow(QWidget *parent)
     csvLayout->addWidget(calcNeededTime,2,3);
     csvTabFrame->setLayout(csvLayout);
 
-    ui->centralwidget->setStyleSheet("background-color: #E9E9E9;");
+    ui->centralwidget->setStyleSheet("background-color: #E7E7E7;");
 
     //setting every WhatsThis text
     testLoc1But1->setWhatsThis("Emulate scan for Location 1");
@@ -249,6 +274,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(calcMonthlyHours, SIGNAL(clicked()), this, SLOT(calcMonthHours()));
     connect(calcOvertime, SIGNAL(clicked()), this, SLOT(calcOverTime()));
     connect(calcNeededTime, SIGNAL(clicked()), this, SLOT(calcNeedTime()));
+    connect(showAdminSubmit, SIGNAL(clicked()), this, SLOT(adminAccept()));
+    connect(showAdminCancel, SIGNAL(clicked()), this, SLOT(adminCancel()));
 
     //connecting signals and slots for logging in the classes
     connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
@@ -503,9 +530,28 @@ void MainWindow::writeToFileFuc(QDateTime time, QString name){
  * update a worker via text input
  */
 void MainWindow::updateWorker(){
-    //Some way of getting a text input
-    //emit UpdateWorker("001234567","Location 2","Justin","false","0005155165");
-    qDebug() << "no worker updated because no text input";
+    showDeleteButton->hide();
+    showAddButton->hide();
+    showUpdateButton->hide();
+    showEmulateSearch->hide();
+    showAdminLineEdit->show();
+    showAdminRFIDLineEdit->show();
+    showAdminNameLineEdit->show();
+    showAdminLocationLineEdit->show();
+    showAdminAccessLineEdit->show();
+    showAdminSubmit->show();
+    showAdminCancel->show();
+    showAdminLineEdit->setPlaceholderText("Current RFID");
+    showAdminRFIDLineEdit->setPlaceholderText("New/Same RFID");
+    showAdminNameLineEdit->setPlaceholderText("New/Same name");
+    showAdminLocationLineEdit->setPlaceholderText("New/Same location");
+    showAdminAccessLineEdit->setPlaceholderText("New/Same Access (1/0)");
+    showAdminLineEdit->setValidator(new QRegExpValidator(RFID));
+    showAdminRFIDLineEdit->setValidator(new QRegExpValidator(RFID));
+    showAdminNameLineEdit->setValidator(new QRegExpValidator(name));
+    showAdminAccessLineEdit->setValidator(new QRegExpValidator(access));
+    currAdminEdit = "Update";
+
     emit LoggingTest(";update worker button pressed", (int)LOG_BUTTON);
 }
 
@@ -514,10 +560,16 @@ void MainWindow::updateWorker(){
  * delete a worker via text input
  */
 void MainWindow::deleteWorker(){
-    //Some way of getting a text input
-    //Maybe Qt Virtual Keyboard
-    //emit DeleteWorker("0001907202");
-    qDebug() << "no worker deleted because no text input";
+    showDeleteButton->hide();
+    showAddButton->hide();
+    showUpdateButton->hide();
+    showEmulateSearch->hide();
+    showAdminLineEdit->show();
+    showAdminSubmit->show();
+    showAdminCancel->show();
+    showAdminLineEdit->setPlaceholderText("RFID");
+    currAdminEdit = "Delete";
+
     emit LoggingTest("delete worker button pressed", (int)LOG_BUTTON);
 }
 
@@ -526,10 +578,83 @@ void MainWindow::deleteWorker(){
  * add a worker via text input
  */
 void MainWindow::addWorker(){
-    //Some way of getting a text input?
-    //emit AddWorker("0001907202","Location 1","Simon","true");
-    qDebug() << "no worker added because no text input";
+    showDeleteButton->hide();
+    showAddButton->hide();
+    showUpdateButton->hide();
+    showEmulateSearch->hide();
+    showAdminLineEdit->show();
+    showAdminNameLineEdit->show();
+    showAdminLocationLineEdit->show();
+    showAdminAccessLineEdit->show();
+    showAdminSubmit->show();
+    showAdminCancel->show();
+    showAdminLineEdit->setPlaceholderText("RFID");
+    showAdminNameLineEdit->setPlaceholderText("name");
+    showAdminLocationLineEdit->setPlaceholderText("location");
+    showAdminAccessLineEdit->setPlaceholderText("Access (true/false)");
+    currAdminEdit = "Add";
+
     emit LoggingTest("add worker button pressed", (int)LOG_BUTTON);
+}
+
+void MainWindow::adminAccept(){
+    QString *currRFID = new QString(showAdminLineEdit->text());
+    QString *RFID = new QString(showAdminRFIDLineEdit->text());
+    QString *name = new QString(showAdminNameLineEdit->text());
+    QString *location = new QString(showAdminLocationLineEdit->text());
+    QString *access = new QString(showAdminAccessLineEdit->text());
+
+    if(!currRFID->isEmpty()){
+        showAdminLineEdit->hide();
+        showAdminRFIDLineEdit->hide();
+        showAdminNameLineEdit->hide();
+        showAdminLocationLineEdit->hide();
+        showAdminAccessLineEdit->hide();
+        showAdminLineEdit->clear();
+        showAdminRFIDLineEdit->clear();
+        showAdminNameLineEdit->clear();
+        showAdminLocationLineEdit->clear();
+        showAdminAccessLineEdit->clear();
+        showAdminSubmit->hide();
+        showAdminCancel->hide();
+        showDeleteButton->show();
+        showAddButton->show();
+        showUpdateButton->show();
+        showEmulateSearch->show();
+        if(currAdminEdit.isEmpty()){
+            qWarning() << "What?! Empty but in adminAccept? How?!";
+        }else if(currAdminEdit == "Add"){
+            emit AddWorker(*currRFID,*location,*name,*access);
+            currAdminEdit.clear();
+        }else if(currAdminEdit == "Delete"){
+            emit DeleteWorker(*currRFID);
+        }else if(currAdminEdit == "Update"){
+            emit UpdateWorker(*RFID,*location,*name,*access,*currRFID);
+            currAdminEdit.clear();
+        }
+
+    }else{
+        qDebug() << "Current RFID is empty -> no change";
+    }
+}
+
+void MainWindow::adminCancel(){
+    showAdminLineEdit->hide();
+    showAdminRFIDLineEdit->hide();
+    showAdminNameLineEdit->hide();
+    showAdminLocationLineEdit->hide();
+    showAdminAccessLineEdit->hide();
+    showAdminLineEdit->clear();
+    showAdminRFIDLineEdit->clear();
+    showAdminNameLineEdit->hide();
+    showAdminLocationLineEdit->clear();
+    showAdminAccessLineEdit->clear();
+    showAdminSubmit->hide();
+    showAdminCancel->hide();
+    showDeleteButton->show();
+    showAddButton->show();
+    showUpdateButton->show();
+    showEmulateSearch->show();
 }
 
 /**

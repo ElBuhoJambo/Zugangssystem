@@ -48,3 +48,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 include(ThirdParty/qtcsv/qtcsv.pri)
+
+DISTFILES += \
+    keyboard/icons/delete_black_24x24.png \
+    keyboard/icons/exit_24.png \
+    keyboard/icons/keyboard_arrow_up_black_24x24.png \
+    keyboard/icons/keyboard_backspace_black_24x24.png \
+    keyboard/icons/keyboard_return_black_24x24.png \
+    keyboard/icons/space_bar_black_24x24.png
+
+RESOURCES += \
+    resources.qrc

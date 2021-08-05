@@ -133,7 +133,6 @@ void Logging::readPendingDatagrams(){
 
     if(diffe < 2081376000){
         Logging::currentTime = newestTime;
-        qDebug() << newestTime.toString();
     }else{
         //qDebug() << "Time invalid";
     }
