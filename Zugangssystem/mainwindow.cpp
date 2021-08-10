@@ -226,70 +226,70 @@ MainWindow::MainWindow(QWidget *parent)
     timeLabel->setWhatsThis("Time the currently scanned worker scanned in");
 
     //connecting signals and slots used for sending data between and in classes
-    connect(openDoor::getInstance(),SIGNAL(Rights(QString, QString)),accessRights::getInstance(),SLOT(checkAccess(QString, QString)));
-    connect(accessRights::getInstance(),SIGNAL(SQLRequest(QString, QString)),sqlCheck::getInstance(),SLOT(receiveRequest(QString, QString)));
-    connect(accessRights::getInstance(),SIGNAL(Visual(QString, QString, bool)),this, SLOT(visual(QString, QString, bool)));
-    connect(accessRights::getInstance(),SIGNAL(Door(bool, QString)),openDoor::getInstance(), SLOT(rightsReturned(bool, QString)));
-    connect(sqlCheck::getInstance(),SIGNAL(Result(bool, QString, QString, QString)),accessRights::getInstance(), SLOT(receiveResult(bool, QString, QString, QString)));
-    connect(this, SIGNAL(ScanInitiated(QString, QString)), openDoor::getInstance(), SLOT(checkAccess(QString, QString)));
+    connect(openDoor::getInstance(),&openDoor::Rights,accessRights::getInstance(),&accessRights::checkAccess);
+    connect(accessRights::getInstance(),&accessRights::SQLRequest,sqlCheck::getInstance(),&sqlCheck::receiveRequest);
+    connect(accessRights::getInstance(), &accessRights::Visual, this, &MainWindow::visual);
+    connect(accessRights::getInstance(),&accessRights::Door,openDoor::getInstance(), &openDoor::rightsReturned);
+    connect(sqlCheck::getInstance(),&sqlCheck::Result,accessRights::getInstance(), &accessRights::receiveResult);
+    connect(this, &MainWindow::ScanInitiated, openDoor::getInstance(), &openDoor::checkAccess);
     connect(sqlCheck::getInstance(), SIGNAL(ShowTable(QString,QString,QString,QString)), this, SLOT(sql(QString,QString,QString,QString)));
-    connect(this, SIGNAL(FirstShow()), sqlCheck::getInstance(), SLOT(showTable()));
-    connect(this, SIGNAL(AddWorker(QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(addWorker(QString, QString, QString, QString)));
-    connect(this, SIGNAL(DeleteWorker(QString)), sqlCheck::getInstance(), SLOT(deleteWorker(QString)));
-    connect(sqlCheck::getInstance(), SIGNAL(DeleteRow(QString)), this, SLOT(deleteRowInTable(QString)));
-    connect(this, SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), sqlCheck::getInstance(), SLOT(updateWorker(QString, QString, QString, QString, QString)));
-    connect(sqlCheck::getInstance(), SIGNAL(UpdateWorker(QString, QString, QString, QString, QString)), this, SLOT(updateRowInTable(QString, QString, QString, QString, QString)));
-    connect(this, SIGNAL(PutCurrentOnTop(QString)), this, SLOT(putCurrentOnTop(QString)));
-    connect(csvHandling::getInstance(), SIGNAL(WriteToTable(QString)), this, SLOT(updateCSVTable(QString)));
-    connect(this, SIGNAL(WriteToFile(const QString &, QString)), csvHandling::getInstance(), SLOT(WriteToFile(const QString &, QString)));
-    connect(this, SIGNAL(FillCSVTable(const QString&)), csvHandling::getInstance(), SLOT(readWholeFile(const QString&)));
+    connect(this, &MainWindow::FirstShow, sqlCheck::getInstance(), &sqlCheck::showTable);
+    connect(this, &MainWindow::AddWorker, sqlCheck::getInstance(), &sqlCheck::addWorker);
+    connect(this, &MainWindow::DeleteWorker, sqlCheck::getInstance(), &sqlCheck::deleteWorker);
+    connect(sqlCheck::getInstance(), &sqlCheck::DeleteRow, this, &MainWindow::deleteRowInTable);
+    connect(this, &MainWindow::UpdateWorker, sqlCheck::getInstance(), &sqlCheck::updateWorker);
+    connect(sqlCheck::getInstance(), &sqlCheck::UpdateWorker, this, &MainWindow::updateRowInTable);
+    connect(this, &MainWindow::PutCurrentOnTop, this, &MainWindow::putCurrentOnTop);
+    connect(csvHandling::getInstance(), &csvHandling::WriteToTable, this, &MainWindow::updateCSVTable);
+    connect(this, &MainWindow::WriteToFile, csvHandling::getInstance(), &csvHandling::WriteToFile);
+    connect(this, &MainWindow::FillCSVTable, csvHandling::getInstance(), &csvHandling::readWholeFile);
     connect(csvHandling::getInstance(), SIGNAL(FillTable(QList<QStringList>)), this, SLOT(fillCSVTable(QList<QStringList>)));
     connect(this, SIGNAL(GetCurrentTime(bool, QString)), Logging::getInstance(), SLOT(getCurrTime(bool, QString)));
     connect(Logging::getInstance(), SIGNAL(SendCurrentTime(QDateTime, QString)), this, SLOT(writeToFileFuc(QDateTime, QString)));
-    connect(Scanner::getInstance(), SIGNAL(ChipScanned(QString)), this, SLOT(scanTest(QString)));
+    connect(Scanner::getInstance(), &Scanner::ChipScanned, this, &MainWindow::scanTest);
 
     //connecting signals and slots for button clicks
-    connect(testLoc1But1, SIGNAL(clicked()), this, SLOT(loc1Clicked1()));
-    connect(testLoc2But1, SIGNAL(clicked()), this, SLOT(loc2Clicked1()));
-    connect(testLoc3But1, SIGNAL(clicked()), this, SLOT(loc3Clicked1()));
-    connect(testLoc1But2, SIGNAL(clicked()), this, SLOT(loc1Clicked2()));
-    connect(testLoc2But2, SIGNAL(clicked()), this, SLOT(loc2Clicked2()));
-    connect(testLoc3But2, SIGNAL(clicked()), this, SLOT(loc3Clicked2()));
-    connect(testAdminBut, SIGNAL(clicked()), this, SLOT(adminClicked()));
-    connect(showTableButton, SIGNAL(toggled(bool)), this, SLOT(showTable(bool)));
-    connect(logOutButton, SIGNAL(clicked(bool)),this, SLOT(hideAdminScreen(bool)));
-    connect(toolTipBut, SIGNAL(clicked()), this, SLOT(showTabToolTips()));
-    connect(showAddButton, SIGNAL(clicked()), this, SLOT(addWorker()));
-    connect(showDeleteButton, SIGNAL(clicked()), this, SLOT(deleteWorker()));
-    connect(showUpdateButton, SIGNAL(clicked()), this, SLOT(updateWorker()));
-    connect(showEmulateSearch, SIGNAL(toggled(bool)), this, SLOT(emulateSearch(bool)));
-    connect(showSortByNameAsc, SIGNAL(clicked()), this, SLOT(sortTableByNameAsc()));
-    connect(showSortByAccessAsc, SIGNAL(clicked()), this, SLOT(sortTableByAccessAsc()));
-    connect(showSortByNameDesc, SIGNAL(clicked()), this, SLOT(sortTableByNameDesc()));
-    connect(showSortByAccessDesc, SIGNAL(clicked()), this, SLOT(sortTableByAccessDesc()));
-    connect(showSearchTable, SIGNAL(textChanged(QString)), this, SLOT(searchInTable(QString)));
-    connect(writeToFile, SIGNAL(clicked()), this, SLOT(emulateWriteToFile()));
+    connect(testLoc1But1, &QPushButton::clicked, this, &MainWindow::loc1Clicked1);
+    connect(testLoc2But1, &QPushButton::clicked, this, &MainWindow::loc2Clicked1);
+    connect(testLoc3But1, &QPushButton::clicked, this, &MainWindow::loc3Clicked1);
+    connect(testLoc1But2, &QPushButton::clicked, this, &MainWindow::loc1Clicked2);
+    connect(testLoc2But2, &QPushButton::clicked, this, &MainWindow::loc2Clicked2);
+    connect(testLoc3But2, &QPushButton::clicked, this, &MainWindow::loc3Clicked2);
+    connect(testAdminBut, &QPushButton::clicked, this, &MainWindow::adminClicked);
+    connect(showTableButton, &QPushButton::toggled, this, &MainWindow::showTable);
+    connect(logOutButton, &QPushButton::clicked,this, &MainWindow::hideAdminScreen);
+    connect(toolTipBut, &QPushButton::clicked, this, &MainWindow::showTabToolTips);
+    connect(showAddButton, &QPushButton::clicked, this, &MainWindow::addWorker);
+    connect(showDeleteButton, &QPushButton::clicked, this, &MainWindow::deleteWorker);
+    connect(showUpdateButton, &QPushButton::clicked, this, &MainWindow::updateWorker);
+    connect(showEmulateSearch, &QPushButton::toggled, this, &MainWindow::emulateSearch);
+    connect(showSortByNameAsc, &QPushButton::clicked, this, &MainWindow::sortTableByNameAsc);
+    connect(showSortByAccessAsc, &QPushButton::clicked, this, &MainWindow::sortTableByAccessAsc);
+    connect(showSortByNameDesc, &QPushButton::clicked, this, &MainWindow::sortTableByNameDesc);
+    connect(showSortByAccessDesc, &QPushButton::clicked, this, &MainWindow::sortTableByAccessDesc);
+    connect(showSearchTable, &QLineEdit::textChanged, this, &MainWindow::searchInTable);
+    connect(writeToFile, &QPushButton::clicked, this, &MainWindow::emulateWriteToFile);
     connect(fillCsvTable, SIGNAL(clicked()), this, SLOT(fillCSVTable()));
-    connect(calcWeeklyHours, SIGNAL(clicked()), this, SLOT(calcWeekHours()));
-    connect(calcMonthlyHours, SIGNAL(clicked()), this, SLOT(calcMonthHours()));
-    connect(calcOvertime, SIGNAL(clicked()), this, SLOT(calcOverTime()));
-    connect(calcNeededTime, SIGNAL(clicked()), this, SLOT(calcNeedTime()));
-    connect(showAdminSubmit, SIGNAL(clicked()), this, SLOT(adminAccept()));
-    connect(showAdminCancel, SIGNAL(clicked()), this, SLOT(adminCancel()));
+    connect(calcWeeklyHours, &QPushButton::clicked, this, &MainWindow::calcWeekHours);
+    connect(calcMonthlyHours, &QPushButton::clicked, this, &MainWindow::calcMonthHours);
+    connect(calcOvertime, &QPushButton::clicked, this, &MainWindow::calcOverTime);
+    connect(calcNeededTime, &QPushButton::clicked, this, &MainWindow::calcNeedTime);
+    connect(showAdminSubmit, &QPushButton::clicked, this, &MainWindow::adminAccept);
+    connect(showAdminCancel, &QPushButton::clicked, this, &MainWindow::adminCancel);
 
     //connecting signals and slots for logging in the classes
-    connect(this, SIGNAL(LoggingTest(QString,int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
-    connect(Logging::getInstance(), SIGNAL(LogMessageTest(QString)), this, SLOT(logMessage(QString)));
-    connect(openDoor::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
-    connect(accessRights::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
-    connect(sqlCheck::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
-    connect(Scanner::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
-    connect(csvHandling::getInstance(), SIGNAL(logMessage(QString, int)), Logging::getInstance(), SLOT(logMessage(QString, int)));
+    connect(this, &MainWindow::LoggingTest, Logging::getInstance(), &Logging::logMessage);
+    connect(Logging::getInstance(), &Logging::LogMessageTest, this, &MainWindow::logMessage);
+    connect(openDoor::getInstance(), &openDoor::logMessage, Logging::getInstance(), &Logging::logMessage);
+    connect(accessRights::getInstance(), &accessRights::logMessage, Logging::getInstance(), &Logging::logMessage);
+    connect(sqlCheck::getInstance(), &sqlCheck::logMessage, Logging::getInstance(), &Logging::logMessage);
+    connect(Scanner::getInstance(), &Scanner::logMessage, Logging::getInstance(), &Logging::logMessage);
+    connect(csvHandling::getInstance(), &csvHandling::logMessage, Logging::getInstance(), &Logging::logMessage);
 
     QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
     foreach(QLineEdit* lineEdit, lineEditList)
     {
-        connect(lineEdit,SIGNAL(selectionChanged()),this,SLOT(showKeyboardLineEdit()));
+        connect(lineEdit,&QLineEdit::selectionChanged,this,&MainWindow::showKeyboardLineEdit);
     }
 
     emit LoggingTest("program started", (int)LOG_COMMON);
