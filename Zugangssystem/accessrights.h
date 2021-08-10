@@ -35,7 +35,7 @@ signals:
      * @param access
      * access status at location
      */
-    void Visual(QString RFID, QString loc, bool access);
+    void Visual(QString name, QString RFID);
 
     /**
      * @brief Door
@@ -59,7 +59,7 @@ signals:
 
 public slots:
     void checkAccess(QString RFID, QString loc);
-    void receiveResult(bool access, QString RFID, QString loc, QString name);
+    void receiveResult(QString RFID, QString name);
 
     //constructor and instance for use in other classes
 private:

@@ -22,23 +22,25 @@ sqlCheck::sqlCheck(){
     if(QSqlDatabase::isDriverAvailable(DRIVER)){
         sDB = QSqlDatabase::addDatabase(DRIVER);
         qDebug() << "Driver set successfully";
-        sDB.setDatabaseName("sqliteTest.db");
+        sDB.setDatabaseName("sqlTestForeign.db");
         if(!sDB.open()){
             qWarning() << "ERROR: " << sDB.lastError();
         }
 
-        QSqlQuery query;
+        QSqlQuery query(sDB);
+        query.exec("PRAGMA foreign_keys=ON;");
 
-        /*if(!query.exec("CREATE TABLE worker (id INTEGER PRIMARY KEY, name TEXT, RFID TEXT, loc TEXT, access INTEGER)")){
+        /*
+        if(!query.exec("CREATE TABLE worker (id INTEGER PRIMARY KEY, name TEXT, RFID TEXT, loc TEXT, access INTEGER)")){
             qWarning() << "ERROR: " << query.lastError().text();
-        }*/
+        }
 
-        /*if(!query.exec("INSERT INTO worker(name, RFID, loc, access) VALUES('Magda', '0004787793', 'Location 1', '1')")){
+        if(!query.exec("INSERT INTO worker(name, RFID, loc, access) VALUES('Magda', '0004787793', 'Location 1', '1')")){
             qWarning() << "ERROR: " << query.lastError().text();
-        }*/
+        }
         if(!query.exec("UPDATE worker SET name = 'Daniel', RFID = '0004365639', loc = 'Location 1', access = '1' WHERE id = 3")){
                     qWarning() << "ERROR: " << query.lastError().text();
-        }
+        }*/
     }else{
         qDebug() << "Driver Error";
     }
@@ -58,40 +60,73 @@ sqlCheck::sqlCheck(){
  * @param currRFID
  * old RFID
  */
-void sqlCheck::updateWorker(QString RFID, QString location, QString name, QString access, QString currRFID){
-    QStringList currData = request(currRFID, "Location 1");
+void sqlCheck::updateWorker(QString currUserId, QString userId, QString RFID, QString name, QList<int> groups, QString active){
     QSqlQuery query;
+    QStringList data;
 
-    int accessInt = access.toInt();
-
-    if(RFID.isEmpty()){
-        RFID = currRFID;
+    query.prepare("SELECT name, active FROM User WHERE id = ?");
+    query.addBindValue(currUserId);
+    if(!query.exec()){
+        qWarning() << "ERROR: " << query.lastError().text();
     }
-    if(location.isEmpty()){
-        location = "Location 1";
-    }
-    if(name.isEmpty()){
-        name = currData.at(0);
-    }
-    if(access.isEmpty()){
-        accessInt = currData.at(1).toInt();
+    while(query.next()){
+        data << query.value(0).toString() << query.value(1).toString();
     }
 
-    //perpare the query and execute it, if successfully emits the results
-    query.prepare("UPDATE worker SET name = ?, RFID = ?, loc = ?, access = ? WHERE RFID = ?");
-    query.addBindValue(name);
-    query.addBindValue(RFID);
-    query.addBindValue(location);
-    query.addBindValue(accessInt);
-    query.addBindValue(currRFID);
+    query.prepare("SELECT RFID FROM Keys WHERE userid = ?");
+    query.addBindValue(currUserId);
+    if(!query.exec()){
+        qWarning() << "ERROR: " << query.lastError().text();
+    }
+    while(query.next()){
+        data << query.value(0).toString();
+    }
+
+    query.prepare("SELECT groupid FROM UserGroup WHERE userid = ?");
+    query.addBindValue(currUserId);
+    if(!query.exec()){
+        qWarning() << "ERROR: " << query.lastError().text();
+    }
+    while(query.next()){
+        data << query.value(0).toString();
+    }
+
+    if(userId.trimmed().isEmpty()){
+        userId=currUserId;
+    }
+    if(RFID.trimmed().isEmpty()){
+        RFID = data.at(2);
+    }
+    if(name.trimmed().isEmpty()){
+        name = data.at(0);
+    }
+    if(groups.isEmpty()){
+        for(int i = 3; i < data.size(); i++){
+            groups << data.at(i).toInt();
+        }
+    }
+    if(active.isEmpty()){
+        active = data.at(1);
+    }
+
+    query.prepare("DELETE FROM User WHERE id = ?");
+    query.addBindValue(currUserId);
     if(query.exec()){
-        qDebug() << "Worker updated successfully";
-        emit logMessage(QString("worker updated;%1;%2").arg(name).arg(RFID),(int)LOG_COMMON);
-        emit UpdateWorker(RFID, location, name, access, currRFID);
+        qDebug() << "Delete for update succesfully";
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
-        emit logMessage(QString("ERR;worker not updated;no query;%1").arg(currRFID), (int)LOG_COMMON);
     }
+    addWorker(userId, RFID, name, groups);
+
+    query.prepare("UPDATE User SET active = ? WHERE id = ?");
+    query.addBindValue(active);
+    query.addBindValue(userId);
+    if(query.exec()){
+        qDebug() << "Update succesfully";
+    }else{
+        qWarning() << "ERROR: " << query.lastError().text();
+    }
+
 }
 
 /**
@@ -100,19 +135,16 @@ void sqlCheck::updateWorker(QString RFID, QString location, QString name, QStrin
  * @param RFID
  * RFID of the worker to delete
  */
-void sqlCheck::deleteWorker(QString RFID){
+void sqlCheck::deleteWorker(QString userId){
     QSqlQuery query;
 
     //perpare the query and execute it, if successfully emits the results
-    query.prepare("DELETE FROM worker WHERE RFID = ?");
-    query.addBindValue(RFID);
+    query.prepare("DELETE FROM User WHERE id = ?");
+    query.addBindValue(userId);
     if(query.exec()){
         qDebug() << "worker deleted successfully";
-        emit logMessage(QString("worker deleted;%1").arg(RFID), (int)LOG_COMMON);
-        emit DeleteRow(RFID);
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
-        emit logMessage(QString("ERR;worker not deleted;no query;%1").arg(RFID), (int)LOG_COMMON);
     }
 }
 
@@ -128,23 +160,51 @@ void sqlCheck::deleteWorker(QString RFID){
  * @param access
  * access status of the worker
  */
-void sqlCheck::addWorker(QString RFID, QString location, QString name, QString access){
+void sqlCheck::addWorker(QString userId, QString RFID, QString name, QList<int> groups){
     QSqlQuery query;
-    int accessInt = access.toInt();
+    bool worked = true;
 
     //perpare the query and execute it, if successfully emits the results
-    query.prepare("INSERT INTO worker(name, RFID, loc, access) VALUES(?, ?, ?, ?)");
+    query.prepare("INSERT INTO User(id, name, active) VALUES(?, ?, 1)");
+    query.addBindValue(userId);
     query.addBindValue(name);
-    query.addBindValue(RFID);
-    query.addBindValue(location);
-    query.addBindValue(accessInt);
     if(query.exec()){
-        qDebug() << "worker added successfully";
-        emit logMessage(QString("worker added;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
-        emit ShowTable(name,RFID,location,QString::number(accessInt));
+        qDebug() << "User added successfully";
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
-        emit logMessage(QString("ERR;worked not added;no query;%1;%2").arg(name).arg(RFID), (int)LOG_COMMON);
+        worked = false;
+    }
+
+    query.prepare("INSERT INTO Keys(RFID, userid) VALUES(?, ?)");
+    query.addBindValue(RFID);
+    query.addBindValue(userId);
+    if(query.exec()){
+        qDebug() << "Key added successfully";
+    }else{
+        qWarning() << "ERROR: " << query.lastError().text();
+        worked = false;
+    }
+
+    for(int i = 0; i < groups.size(); i++){
+        query.prepare("INSERT INTO UserGroup(userid, groupid) VALUES(?, ?)");
+        query.addBindValue(userId);
+        query.addBindValue(groups[i]);
+        if(query.exec()){
+            qDebug() << "UserGroup added successfully";
+        }else{
+            qWarning() << "ERROR: " << query.lastError().text();
+            worked = false;
+        }
+    }
+
+    if(!worked){
+        query.prepare("DELETE FROM User WHERE id = ?");
+        query.addBindValue(userId);
+        if(query.exec()){
+            qDebug() << "Add undone";
+        }else{
+            qWarning() << "ERROR: " << query.lastError().text();
+        }
     }
 }
 
@@ -155,7 +215,12 @@ void sqlCheck::addWorker(QString RFID, QString location, QString name, QString a
 void sqlCheck::showTable(){
     QSqlQuery query;
     //perpare the query and execute it, if successfully emits the results
-    query.prepare("SELECT name, RFID, loc, access FROM worker");
+    query.prepare("SELECT name, RFID, groupname, rightname FROM User "
+                  "INNER JOIN Keys ON User.id = Keys.userid "
+                  "INNER JOIN UserGroup ON User.id = UserGroup.userid "
+                  "INNER JOIN Groups ON Groups.id = UserGroup.groupid "
+                  "INNER JOIN GroupRights ON Groups.id = GroupRights.groupid "
+                  "INNER JOIN Rights ON Rights.id = GroupRights.rightid");
     if(!query.exec()){
         qWarning() << "ERROR: " << query.lastError().text();
     }
@@ -172,7 +237,7 @@ void sqlCheck::getNames(){
     QStringList result;
     QSqlQuery query;
     //perpare the query and execute it, if successfully emits the results
-    query.prepare("SELECT name FROM worker");
+    query.prepare("SELECT name FROM User");
     if(!query.exec()){
         qWarning() << "ERROR: " << query.lastError().text();
     }
@@ -195,15 +260,7 @@ void sqlCheck::receiveRequest(QString RFID, QString loc){
     if(RFID.length() == 10){
         qDebug() << "RFID is in correct format at sqlCheck";
         results = request(RFID, loc);
-        if(results.size() == 1){
-            emit Result(false, RFID, loc, results.at(0));
-            return;
-        }
-        if(results.at(1).toInt()){
-            emit Result(true, RFID, loc, results.at(0));
-        }else{
-            emit Result(false, RFID, loc, results.at(0));
-        }
+        emit Result(RFID, results.at(0));
     }else{
         qDebug() << "RFID is in faulty format at sqlCheck";
     }
@@ -229,13 +286,14 @@ QStringList sqlCheck::request(QString RFID, QString loc){
 
     QSqlQuery query;
     //perpare the query and execute it, if successfully emits the results
-    query.prepare("SELECT name, access FROM worker WHERE RFID = ?");
+    query.prepare("SELECT name FROM User "
+                  "INNER JOIN Keys ON User.id = Keys.userid WHERE RFID = ?");
     query.addBindValue(RFID);
     if(query.exec()){
         if(query.next()){
             qDebug() << "DB found" << RFID << query.value(0).toString();
             emit logMessage(QString("Worker found for %1;sqlCheck;%2").arg(loc).arg(query.value(0).toString()), (int)LOG_SCAN);
-            results << query.value(0).toString() << query.value(1).toString();
+            results << query.value(0).toString();
             return results;
         }else{
             query.clear();

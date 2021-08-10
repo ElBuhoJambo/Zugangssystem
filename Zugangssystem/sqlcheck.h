@@ -31,7 +31,7 @@ signals:
      * @param name
      * name of worker
      */
-    void Result(bool access, QString RFID, QString loc, QString name);
+    void Result(QString RFID, QString name);
 
     /**
      * @brief ShowTable
@@ -92,9 +92,9 @@ signals:
 public slots:
     void receiveRequest(QString RFID, QString loc);
     void showTable();
-    void addWorker(QString RFID, QString location, QString name, QString access);
-    void deleteWorker(QString RFID);
-    void updateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
+    void addWorker(QString userId, QString RFID, QString name, QList<int> groups);
+    void deleteWorker(QString userId);
+    void updateWorker(QString currUserId, QString userId, QString RFID, QString name, QList<int> groups, QString active);
     void getNames();
 
     //constructor and instance for use in other classes, and the database variable

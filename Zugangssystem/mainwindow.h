@@ -42,6 +42,14 @@
 
 #define ADMIN_RFID "0004365639"
 
+typedef enum{
+    EmptySpace,
+    Software,
+    Hardware,
+    Produktion,
+    Buero
+} UserGroups_type;
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -92,10 +100,11 @@ public:
     QPushButton *showUpdateButton;
     QPushButton *showEmulateSearch;
     QLineEdit *showAdminLineEdit;
+    QLineEdit *showAdminUserIdEdit;
     QLineEdit *showAdminRFIDLineEdit;
     QLineEdit *showAdminNameLineEdit;
-    QLineEdit *showAdminLocationLineEdit;
-    QLineEdit *showAdminAccessLineEdit;
+    QLineEdit *showAdminGroupsLineEdit;
+    QLineEdit *showAdminActivateLineEdit;
     QPushButton *showAdminSubmit;
     QPushButton *showAdminCancel;
     QPushButton *showSortByNameAsc;
@@ -111,7 +120,7 @@ public:
     QFrame *showSpaceFrame;
     QTableWidget *showTableWidget;
     QVBoxLayout *showLayout;
-    QStringList columns = {"Name", "RFID", "Location", "Access"};
+    QStringList columns = {"Name", "RFID", "Groups", "Rights"};
     QString currAdminEdit;
 
     QPushButton *writeToFile;
@@ -191,7 +200,7 @@ signals:
      * @param access
      * access status of worker
      */
-    void AddWorker(QString RFID, QString location, QString name, QString access);
+    void AddWorker(QString userId, QString RFID, QString name, QList<int> groups);
 
     /**
      * @brief DeleteWorker
@@ -199,7 +208,7 @@ signals:
      * @param RFID
      * RFID of worker to be deleted
      */
-    void DeleteWorker(QString RFID);
+    void DeleteWorker(QString userId);
 
     /**
      * @brief UpdateWorker
@@ -215,7 +224,7 @@ signals:
      * @param currRFID
      * current RFID
      */
-    void UpdateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
+    void UpdateWorker(QString currUserId, QString userId, QString RFID, QString name, QList<int> groups, QString active);
 
     /**
      * @brief GetWorker
@@ -268,7 +277,7 @@ public slots:
     void loc3Clicked2();
     void adminClicked();
     void scanTest(QString rfid);
-    void visual(QString name, QString loc, bool access);
+    void visual(QString name, QString RFID);
     void logMessage(QString msg);
     void sql(QString name, QString RFID, QString loc, QString access);
     void showTable(bool show);

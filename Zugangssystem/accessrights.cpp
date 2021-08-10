@@ -48,7 +48,7 @@ void accessRights::checkAccess(QString RFID, QString loc){
  * @param name
  * name of the worker of the RFID
  */
-void accessRights::receiveResult(bool access, QString RFID, QString loc, QString name){
-    emit Door(access, loc);
-    emit Visual(name, RFID, access);
+void accessRights::receiveResult(QString RFID, QString name){
+    //emit Door(access, loc);
+    emit Visual(name, RFID);
 }

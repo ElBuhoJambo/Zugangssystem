@@ -50,17 +50,19 @@ MainWindow::MainWindow(QWidget *parent)
     showEmulateSearch = new QPushButton("Emulate a search");
     showEmulateSearch->setCheckable(true);
     showAdminLineEdit = new QLineEdit;
+    showAdminUserIdEdit = new QLineEdit;
     showAdminRFIDLineEdit = new QLineEdit;
     showAdminNameLineEdit = new QLineEdit;
-    showAdminLocationLineEdit = new QLineEdit;
-    showAdminAccessLineEdit = new QLineEdit;
+    showAdminGroupsLineEdit = new QLineEdit;
+    showAdminActivateLineEdit = new QLineEdit;
     showAdminSubmit = new QPushButton("Submit");
     showAdminCancel = new QPushButton("Cancel");
     showAdminLineEdit->hide();
+    showAdminUserIdEdit->hide();
     showAdminRFIDLineEdit->hide();
     showAdminNameLineEdit->hide();
-    showAdminLocationLineEdit->hide();
-    showAdminAccessLineEdit->hide();
+    showAdminGroupsLineEdit->hide();
+    showAdminActivateLineEdit->hide();
     showAdminSubmit->hide();
     showAdminCancel->hide();
     showSortByNameAsc = new QPushButton("Ascending");
@@ -106,12 +108,13 @@ MainWindow::MainWindow(QWidget *parent)
     showAdminLayout->addWidget(showUpdateButton,2,0,1,2,Qt::AlignTop);
     showAdminLayout->addWidget(showEmulateSearch,3,0,1,2,Qt::AlignTop);
     showAdminLayout->addWidget(showAdminLineEdit,4,0,1,2,Qt::AlignTop);
-    showAdminLayout->addWidget(showAdminRFIDLineEdit,5,0,1,2,Qt::AlignTop);
-    showAdminLayout->addWidget(showAdminNameLineEdit,6,0,1,2,Qt::AlignTop);
-    showAdminLayout->addWidget(showAdminLocationLineEdit,7,0,1,2,Qt::AlignTop);
-    showAdminLayout->addWidget(showAdminAccessLineEdit,8,0,1,2,Qt::AlignTop);
-    showAdminLayout->addWidget(showAdminSubmit,9,0,Qt::AlignTop);
-    showAdminLayout->addWidget(showAdminCancel,9,1,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminUserIdEdit,5,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminRFIDLineEdit,6,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminNameLineEdit,7,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminGroupsLineEdit,8,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminActivateLineEdit,9,0,1,2,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminSubmit,10,0,Qt::AlignTop);
+    showAdminLayout->addWidget(showAdminCancel,10,1,Qt::AlignTop);
     sqlLayout->addWidget(showSortFrame, 3,1);
     sqlLayout->addWidget(showSpaceFrame, 2,1);
     sqlLayout->addWidget(showAdminFrame, 0,1,2,1);
@@ -535,21 +538,23 @@ void MainWindow::updateWorker(){
     showUpdateButton->hide();
     showEmulateSearch->hide();
     showAdminLineEdit->show();
+    showAdminUserIdEdit->show();
     showAdminRFIDLineEdit->show();
     showAdminNameLineEdit->show();
-    showAdminLocationLineEdit->show();
-    showAdminAccessLineEdit->show();
+    showAdminGroupsLineEdit->show();
+    showAdminActivateLineEdit->show();
     showAdminSubmit->show();
     showAdminCancel->show();
-    showAdminLineEdit->setPlaceholderText("Current RFID");
+    showAdminLineEdit->setPlaceholderText("Current User ID");
+    showAdminUserIdEdit->setPlaceholderText("New/Same User ID");
     showAdminRFIDLineEdit->setPlaceholderText("New/Same RFID");
     showAdminNameLineEdit->setPlaceholderText("New/Same name");
-    showAdminLocationLineEdit->setPlaceholderText("New/Same location");
-    showAdminAccessLineEdit->setPlaceholderText("New/Same Access (1/0)");
-    showAdminLineEdit->setValidator(new QRegExpValidator(RFID));
-    showAdminRFIDLineEdit->setValidator(new QRegExpValidator(RFID));
-    showAdminNameLineEdit->setValidator(new QRegExpValidator(name));
-    showAdminAccessLineEdit->setValidator(new QRegExpValidator(access));
+    showAdminGroupsLineEdit->setPlaceholderText("New/Same Groups");
+    showAdminActivateLineEdit->setPlaceholderText("New/Same Active status (1/0)");
+    //showAdminLineEdit->setValidator(new QRegExpValidator(RFID));
+    //showAdminRFIDLineEdit->setValidator(new QRegExpValidator(RFID));
+    //showAdminNameLineEdit->setValidator(new QRegExpValidator(name));
+    //showAdminActivateLineEdit->setValidator(new QRegExpValidator(access));
     currAdminEdit = "Update";
 
     emit LoggingTest(";update worker button pressed", (int)LOG_BUTTON);
@@ -583,38 +588,60 @@ void MainWindow::addWorker(){
     showUpdateButton->hide();
     showEmulateSearch->hide();
     showAdminLineEdit->show();
+    showAdminUserIdEdit->show();
     showAdminNameLineEdit->show();
-    showAdminLocationLineEdit->show();
-    showAdminAccessLineEdit->show();
+    showAdminGroupsLineEdit->show();
+    showAdminActivateLineEdit->show();
     showAdminSubmit->show();
     showAdminCancel->show();
-    showAdminLineEdit->setPlaceholderText("RFID");
+    showAdminLineEdit->setPlaceholderText("User ID");
+    showAdminRFIDLineEdit->setPlaceholderText("RFID");
     showAdminNameLineEdit->setPlaceholderText("name");
-    showAdminLocationLineEdit->setPlaceholderText("location");
-    showAdminAccessLineEdit->setPlaceholderText("Access (true/false)");
+    showAdminGroupsLineEdit->setPlaceholderText("Group1,Group2,Group3,...");
     currAdminEdit = "Add";
 
     emit LoggingTest("add worker button pressed", (int)LOG_BUTTON);
 }
 
 void MainWindow::adminAccept(){
-    QString *currRFID = new QString(showAdminLineEdit->text());
+    QString *currUserId = new QString(showAdminLineEdit->text());
+    QString *userId = new QString(showAdminUserIdEdit->text());
     QString *RFID = new QString(showAdminRFIDLineEdit->text());
     QString *name = new QString(showAdminNameLineEdit->text());
-    QString *location = new QString(showAdminLocationLineEdit->text());
-    QString *access = new QString(showAdminAccessLineEdit->text());
+    QString *groups = new QString(showAdminGroupsLineEdit->text());
+    QString *active = new QString(showAdminActivateLineEdit->text());
 
-    if(!currRFID->isEmpty()){
+    *groups = groups->replace(" ","");
+    *groups = groups->toLower();
+    QStringList groupList = groups->split(QLatin1Char(','));
+    QList<int> groupArr;
+    for(int i = 0; i < groupList.size(); i++){
+        if(groupList.at(i) == "software"){
+            groupArr << (int)Software;
+        }else if(groupList.at(i) == "hardware"){
+            groupArr << (int)Hardware;
+        }else if(groupList.at(i) == "produktion"){
+            groupArr << (int)Produktion;
+        }else if(groupList.at(i) == "buero"){
+            groupArr << (int)Buero;
+        }else{
+            qDebug() << "Invalid group";
+        }
+    }
+
+    if(!currUserId->isEmpty()){
         showAdminLineEdit->hide();
+        showAdminUserIdEdit->hide();
         showAdminRFIDLineEdit->hide();
         showAdminNameLineEdit->hide();
-        showAdminLocationLineEdit->hide();
-        showAdminAccessLineEdit->hide();
+        showAdminGroupsLineEdit->hide();
+        showAdminActivateLineEdit->hide();
         showAdminLineEdit->clear();
+        showAdminUserIdEdit->clear();
         showAdminRFIDLineEdit->clear();
         showAdminNameLineEdit->clear();
-        showAdminLocationLineEdit->clear();
-        showAdminAccessLineEdit->clear();
+        showAdminGroupsLineEdit->clear();
+        showAdminActivateLineEdit->clear();
         showAdminSubmit->hide();
         showAdminCancel->hide();
         showDeleteButton->show();
@@ -624,12 +651,12 @@ void MainWindow::adminAccept(){
         if(currAdminEdit.isEmpty()){
             qWarning() << "What?! Empty but in adminAccept? How?!";
         }else if(currAdminEdit == "Add"){
-            emit AddWorker(*currRFID,*location,*name,*access);
+            emit AddWorker(*userId,*RFID,*name,groupArr);
             currAdminEdit.clear();
         }else if(currAdminEdit == "Delete"){
-            emit DeleteWorker(*currRFID);
+            emit DeleteWorker(*currUserId);
         }else if(currAdminEdit == "Update"){
-            emit UpdateWorker(*RFID,*location,*name,*access,*currRFID);
+            emit UpdateWorker(*currUserId,*userId,*RFID,*name,groupArr,*active);
             currAdminEdit.clear();
         }
 
@@ -640,15 +667,17 @@ void MainWindow::adminAccept(){
 
 void MainWindow::adminCancel(){
     showAdminLineEdit->hide();
+    showAdminUserIdEdit->hide();
     showAdminRFIDLineEdit->hide();
     showAdminNameLineEdit->hide();
-    showAdminLocationLineEdit->hide();
-    showAdminAccessLineEdit->hide();
+    showAdminGroupsLineEdit->hide();
+    showAdminActivateLineEdit->hide();
     showAdminLineEdit->clear();
+    showAdminUserIdEdit->clear();
     showAdminRFIDLineEdit->clear();
     showAdminNameLineEdit->hide();
-    showAdminLocationLineEdit->clear();
-    showAdminAccessLineEdit->clear();
+    showAdminGroupsLineEdit->clear();
+    showAdminActivateLineEdit->clear();
     showAdminSubmit->hide();
     showAdminCancel->hide();
     showDeleteButton->show();
@@ -716,25 +745,19 @@ void MainWindow::showTable(bool show){
  * @param access
  * access status of the current worker getting added
  */
-void MainWindow::sql(QString name, QString RFID, QString loc, QString access){
+void MainWindow::sql(QString name, QString RFID, QString groupname, QString rightname){
     //create items to add to table with correct data
     showTableWidget->setRowCount(showTableWidget->rowCount()+1);
     QTableWidgetItem *nameItem = new QTableWidgetItem(name);
     QTableWidgetItem *rfidItem = new QTableWidgetItem(RFID);
-    QTableWidgetItem *locItem = new QTableWidgetItem(loc);
-    QTableWidgetItem *accessItem = new QTableWidgetItem();
-
-    if(access == "1"){
-        accessItem->setText("Granted");
-    }else{
-        accessItem->setText("Denied");
-    }
+    QTableWidgetItem *groupItem = new QTableWidgetItem(groupname);
+    QTableWidgetItem *rightItem = new QTableWidgetItem(rightname);
 
     //add the items to the correct (last)row and column
     showTableWidget->setItem(showTableWidget->rowCount()-1, 0, nameItem);
     showTableWidget->setItem(showTableWidget->rowCount()-1, 1, rfidItem);
-    showTableWidget->setItem(showTableWidget->rowCount()-1, 2, locItem);
-    showTableWidget->setItem(showTableWidget->rowCount()-1, 3, accessItem);
+    showTableWidget->setItem(showTableWidget->rowCount()-1, 2, groupItem);
+    showTableWidget->setItem(showTableWidget->rowCount()-1, 3, rightItem);
 }
 
 /**
@@ -882,31 +905,43 @@ void MainWindow::putCurrentOnTop(QString RFID){
         showFrame->show();
         emit LoggingTest("first show for scan", (int)LOG_SCAN);
     }
+
+    for(int i = 0; i < RFID.length(); i++){
+        if(RFID.at(0) != '0'){
+            break;
+        }
+        RFID = RFID.remove(0,1);
+    }
+
     QList<QTableWidgetItem *> search = showTableWidget->findItems(RFID, Qt::MatchExactly);
-    if(search[0]->row() == 0){
-        return;
-    }else{
-        int row = search[0]->row();
-        QTableWidgetItem *temp1 = showTableWidget->takeItem(0,0);
-        QTableWidgetItem *temp2 = showTableWidget->takeItem(0,1);
-        QTableWidgetItem *temp3 = showTableWidget->takeItem(0,2);
-        QTableWidgetItem *temp4 = showTableWidget->takeItem(0,3);
+    int row = 0;
+
+    for(int i = 0; i < showTableWidget->rowCount(); i++){
+        showTableWidget->hideRow(i);
+    }
+
+    for(int i = 0; i < search.size(); i++){
+        row = search[i]->row();
+        QTableWidgetItem *temp1 = showTableWidget->takeItem(i,0);
+        QTableWidgetItem *temp2 = showTableWidget->takeItem(i,1);
+        QTableWidgetItem *temp3 = showTableWidget->takeItem(i,2);
+        QTableWidgetItem *temp4 = showTableWidget->takeItem(i,3);
 
         QTableWidgetItem *curr1 = showTableWidget->takeItem(row,0);
         QTableWidgetItem *curr2 = showTableWidget->takeItem(row,1);
         QTableWidgetItem *curr3 = showTableWidget->takeItem(row,2);
         QTableWidgetItem *curr4 = showTableWidget->takeItem(row,3);
 
-        showTableWidget->setItem(0,0,curr1);
-        showTableWidget->setItem(0,1,curr2);
-        showTableWidget->setItem(0,2,curr3);
-        showTableWidget->setItem(0,3,curr4);
+        showTableWidget->setItem(i,0,curr1);
+        showTableWidget->setItem(i,1,curr2);
+        showTableWidget->setItem(i,2,curr3);
+        showTableWidget->setItem(i,3,curr4);
 
         showTableWidget->setItem(row,0,temp1);
         showTableWidget->setItem(row,1,temp2);
         showTableWidget->setItem(row,2,temp3);
         showTableWidget->setItem(row,3,temp4);
-
+        showTableWidget->showRow(i);
     }
 }
 
@@ -959,7 +994,7 @@ void MainWindow::hideAdminScreen(bool chip){
  * True if access is granted
  * False if not
  */
-void MainWindow::visual(QString name, QString loc, bool access){
+void MainWindow::visual(QString name, QString RFID){
 
     QString filePath = name.simplified();
     filePath.replace(" ","");
@@ -968,12 +1003,7 @@ void MainWindow::visual(QString name, QString loc, bool access){
     //fill labels with data
     QDateTime curTime = Logging::getInstance()->getCurrTime();
     nameLabel->setText(QString("Willkommen %1").arg(name));
-    locLabel->setText(loc);
-    if(access){
-        accessLabel->setText("Access granted");
-    }else{
-        accessLabel->setText("Access denied");
-    }
+    locLabel->setText(RFID);
     timeLabel->setText(QString("Einstechzeit: %1").arg(curTime.toString("hh:mm:ss")));
 
     //overwrite the current layout with the new data
