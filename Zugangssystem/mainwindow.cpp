@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainTabFrame = new QFrame;
     loggingTabFrame = new QFrame;
     openTabFrame = new QFrame;
-    rightsTabFrame = new QFrame;
+    settingsTabFrame = new QFrame;
     sqlTabFrame = new QFrame;
     visualTabFrame = new QFrame;
     csvTabFrame = new QFrame;
@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Layout of tabs definition
     loggingLayout = new QGridLayout;
     openLayout = new QGridLayout;
-    rightsLayout = new QGridLayout;
+    settingsLayout = new QGridLayout;
     sqlLayout = new QGridLayout;
     visualLayout = new QGridLayout;
     csvLayout = new QGridLayout;
@@ -147,6 +147,11 @@ MainWindow::MainWindow(QWidget *parent)
     lineEditKeyboard->hide();
     lineEditKeyboard->setGeometry(0,300,800,300);
 
+    settings = new QSettings("LarSys", "Zugangssystem");
+    keyboardEnabled = new QCheckBox("Enable display keyboard?");
+    settingsSaveCancel = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
+    keyboardEnabled->setFocusPolicy(Qt::NoFocus);
+
     ui->centralwidget->setLayout(mainGridLayout);
 
     //statusbar setup
@@ -163,10 +168,10 @@ MainWindow::MainWindow(QWidget *parent)
     mainTabWidget->addTab(mainTabFrame, "Hauptmenu");
     mainTabWidget->addTab(loggingTabFrame, "Logging");
     mainTabWidget->addTab(openTabFrame, "Öffne Tür");
-    mainTabWidget->addTab(rightsTabFrame, "Rechte");
     mainTabWidget->addTab(sqlTabFrame, "SQL");
     mainTabWidget->addTab(csvTabFrame, "CSV");
     mainTabWidget->addTab(visualTabFrame, "Visual on Screen");
+    mainTabWidget->addTab(settingsTabFrame, "Einstellungen");
 
     mainGridLayout->addWidget(mainTabWidget);
     mainTabWidget->setFixedSize(790,550);
@@ -203,6 +208,10 @@ MainWindow::MainWindow(QWidget *parent)
     csvLayout->addWidget(calcOvertime,2,2);
     csvLayout->addWidget(calcNeededTime,2,3);
     csvTabFrame->setLayout(csvLayout);
+
+    settingsLayout->addWidget(keyboardEnabled,0,0,Qt::AlignTop);
+    settingsLayout->addWidget(settingsSaveCancel,1,0);
+    settingsTabFrame->setLayout(settingsLayout);
 
     ui->centralwidget->setStyleSheet("background-color: #E7E7E7;");
 
@@ -290,6 +299,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(calcNeededTime, &QPushButton::clicked, this, &MainWindow::calcNeedTime);
     connect(showAdminSubmit, &QPushButton::clicked, this, &MainWindow::adminAccept);
     connect(showAdminCancel, &QPushButton::clicked, this, &MainWindow::adminCancel);
+    connect(settingsSaveCancel, &QDialogButtonBox::accepted, this, &MainWindow::saveSettings);
+    connect(settingsSaveCancel, &QDialogButtonBox::rejected, this, &MainWindow::restoreSettings);
 
     //connecting signals and slots for logging in the classes
     connect(this, &MainWindow::LoggingTest, Logging::getInstance(), &Logging::logMessage);
@@ -300,19 +311,47 @@ MainWindow::MainWindow(QWidget *parent)
     connect(Scanner::getInstance(), &Scanner::logMessage, Logging::getInstance(), &Logging::logMessage);
     connect(csvHandling::getInstance(), &csvHandling::logMessage, Logging::getInstance(), &Logging::logMessage);
 
-    QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
-    foreach(QLineEdit* lineEdit, lineEditList)
-    {
-        connect(lineEdit,&QLineEdit::selectionChanged,this,&MainWindow::showKeyboardLineEdit);
-    }
-
     emit LoggingTest("program started", (int)LOG_COMMON);
+
+    restoreSettings();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 
+}
+
+void MainWindow::grabKeyboard(){
+    QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
+    foreach(QLineEdit* lineEdit, lineEditList)
+    {
+        connect(lineEdit,&QLineEdit::selectionChanged,this,&MainWindow::showKeyboardLineEdit);
+    }
+}
+
+void MainWindow::disableDisplayKeyboard(){
+    QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
+    foreach(QLineEdit* lineEdit, lineEditList)
+    {
+        disconnect(lineEdit,&QLineEdit::selectionChanged,this,&MainWindow::showKeyboardLineEdit);
+    }
+}
+
+void MainWindow::saveSettings(){
+    settings->setValue("checkbox/value", keyboardEnabled->isChecked());
+
+    restoreSettings();
+}
+
+void MainWindow::restoreSettings(){
+    keyboardEnabled->setChecked(settings->value("checkbox/value").value<bool>());
+
+    if(keyboardEnabled->isChecked()){
+        grabKeyboard();
+    }else{
+        disableDisplayKeyboard();
+    }
 }
 
 void MainWindow::showKeyboardLineEdit(){
@@ -1041,7 +1080,7 @@ void MainWindow::visual(QString name, QString RFID){
     visualLayout->addWidget(timeLabel,2,2);
 
     //switch to the visual tab
-    mainTabWidget->setCurrentIndex(6);
+    mainTabWidget->setCurrentIndex(5);
 }
 
 /**

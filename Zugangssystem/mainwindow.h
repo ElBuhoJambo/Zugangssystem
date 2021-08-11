@@ -16,6 +16,7 @@
 #include <QMessageBox>
 #include <QDialogButtonBox>
 #include <QHeaderView>
+#include <QCheckBox>
 
 #include <QThread>
 #include <QToolTip>
@@ -28,6 +29,7 @@
 #include <QDateTime>
 
 #include <QDir>
+#include <QSettings>
 
 #include "sqlcheck.h"
 #include "accessrights.h"
@@ -66,20 +68,22 @@ public:
     void scanned(QString RFID, QString loc);
     void showAdminScreen();
     void delay(int millisecondsWait);
+    void grabKeyboard();
+    void disableDisplayKeyboard();
 
     QGridLayout *mainGridLayout;
     QTabWidget *mainTabWidget;
     QFrame *mainTabFrame;
     QFrame *loggingTabFrame;
     QFrame *openTabFrame;
-    QFrame *rightsTabFrame;
+    QFrame *settingsTabFrame;
     QFrame *sqlTabFrame;
     QFrame *visualTabFrame;
     QFrame *csvTabFrame;
 
     QGridLayout *loggingLayout;
     QGridLayout *openLayout;
-    QGridLayout *rightsLayout;
+    QGridLayout *settingsLayout;
     QGridLayout *sqlLayout;
     QGridLayout *visualLayout;
     QGridLayout *csvLayout;
@@ -145,6 +149,11 @@ public:
     QSpacerItem *logOutSpacer = new QSpacerItem(1, 400);
     QWidget *statusWidget = new QWidget;
     QHBoxLayout *statusLayout = new QHBoxLayout(statusWidget);
+
+    QSettings *settings;
+    QCheckBox *keyboardEnabled;
+    QDialogButtonBox *settingsSaveCancel;
+
 
     QRegExp RFID;
     QRegExp name;
@@ -310,6 +319,8 @@ public slots:
     void showKeyboardLineEdit();
     void adminAccept();
     void adminCancel();
+    void saveSettings();
+    void restoreSettings();
 
 };
 #endif // MAINWINDOW_H
