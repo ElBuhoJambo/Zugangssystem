@@ -322,6 +322,10 @@ MainWindow::~MainWindow()
 
 }
 
+/**
+ * @brief MainWindow::grabKeyboard
+ * enable display keyboard
+ */
 void MainWindow::grabKeyboard(){
     QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
     foreach(QLineEdit* lineEdit, lineEditList)
@@ -330,6 +334,10 @@ void MainWindow::grabKeyboard(){
     }
 }
 
+/**
+ * @brief MainWindow::disableDisplayKeyboard
+ * disable display keyboard
+ */
 void MainWindow::disableDisplayKeyboard(){
     QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
     foreach(QLineEdit* lineEdit, lineEditList)
@@ -338,12 +346,20 @@ void MainWindow::disableDisplayKeyboard(){
     }
 }
 
+/**
+ * @brief MainWindow::saveSettings
+ * save current settings and apply them
+ */
 void MainWindow::saveSettings(){
     settings->setValue("checkbox/value", keyboardEnabled->isChecked());
 
     restoreSettings();
 }
 
+/**
+ * @brief MainWindow::restoreSettings
+ * read the current saved settings and apply them
+ */
 void MainWindow::restoreSettings(){
     keyboardEnabled->setChecked(settings->value("checkbox/value").value<bool>());
 
@@ -354,6 +370,10 @@ void MainWindow::restoreSettings(){
     }
 }
 
+/**
+ * @brief MainWindow::showKeyboardLineEdit
+ * open the display keyboard and assign the clicked lineedit
+ */
 void MainWindow::showKeyboardLineEdit(){
     QLineEdit *line = (QLineEdit *)sender();
     lineEditKeyboard->setLineEdit(line);
@@ -624,7 +644,7 @@ void MainWindow::deleteWorker(){
     showAdminLineEdit->show();
     showAdminSubmit->show();
     showAdminCancel->show();
-    showAdminLineEdit->setPlaceholderText("RFID");
+    showAdminLineEdit->setPlaceholderText("User Id");
     currAdminEdit = "Delete";
 
     emit LoggingTest("delete worker button pressed", (int)LOG_BUTTON);
@@ -657,6 +677,10 @@ void MainWindow::addWorker(){
     emit LoggingTest("add worker button pressed", (int)LOG_BUTTON);
 }
 
+/**
+ * @brief MainWindow::adminAccept
+ * add, update or delete a worker after apply was clicked by admin
+ */
 void MainWindow::adminAccept(){
     QString *currUserId = new QString(showAdminLineEdit->text());
     QString *userId = new QString(showAdminUserIdEdit->text());
@@ -706,7 +730,7 @@ void MainWindow::adminAccept(){
         if(currAdminEdit.isEmpty()){
             qWarning() << "What?! Empty but in adminAccept? How?!";
         }else if(currAdminEdit == "Add"){
-            emit AddWorker(*userId,*RFID,*name,groupArr);
+            emit AddWorker(*currUserId,*RFID,*name,groupArr);
             currAdminEdit.clear();
         }else if(currAdminEdit == "Delete"){
             emit DeleteWorker(*currUserId);
@@ -720,6 +744,10 @@ void MainWindow::adminAccept(){
     }
 }
 
+/**
+ * @brief MainWindow::adminCancel
+ * clear out lineedits of admin input after cancel was clicked
+ */
 void MainWindow::adminCancel(){
     showAdminLineEdit->hide();
     showAdminUserIdEdit->hide();
@@ -742,6 +770,10 @@ void MainWindow::adminCancel(){
     showAllButton->show();
 }
 
+/**
+ * @brief MainWindow::showAll
+ * show every worker and their groups; only admin
+ */
 void MainWindow::showAll(){
     for(int i = 0; i < showTableWidget->rowCount(); i++){
         showTableWidget->showRow(i);
@@ -798,15 +830,9 @@ void MainWindow::showTable(bool show){
 
 /**
  * @brief MainWindow::sql
- * make items for table and append them to the table therefore adding a worker
- * @param name
- * name of the current worker getting added
- * @param RFID
- * RFID of the current worker getting added
- * @param loc
- * location of the current worker getting added
- * @param access
- * access status of the current worker getting added
+ * fills the table with every worker, their groups and the corresponding rights
+ * @param result
+ * the query result in table form
  */
 void MainWindow::sql(QList<QStringList> result){
     for(int i = 0; i < result.size(); i++){
@@ -825,6 +851,7 @@ void MainWindow::sql(QList<QStringList> result){
         showTableWidget->setItem(showTableWidget->rowCount()-1, 3, groupItem);
         showTableWidget->setItem(showTableWidget->rowCount()-1, 4, rightItem);
     }
+    showTableWidget->sortByColumn(0,Qt::AscendingOrder);
 }
 
 /**
@@ -833,14 +860,12 @@ void MainWindow::sql(QList<QStringList> result){
  * @param RFID
  * RFID of the deleted worker
  */
-void MainWindow::deleteRowInTable(QString RFID){
+void MainWindow::deleteRowInTable(QString userId){
     //find the item with the exact RFID
-    QList<QTableWidgetItem *> toRemove = showTableWidget->findItems(RFID,Qt::MatchExactly);
+    QList<QTableWidgetItem *> toRemove = showTableWidget->findItems(userId,Qt::MatchExactly);
     //remove whole row of worker if it exist
-    if(!toRemove.isEmpty()){
-        showTableWidget->removeRow(toRemove[0]->row());
-    }else{
-        qDebug() << "Nothing removed, no worker found";
+    for(int i = 0; i < toRemove.size(); i++){
+        showTableWidget->removeRow(toRemove.at(i)->row());
     }
 }
 
@@ -858,24 +883,29 @@ void MainWindow::deleteRowInTable(QString RFID){
  * @param currRFID
  * old RFID
  */
-void MainWindow::updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID){
+void MainWindow::updateRowInTable(QString userId, QList<QStringList> result){
     //find the item with the exact RFID
-    QList<QTableWidgetItem *> toUpdate = showTableWidget->findItems(currRFID,Qt::MatchExactly);
+    QList<QTableWidgetItem *> toUpdate = showTableWidget->findItems(userId,Qt::MatchExactly);
 
-    if(access == "true"){
-        access = "Granted";
-    }else{
-        access = "Denied";
+    for(int i = 0; i < toUpdate.size(); i++){
+        showTableWidget->removeRow(toUpdate.at(i)->row());
     }
 
-    //overwrite the whole row if the worker/RFID exists
-    if(!toUpdate.isEmpty()){
-        showTableWidget->item(toUpdate[0]->row(), 0)->setText(name);
-        showTableWidget->item(toUpdate[0]->row(), 1)->setText(RFID);
-        showTableWidget->item(toUpdate[0]->row(), 2)->setText(location);
-        showTableWidget->item(toUpdate[0]->row(), 3)->setText(access);
-    }else{
+    for(int i = 0; i < result.size(); i++){
+        //create items to add to table with correct data
+        showTableWidget->setRowCount(showTableWidget->rowCount()+1);
+        QTableWidgetItem *userIdItem = new QTableWidgetItem(result.at(i).at(0));
+        QTableWidgetItem *nameItem = new QTableWidgetItem(result.at(i).at(1));
+        QTableWidgetItem *rfidItem = new QTableWidgetItem(result.at(i).at(2));
+        QTableWidgetItem *groupItem = new QTableWidgetItem(result.at(i).at(3));
+        QTableWidgetItem *rightItem = new QTableWidgetItem(result.at(i).at(4));
 
+        //add the items to the correct (last)row and column
+        showTableWidget->setItem(showTableWidget->rowCount()-1, 0, userIdItem);
+        showTableWidget->setItem(showTableWidget->rowCount()-1, 1, nameItem);
+        showTableWidget->setItem(showTableWidget->rowCount()-1, 2, rfidItem);
+        showTableWidget->setItem(showTableWidget->rowCount()-1, 3, groupItem);
+        showTableWidget->setItem(showTableWidget->rowCount()-1, 4, rightItem);
     }
 }
 
@@ -888,7 +918,7 @@ void MainWindow::sortTableByNameAsc(){
     emit LoggingTest("sort by name ascending pressed",(int)LOG_BUTTON);
 }
 /**
- * @brief MainWindow::sortTableByAccessAsc
+ * @brief MainWindow::sortTableByIdAsc
  * does what it says on the tin
  */
 void MainWindow::sortTableByIdAsc(){
@@ -904,7 +934,7 @@ void MainWindow::sortTableByNameDesc(){
     emit LoggingTest("sort by name descending pressed",(int)LOG_BUTTON);
 }
 /**
- * @brief MainWindow::sortTableByAccessDesc
+ * @brief MainWindow::sortTableByIdDesc
  * does what it says on the tin
  */
 void MainWindow::sortTableByIdDesc(){
@@ -961,7 +991,7 @@ void MainWindow::emulateSearch(bool toggle){
 
 /**
  * @brief MainWindow::putCurrentOnTop
- * puts the currently scanned worker on top of the sql table
+ * puts the currently scanned worker on top of the sql table and hides any other worker
  * @param RFID
  * scanned RFID
  */
@@ -993,21 +1023,25 @@ void MainWindow::putCurrentOnTop(QString RFID){
         QTableWidgetItem *temp2 = showTableWidget->takeItem(i,1);
         QTableWidgetItem *temp3 = showTableWidget->takeItem(i,2);
         QTableWidgetItem *temp4 = showTableWidget->takeItem(i,3);
+        QTableWidgetItem *temp5 = showTableWidget->takeItem(i,4);
 
         QTableWidgetItem *curr1 = showTableWidget->takeItem(row,0);
         QTableWidgetItem *curr2 = showTableWidget->takeItem(row,1);
         QTableWidgetItem *curr3 = showTableWidget->takeItem(row,2);
         QTableWidgetItem *curr4 = showTableWidget->takeItem(row,3);
+        QTableWidgetItem *curr5 = showTableWidget->takeItem(row,4);
 
         showTableWidget->setItem(i,0,curr1);
         showTableWidget->setItem(i,1,curr2);
         showTableWidget->setItem(i,2,curr3);
         showTableWidget->setItem(i,3,curr4);
+        showTableWidget->setItem(i,4,curr5);
 
         showTableWidget->setItem(row,0,temp1);
         showTableWidget->setItem(row,1,temp2);
         showTableWidget->setItem(row,2,temp3);
         showTableWidget->setItem(row,3,temp4);
+        showTableWidget->setItem(row,4,temp5);
         showTableWidget->showRow(i);
     }
 }
@@ -1052,14 +1086,11 @@ void MainWindow::hideAdminScreen(bool chip){
 
 /**
  * @brief MainWindow::visual
- * Slot for the visual output of the access check
+ * visual output after chip was scanned
  * @param name
- * Name of the chip owner
- * @param loc
- * Location that the chip was scanned at
- * @param access
- * True if access is granted
- * False if not
+ * name of the worker
+ * @param RFID
+ * scanned RFID
  */
 void MainWindow::visual(QString name, QString RFID){
 
@@ -1197,6 +1228,14 @@ void MainWindow::scanned(QString RFID, QString loc){
  * Message that was logged
  */
 void MainWindow::logMessage(QString msg){
+
+    if(currentScan%10 == 0 && currentScan >= 20){
+        QList<QLabel *> labelList = loggingTabFrame->findChildren<QLabel *>();
+        for(int i = currentScan-20; i < currentScan-10; i++){
+            labelList.at(i)->hide();
+        }
+    }
+
     //add the last logged message for visual output in the logging tab
     QString log = msg.remove(msg.length()-1, msg.length());
     QLabel *testLabel = new QLabel(log);

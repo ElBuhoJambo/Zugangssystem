@@ -53,7 +53,7 @@ signals:
      * @param RFID
      * deleted RFID
      */
-    void DeleteRow(QString RFID);
+    void DeleteRow(QString userId);
 
     /**
      * @brief UpdateWorker
@@ -69,7 +69,7 @@ signals:
      * @param currRFID
      * old RFID
      */
-    void UpdateWorker(QString RFID, QString location, QString name, QString access, QString currRFID);
+    void UpdateWorker(QString userId, QList<QStringList> result);
 
     /**
      * @brief GetNames

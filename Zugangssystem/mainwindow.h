@@ -46,7 +46,7 @@
 #define ADMIN_RFID "0004365639"
 
 typedef enum{
-    EmptySpace,
+    EmptySpacer,
     Software,
     Hardware,
     Produktion,
@@ -296,9 +296,9 @@ public slots:
     void showTabToolTips();
     void addWorker();
     void deleteWorker();
-    void deleteRowInTable(QString RFID);
+    void deleteRowInTable(QString userId);
     void updateWorker();
-    void updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID);
+    void updateRowInTable(QString userId, QList<QStringList> result);
     void sortTableByNameAsc();
     void sortTableByIdAsc();
     void sortTableByNameDesc();

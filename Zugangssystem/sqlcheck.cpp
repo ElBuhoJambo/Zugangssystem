@@ -127,6 +127,27 @@ void sqlCheck::updateWorker(QString currUserId, QString userId, QString RFID, QS
         qWarning() << "ERROR: " << query.lastError().text();
     }
 
+    QList<QStringList> result;
+    //perpare the query and execute it, if successfully emits the results
+    query.prepare("SELECT User.id, name, RFID, groupname, rightname FROM User "
+                  "INNER JOIN Keys ON User.id = Keys.userid "
+                  "INNER JOIN UserGroup ON User.id = UserGroup.userid "
+                  "INNER JOIN Groups ON Groups.id = UserGroup.groupid "
+                  "INNER JOIN GroupRights ON Groups.id = GroupRights.groupid "
+                  "INNER JOIN Rights ON Rights.id = GroupRights.rightid "
+                  "WHERE User.id = ?");
+    query.addBindValue(userId);
+    if(!query.exec()){
+        qWarning() << "ERROR: " << query.lastError().text();
+    }
+    while(query.next()){
+        QStringList temp;
+        temp << query.value(0).toString() << query.value(1).toString() << query.value(2).toString() << query.value(3).toString() << query.value(4).toString();
+        result << temp;
+    }
+
+    emit UpdateWorker(userId, result);
+
 }
 
 /**
@@ -146,6 +167,8 @@ void sqlCheck::deleteWorker(QString userId){
     }else{
         qWarning() << "ERROR: " << query.lastError().text();
     }
+
+    emit DeleteRow(userId);
 }
 
 /**
@@ -166,7 +189,7 @@ void sqlCheck::addWorker(QString userId, QString RFID, QString name, QList<int> 
 
     //perpare the query and execute it, if successfully emits the results
     query.prepare("INSERT INTO User(id, name, active) VALUES(?, ?, 1)");
-    query.addBindValue(userId);
+    query.addBindValue(userId.toInt());
     query.addBindValue(name);
     if(query.exec()){
         qDebug() << "User added successfully";
@@ -177,7 +200,7 @@ void sqlCheck::addWorker(QString userId, QString RFID, QString name, QList<int> 
 
     query.prepare("INSERT INTO Keys(RFID, userid) VALUES(?, ?)");
     query.addBindValue(RFID);
-    query.addBindValue(userId);
+    query.addBindValue(userId.toInt());
     if(query.exec()){
         qDebug() << "Key added successfully";
     }else{
@@ -187,7 +210,7 @@ void sqlCheck::addWorker(QString userId, QString RFID, QString name, QList<int> 
 
     for(int i = 0; i < groups.size(); i++){
         query.prepare("INSERT INTO UserGroup(userid, groupid) VALUES(?, ?)");
-        query.addBindValue(userId);
+        query.addBindValue(userId.toInt());
         query.addBindValue(groups[i]);
         if(query.exec()){
             qDebug() << "UserGroup added successfully";
@@ -199,13 +222,14 @@ void sqlCheck::addWorker(QString userId, QString RFID, QString name, QList<int> 
 
     if(!worked){
         query.prepare("DELETE FROM User WHERE id = ?");
-        query.addBindValue(userId);
+        query.addBindValue(userId.toInt());
         if(query.exec()){
             qDebug() << "Add undone";
         }else{
             qWarning() << "ERROR: " << query.lastError().text();
         }
     }
+    showTable();
 }
 
 /**
