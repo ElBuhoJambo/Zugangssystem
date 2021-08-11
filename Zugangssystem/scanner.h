@@ -60,7 +60,7 @@ private:
     void initScanner(void);
 
     static Scanner* sInstance;
-    QString defaultPath = "/dev/input/event2";
+    QString defaultPath = "/dev/input/event1";
     QString rfid;
     QTimer* sCheckScanner;
     QFile *sScannerFile;

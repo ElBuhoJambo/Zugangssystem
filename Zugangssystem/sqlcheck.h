@@ -45,7 +45,7 @@ signals:
      * @param access
      * access status of a worker
      */
-    void ShowTable(QString name, QString loc, QString RFID, QString access);
+    void ShowTable(QList<QStringList> result);
 
     /**
      * @brief DeleteRow

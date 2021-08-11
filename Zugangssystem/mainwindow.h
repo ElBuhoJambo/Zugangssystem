@@ -15,6 +15,7 @@
 #include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QDialogButtonBox>
+#include <QHeaderView>
 
 #include <QThread>
 #include <QToolTip>
@@ -99,6 +100,7 @@ public:
     QPushButton *showDeleteButton;
     QPushButton *showUpdateButton;
     QPushButton *showEmulateSearch;
+    QPushButton *showAllButton;
     QLineEdit *showAdminLineEdit;
     QLineEdit *showAdminUserIdEdit;
     QLineEdit *showAdminRFIDLineEdit;
@@ -109,18 +111,18 @@ public:
     QPushButton *showAdminCancel;
     QPushButton *showSortByNameAsc;
     QPushButton *showSortByNameDesc;
-    QPushButton *showSortByAccessAsc;
-    QPushButton *showSortByAccessDesc;
+    QPushButton *showSortByIdAsc;
+    QPushButton *showSortByIdDesc;
     QLineEdit *showSearchTable;
     QLabel *showSortByName;
-    QLabel *showSortByAccess;
+    QLabel *showSortById;
     QFrame *showFrame;
     QFrame *showAdminFrame;
     QFrame *showSortFrame;
     QFrame *showSpaceFrame;
     QTableWidget *showTableWidget;
     QVBoxLayout *showLayout;
-    QStringList columns = {"Name", "RFID", "Groups", "Rights"};
+    QStringList columns = {"Id", "Name", "RFID", "Groups", "Rights"};
     QString currAdminEdit;
 
     QPushButton *writeToFile;
@@ -279,7 +281,7 @@ public slots:
     void scanTest(QString rfid);
     void visual(QString name, QString RFID);
     void logMessage(QString msg);
-    void sql(QString name, QString RFID, QString loc, QString access);
+    void sql(QList<QStringList> result);
     void showTable(bool show);
     void hideAdminScreen(bool chip);
     void showTabToolTips();
@@ -289,11 +291,12 @@ public slots:
     void updateWorker();
     void updateRowInTable(QString RFID, QString location, QString name, QString access, QString currRFID);
     void sortTableByNameAsc();
-    void sortTableByAccessAsc();
+    void sortTableByIdAsc();
     void sortTableByNameDesc();
-    void sortTableByAccessDesc();
+    void sortTableByIdDesc();
     void searchInTable(QString term);
     void emulateSearch(bool toggle);
+    void showAll();
     void putCurrentOnTop(QString RFID);
     void emulateWriteToFile();
     void writeToFileFuc(QDateTime time, QString name);

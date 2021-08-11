@@ -214,8 +214,9 @@ void sqlCheck::addWorker(QString userId, QString RFID, QString name, QList<int> 
  */
 void sqlCheck::showTable(){
     QSqlQuery query;
+    QList<QStringList> result;
     //perpare the query and execute it, if successfully emits the results
-    query.prepare("SELECT name, RFID, groupname, rightname FROM User "
+    query.prepare("SELECT User.id, name, RFID, groupname, rightname FROM User "
                   "INNER JOIN Keys ON User.id = Keys.userid "
                   "INNER JOIN UserGroup ON User.id = UserGroup.userid "
                   "INNER JOIN Groups ON Groups.id = UserGroup.groupid "
@@ -225,8 +226,12 @@ void sqlCheck::showTable(){
         qWarning() << "ERROR: " << query.lastError().text();
     }
     while(query.next()){
-        emit ShowTable(QString(query.value(0).toString()), QString(query.value(1).toString()), QString(query.value(2).toString()), query.value(3).toString());
+        QStringList temp;
+        temp << query.value(0).toString() << query.value(1).toString() << query.value(2).toString() << query.value(3).toString() << query.value(4).toString();
+        result << temp;
     }
+
+    emit ShowTable(result);
 }
 
 /**
