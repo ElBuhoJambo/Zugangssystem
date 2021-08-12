@@ -143,14 +143,23 @@ MainWindow::MainWindow(QWidget *parent)
     calcOvertime = new QPushButton("Overtime");
     calcNeededTime = new QPushButton("Needed time");
 
+    //initliazing display keyboard
     lineEditKeyboard = new Keyboard(this);
     lineEditKeyboard->hide();
     lineEditKeyboard->setGeometry(0,300,800,300);
 
+    //definitions for settings tab
     settings = new QSettings("LarSys", "Zugangssystem");
     keyboardEnabled = new QCheckBox("Enable display keyboard?");
     settingsSaveCancel = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
+    standardSortDrop = new QComboBox;
+    colorSchemeDrop = new QComboBox;
+    fontDrop = new QFontComboBox;
     keyboardEnabled->setFocusPolicy(Qt::NoFocus);
+    standardSortDrop->addItems(standardSort);
+    colorSchemeDrop->addItems(colorScheme);
+    fontDrop->setWritingSystem(QFontDatabase::Latin);
+    fontDrop->setFontFilters(QFontComboBox::ScalableFonts);
 
     ui->centralwidget->setLayout(mainGridLayout);
 
@@ -209,11 +218,13 @@ MainWindow::MainWindow(QWidget *parent)
     csvLayout->addWidget(calcNeededTime,2,3);
     csvTabFrame->setLayout(csvLayout);
 
+    //setup for settings screen
     settingsLayout->addWidget(keyboardEnabled,0,0,Qt::AlignTop);
-    settingsLayout->addWidget(settingsSaveCancel,1,0);
+    settingsLayout->addWidget(standardSortDrop,0,1,1,2,Qt::AlignTop);
+    settingsLayout->addWidget(colorSchemeDrop,1,0,Qt::AlignTop);
+    settingsLayout->addWidget(fontDrop,1,1,1,2,Qt::AlignTop);
+    settingsLayout->addWidget(settingsSaveCancel,2,1,1,2);
     settingsTabFrame->setLayout(settingsLayout);
-
-    ui->centralwidget->setStyleSheet("background-color: #E7E7E7;");
 
     //setting every WhatsThis text
     testLoc1But1->setWhatsThis("Emulate scan for Location 1");
@@ -246,6 +257,10 @@ MainWindow::MainWindow(QWidget *parent)
     locLabel->setWhatsThis("Location of the currently scanned worker");
     accessLabel->setWhatsThis("Output whether or not access is to this location is granted");
     timeLabel->setWhatsThis("Time the currently scanned worker scanned in");
+    keyboardEnabled->setWhatsThis("Check if display keyboard should be enabled\nUncheck if display keyboard should be disabled");
+    standardSortDrop->setWhatsThis("Set the standard sort criterium for the worker table");
+    colorSchemeDrop->setWhatsThis("Set the color scheme of the application");
+    fontDrop->setWhatsThis("Set the font of the application");
 
     //connecting signals and slots used for sending data between and in classes
     connect(openDoor::getInstance(),&openDoor::Rights,accessRights::getInstance(),&accessRights::checkAccess);
@@ -353,6 +368,12 @@ void MainWindow::disableDisplayKeyboard(){
  */
 void MainWindow::saveSettings(){
     settings->setValue("checkbox/value", keyboardEnabled->isChecked());
+    settings->setValue("combobox/index", standardSortDrop->currentIndex());
+    settings->setValue("combobox/data", standardSortDrop->currentData());
+    settings->setValue("colorscheme/index", colorSchemeDrop->currentIndex());
+    settings->setValue("colorscheme/data", colorSchemeDrop->currentData());
+    settings->setValue("font/index", fontDrop->currentIndex());
+    settings->setValue("font/text", fontDrop->currentText());
 
     restoreSettings();
 }
@@ -362,12 +383,92 @@ void MainWindow::saveSettings(){
  * read the current saved settings and apply them
  */
 void MainWindow::restoreSettings(){
-    keyboardEnabled->setChecked(settings->value("checkbox/value").value<bool>());
+    bool enableKeyboard = settings->value("checkbox/value").value<bool>();
+    int currentSortIndex = settings->value("combobox/index").value<int>();
+    int currentColorIndex = settings->value("colorscheme/index").value<int>();
+    int currentFontIndex = settings->value("font/index").value<int>();
+    QString currenFont = settings->value("font/text").toString();
 
-    if(keyboardEnabled->isChecked()){
+    keyboardEnabled->setChecked(enableKeyboard);
+    standardSortDrop->setCurrentIndex(currentSortIndex);
+    colorSchemeDrop->setCurrentIndex(currentColorIndex);
+    fontDrop->setCurrentIndex(currentFontIndex);
+
+    if(enableKeyboard){
         grabKeyboard();
     }else{
         disableDisplayKeyboard();
+    }
+    switch(currentSortIndex){
+    case 0:
+        showTableWidget->sortByColumn(0, Qt::AscendingOrder);
+        break;
+    case 1:
+        showTableWidget->sortByColumn(0, Qt::DescendingOrder);
+        break;
+    case 2:
+        showTableWidget->sortByColumn(1, Qt::AscendingOrder);
+        break;
+    case 3:
+        showTableWidget->sortByColumn(1, Qt::DescendingOrder);
+        break;
+    default:
+        showTableWidget->sortByColumn(0, Qt::AscendingOrder);
+        break;
+    }
+    setColorScheme(currentColorIndex,currenFont);
+}
+
+/**
+ * @brief MainWindow::setColorScheme
+ * set the color scheme and the font
+ * @param index
+ * current index of the color scheme
+ * @param font
+ * current font family
+ */
+void MainWindow::setColorScheme(int index, QString font){
+    switch(index){
+    case 0:
+        mainTabWidget->setStyleSheet(QString("background-color:#F1F1F1; "
+                                             "color: #000000;"
+                                             "font-family:"+font+";"));
+        this->setStyleSheet(QString("background-color:#F1F1F1; "
+                                             "color: #000000;"
+                                             "font-family:"+font+";"));
+        break;
+    case 1:
+        mainTabWidget->setStyleSheet(QString("background-color:#AFAFAF;"
+                                             "color: #FFFFFF;"
+                                             "font-family:"+font+";"));
+        this->setStyleSheet(QString("background-color:#AFAFAF;"
+                                             "color: #FFFFFF;"
+                                             "font-family:"+font+";"));
+        break;
+    case 2:
+        mainTabWidget->setStyleSheet(QString("background-color:#8FDDFB;"
+                                             "color: #253E92;"
+                                             "font-family:"+font+";"));
+        this->setStyleSheet(QString("background-color:#8FDDFB;"
+                                             "color: #253E92;"
+                                             "font-family:"+font+";"));
+        break;
+    case 3:
+        mainTabWidget->setStyleSheet(QString("background-color:#FFE808;"
+                                             "color: #FF0000;"
+                                             "font-family:"+font+";"));
+        this->setStyleSheet(QString("background-color:#FFE808;"
+                                             "color: #FF0000;"
+                                             "font-family:"+font+";"));
+        break;
+    default:
+        mainTabWidget->setStyleSheet(QString("background-color:#F1F1F1; "
+                                             "color: #000000;"
+                                             "font-family:"+font+";"));
+        this->setStyleSheet(QString("background-color:#999999;"
+                                             "color: #FFFFFF;"
+                                             "font-family:"+font+";"));
+        break;
     }
 }
 

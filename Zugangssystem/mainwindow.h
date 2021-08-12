@@ -17,6 +17,8 @@
 #include <QDialogButtonBox>
 #include <QHeaderView>
 #include <QCheckBox>
+#include <QComboBox>
+#include <QFontComboBox>
 
 #include <QThread>
 #include <QToolTip>
@@ -71,6 +73,7 @@ public:
     void delay(int millisecondsWait);
     void grabKeyboard();
     void disableDisplayKeyboard();
+    void setColorScheme(int index, QString font);
 
     QGridLayout *mainGridLayout;
     QTabWidget *mainTabWidget;
@@ -153,6 +156,11 @@ public:
 
     QSettings *settings;
     QCheckBox *keyboardEnabled;
+    QComboBox *standardSortDrop;
+    QStringList standardSort = {"User Id Asc","User Id Desc","Name A-Z","Name Z-A"};
+    QComboBox *colorSchemeDrop;
+    QStringList colorScheme = {"Light Mode", "Dark Mode", "Ocean", "Fire"};
+    QFontComboBox *fontDrop;
     QDialogButtonBox *settingsSaveCancel;
 
 
