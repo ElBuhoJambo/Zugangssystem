@@ -21,6 +21,7 @@ SOURCES += \
     csvhandling.cpp \
     keyboard/keyboard.cpp \
     logging.cpp \
+    logoutuser.cpp \
     main.cpp \
     mainwindow.cpp \
     opendoor.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     keyboard/keyboard.h \
     keyboard/ui_keyboard.h \
     logging.h \
+    logoutuser.h \
     mainwindow.h \
     opendoor.h \
     scanner.h \

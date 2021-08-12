@@ -38,6 +38,7 @@
 #include "csvhandling.h"
 #include "scanner.h"
 #include "keyboard/keyboard.h"
+#include "logoutuser.h"
 
 #include "math.h"
 
@@ -321,6 +322,7 @@ public slots:
     void adminCancel();
     void saveSettings();
     void restoreSettings();
+    void logoutWorker();
 
 };
 #endif // MAINWINDOW_H

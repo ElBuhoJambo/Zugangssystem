@@ -269,6 +269,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(GetCurrentTime(bool, QString)), Logging::getInstance(), SLOT(getCurrTime(bool, QString)));
     connect(Logging::getInstance(), SIGNAL(SendCurrentTime(QDateTime, QString)), this, SLOT(writeToFileFuc(QDateTime, QString)));
     connect(Scanner::getInstance(), &Scanner::ChipScanned, this, &MainWindow::scanTest);
+    connect(logoutUser::getInstance(), &logoutUser::Logout, this, &MainWindow::logoutWorker);
 
     //connecting signals and slots for button clicks
     connect(testLoc1But1, &QPushButton::clicked, this, &MainWindow::loc1Clicked1);
@@ -812,19 +813,25 @@ void MainWindow::delay(int millisecondsWait){
  */
 void MainWindow::showTable(bool show){
     //only if the table hasn't been shown yet fill it up again, if it's not the first time just show or hide the widget
-    if(firstShow){
-        emit FirstShow();
-        firstShow = false;
-        showFrame->show();
-        emit LoggingTest("show table button pressed;first time", (int)LOG_BUTTON);
-    }else{
-        if(show){
+    if(!(nameLabel->text().isEmpty() || nameLabel->text() == "")){
+        if(firstShow){
+            emit FirstShow();
+            firstShow = false;
             showFrame->show();
-            emit LoggingTest("show table button pressed;show", (int)LOG_BUTTON);
+            emit LoggingTest("show table button pressed;first time", (int)LOG_BUTTON);
         }else{
-            showFrame->hide();
-            emit LoggingTest("show table button pressed;hide", (int)LOG_BUTTON);
+            if(show){
+                showFrame->show();
+                emit LoggingTest("show table button pressed;show", (int)LOG_BUTTON);
+            }else{
+                showFrame->hide();
+                emit LoggingTest("show table button pressed;hide", (int)LOG_BUTTON);
+            }
         }
+    }else{
+        QMessageBox tableInfo;
+        tableInfo.setText("Nobody logged in!\nNothing to show!");
+        tableInfo.exec();
     }
 }
 
@@ -1076,12 +1083,34 @@ void MainWindow::hideAdminScreen(bool chip){
     logOutButton->hide();
     showAdminFrame->hide();
     ui->statusbar->showMessage("admin gone");
+    nameLabel->clear();
+    locLabel->clear();
+    accessLabel->clear();
+    timeLabel->clear();
+    putCurrentOnTop("0");
     adminLogged = false;
     if(!chip){
         emit LoggingTest("log out button pressed",(int)LOG_BUTTON);
     }
 
     emit LoggingTest("admin logged out",(int)LOG_COMMON);
+}
+
+/**
+ * @brief MainWindow::logoutWorker
+ * clear visual output and table of current worker
+ */
+void MainWindow::logoutWorker(){
+    if(adminLogged){
+        hideAdminScreen(true);
+    }else{
+        nameLabel->clear();
+        locLabel->clear();
+        accessLabel->clear();
+        timeLabel->clear();
+        putCurrentOnTop("0");
+        emit LoggingTest("user logged out automatically",(int)LOG_COMMON);
+    }
 }
 
 /**
@@ -1216,6 +1245,7 @@ void MainWindow::scanned(QString RFID, QString loc){
         loc.append("RFID: ").append(RFID);
         emit LoggingTest(loc, 0);
         emit PutCurrentOnTop(RFID);
+        logoutUser::getInstance()->setUserLoggedIn(true);
     }else{
         qDebug() << "RFID is in a faulty format";
         //emit LoggingTest(QString("UID is in a faulty format; UID: ").append(QString::number(UID)), 1);
