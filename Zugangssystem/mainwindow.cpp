@@ -7,9 +7,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    userId.setPattern("\\d{1,18}");
     RFID.setPattern("[0-9]{,10}");
     name.setPattern("^[a-zA-Z\\s,.'-]+$");
-    access.setPattern("[01]");
+    active.setPattern("[01]");
+    group.setPattern("((\\w+)|,)+");
 
     //TabWidget and tab definition
     mainGridLayout = new QGridLayout;
@@ -64,6 +66,12 @@ MainWindow::MainWindow(QWidget *parent)
     showAdminNameLineEdit->setFocusPolicy(Qt::NoFocus);
     showAdminGroupsLineEdit->setFocusPolicy(Qt::NoFocus);
     showAdminActivateLineEdit->setFocusPolicy(Qt::NoFocus);
+    showAdminLineEdit->setValidator(new QRegExpValidator(userId));
+    showAdminUserIdEdit->setValidator(new QRegExpValidator(userId));
+    showAdminRFIDLineEdit->setValidator(new QRegExpValidator(RFID));
+    showAdminNameLineEdit->setValidator(new QRegExpValidator(name));
+    showAdminGroupsLineEdit->setValidator(new QRegExpValidator(group));
+    showAdminActivateLineEdit->setValidator(new QRegExpValidator(active));
     showAdminLineEdit->hide();
     showAdminUserIdEdit->hide();
     showAdminRFIDLineEdit->hide();
@@ -77,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
     showSortByNameDesc = new QPushButton("Descending");
     showSortByIdDesc = new QPushButton("Descending");
     showSearchTable = new QLineEdit();
-    showSearchTable->setPlaceholderText("RFID");
+    showSearchTable->setPlaceholderText("User Id");
     showSearchTable->setFocusPolicy(Qt::NoFocus);
     showSortByName = new QLabel("Sort by name");
     showSortById = new QLabel("Sort by id");
@@ -734,10 +742,6 @@ void MainWindow::updateWorker(){
     showAdminNameLineEdit->setPlaceholderText("New/Same name");
     showAdminGroupsLineEdit->setPlaceholderText("New/Same Groups");
     showAdminActivateLineEdit->setPlaceholderText("New/Same Active status (1/0)");
-    //showAdminLineEdit->setValidator(new QRegExpValidator(RFID));
-    //showAdminRFIDLineEdit->setValidator(new QRegExpValidator(RFID));
-    //showAdminNameLineEdit->setValidator(new QRegExpValidator(name));
-    //showAdminActivateLineEdit->setValidator(new QRegExpValidator(access));
     currAdminEdit = "Update";
 
     emit LoggingTest(";update worker button pressed", (int)LOG_BUTTON);
@@ -956,7 +960,8 @@ void MainWindow::sql(QList<QStringList> result){
     for(int i = 0; i < result.size(); i++){
         //create items to add to table with correct data
         showTableWidget->setRowCount(i+1);
-        QTableWidgetItem *userIdItem = new QTableWidgetItem(result.at(i).at(0));
+        QTableWidgetItem *userIdItem = new QTableWidgetItem;
+        userIdItem->setData(Qt::EditRole, result.at(i).at(0).toInt());
         QTableWidgetItem *nameItem = new QTableWidgetItem(result.at(i).at(1));
         QTableWidgetItem *rfidItem = new QTableWidgetItem(result.at(i).at(2));
         QTableWidgetItem *groupItem = new QTableWidgetItem(result.at(i).at(3));
@@ -1012,7 +1017,8 @@ void MainWindow::updateRowInTable(QString userId, QList<QStringList> result){
     for(int i = 0; i < result.size(); i++){
         //create items to add to table with correct data
         showTableWidget->setRowCount(showTableWidget->rowCount()+1);
-        QTableWidgetItem *userIdItem = new QTableWidgetItem(result.at(i).at(0));
+        QTableWidgetItem *userIdItem = new QTableWidgetItem;
+        userIdItem->setData(Qt::EditRole, result.at(i).at(0).toInt());
         QTableWidgetItem *nameItem = new QTableWidgetItem(result.at(i).at(1));
         QTableWidgetItem *rfidItem = new QTableWidgetItem(result.at(i).at(2));
         QTableWidgetItem *groupItem = new QTableWidgetItem(result.at(i).at(3));
@@ -1062,11 +1068,12 @@ void MainWindow::sortTableByIdDesc(){
 
 /**
  * @brief MainWindow::searchInTable
- * search for a certain worker in the table doesn't matter with what criterium
+ * search for a certain worker in the table per userid
  * @param term
- * cirterium for search, can be name, RFID, anything
+ * cirterium for search -> userid
  */
 void MainWindow::searchInTable(QString term){
+    //deselects every selected row
     QList<QTableWidgetItem *> selected = showTableWidget->selectedItems();
     int row = -1;
     if(!selected.isEmpty()){
@@ -1079,14 +1086,17 @@ void MainWindow::searchInTable(QString term){
     }else{
         qDebug() << "non prev selected, search";
     }
-    //find the worker with the exact term, doesn't matter if name, RFID or anything else
-    QList<QTableWidgetItem *> search = showTableWidget->findItems(term, Qt::MatchStartsWith);
-    //highlight the whole row if the term is found
-    if(!search.isEmpty()){
-        for(int i = 0; i < search.size(); i++){
-            showTableWidget->selectRow(search[i]->row());
+
+    //looks for rows containing the exact userid and selects the whole row
+    int rows = showTableWidget->rowCount();
+    bool found = false;
+    for(int i = 0; i < rows; i++){
+        if(showTableWidget->item(i,0)->text() == term){
+            showTableWidget->selectRow(i);
+            found = true;
         }
-    }else{
+    }
+    if(!found){
         qDebug() << "Worker not found, search";
     }
 }

@@ -147,10 +147,11 @@ public:
     QCheckBox *autoLogout;
     QDialogButtonBox *settingsSaveCancel;
 
-
+    QRegExp userId;
     QRegExp RFID;
     QRegExp name;
-    QRegExp access;
+    QRegExp active;
+    QRegExp group;
 
     Keyboard *lineEditKeyboard;
 
