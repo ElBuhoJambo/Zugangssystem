@@ -44,11 +44,22 @@ void logoutUser::initTimer(){
 /**
  * @brief logoutUser::checkForUser
  * checks if a user is logged in and starts a singleshot timer for logging a user out after 7 secs
+ * if auto logout is disabled and the it is the admin that is logged in than don't start the timer
  */
 void logoutUser::checkForUser(){
     if(userLoggedIn){
+        if(isAutoLogoutDisabled && isAdmin){
+            if(singleShotLogout != NULL){
+                singleShotLogout->stop();
+            }
+            return;
+        }
         setUserLoggedIn(false);
-        QTimer::singleShot(7000, this, &logoutUser::logout);
+        singleShotLogout = new QTimer;
+        singleShotLogout->setSingleShot(true);
+        singleShotLogout->setInterval(7000);
+        connect(singleShotLogout, &QTimer::timeout, this, &logoutUser::logout);
+        singleShotLogout->start();
     }
 }
 
@@ -72,10 +83,30 @@ bool logoutUser::getUserLoggedIn(){
 
 /**
  * @brief logoutUser::setUserLoggedIn
- * sets the new status if a user is logged in for use in the main class
+ * sets the new status if any user is logged in for use in the main class
  * @param userLoggedIn
- * new status if a user is logged in
+ * new status if any user is logged in
  */
 void logoutUser::setUserLoggedIn(bool userLoggedIn){
     this->userLoggedIn = userLoggedIn;
+}
+
+/**
+ * @brief logoutUser::setIsAdmin
+ * sets the new status if the admin is logged in for use in the main class
+ * @param isAdmin
+ * new status if the admin is logged in
+ */
+void logoutUser::setIsAdmin(bool isAdmin){
+    this->isAdmin = isAdmin;
+}
+
+/**
+ * @brief logoutUser::setIsAutoLogoutEnabled
+ * sets the new status if the auto logout is enabled for use in the main class
+ * @param isAutoLogoutEnabled
+ * new status if auto logout is enabled
+ */
+void logoutUser::setIsAutoLogoutDisabled(bool isAutoLogoutDisabled){
+    this->isAutoLogoutDisabled = isAutoLogoutDisabled;
 }

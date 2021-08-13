@@ -15,6 +15,8 @@ public:
     static logoutUser* getInstance(void);
     bool getUserLoggedIn();
     void setUserLoggedIn(bool userLoggedIn);
+    void setIsAdmin(bool isAdmin);
+    void setIsAutoLogoutDisabled(bool isAutoLogoutDisabled);
 
 public slots:
     void checkForUser();
@@ -34,6 +36,9 @@ private:
     static logoutUser* lInstance;
     bool userLoggedIn = false;
     QTimer *logoutTimer;
+    QTimer *singleShotLogout;
+    bool isAdmin = false;
+    bool isAutoLogoutDisabled = true;
 };
 
 #endif // LOGOUTUSER_H

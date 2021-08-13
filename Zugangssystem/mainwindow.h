@@ -1,27 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QLabel>
-#include <QPushButton>
-#include <QTabWidget>
-#include <QFrame>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QDateTime>
+#include <QtWidgets>
 #include <QTime>
-#include <QLineEdit>
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QMessageBox>
-#include <QDialogButtonBox>
-#include <QHeaderView>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QFontComboBox>
 
 #include <QThread>
-#include <QToolTip>
 #include <QWhatsThis>
 
 #include <QAbstractSocket>
@@ -161,6 +144,7 @@ public:
     QComboBox *colorSchemeDrop;
     QStringList colorScheme = {"Light Mode", "Dark Mode", "Ocean", "Fire"};
     QFontComboBox *fontDrop;
+    QCheckBox *autoLogout;
     QDialogButtonBox *settingsSaveCancel;
 
 

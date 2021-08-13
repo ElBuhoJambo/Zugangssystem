@@ -155,11 +155,13 @@ MainWindow::MainWindow(QWidget *parent)
     standardSortDrop = new QComboBox;
     colorSchemeDrop = new QComboBox;
     fontDrop = new QFontComboBox;
+    autoLogout = new QCheckBox("Disable auto logout?");
     keyboardEnabled->setFocusPolicy(Qt::NoFocus);
     standardSortDrop->addItems(standardSort);
     colorSchemeDrop->addItems(colorScheme);
     fontDrop->setWritingSystem(QFontDatabase::Latin);
     fontDrop->setFontFilters(QFontComboBox::ScalableFonts);
+    autoLogout->hide();
 
     ui->centralwidget->setLayout(mainGridLayout);
 
@@ -220,11 +222,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     //setup for settings screen
     settingsLayout->addWidget(keyboardEnabled,0,0,Qt::AlignTop);
-    settingsLayout->addWidget(standardSortDrop,0,1,1,2,Qt::AlignTop);
+    settingsLayout->addWidget(standardSortDrop,1,1,1,2,Qt::AlignTop);
     settingsLayout->addWidget(colorSchemeDrop,1,0,Qt::AlignTop);
-    settingsLayout->addWidget(fontDrop,1,1,1,2,Qt::AlignTop);
-    settingsLayout->addWidget(settingsSaveCancel,2,1,1,2);
+    settingsLayout->addWidget(fontDrop,2,0,1,3,Qt::AlignTop);
+    settingsLayout->addWidget(autoLogout,0,2,Qt::AlignTop);
+    settingsLayout->addWidget(settingsSaveCancel,3,1,1,2,Qt::AlignBottom);
     settingsTabFrame->setLayout(settingsLayout);
+    settingsLayout->setAlignment(Qt::AlignTop);
 
     //setting every WhatsThis text
     testLoc1But1->setWhatsThis("Emulate scan for Location 1");
@@ -346,6 +350,7 @@ void MainWindow::grabKeyboard(){
     QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
     foreach(QLineEdit* lineEdit, lineEditList)
     {
+        lineEdit->setFocusPolicy(Qt::NoFocus);
         connect(lineEdit,&QLineEdit::selectionChanged,this,&MainWindow::showKeyboardLineEdit);
     }
 }
@@ -358,6 +363,7 @@ void MainWindow::disableDisplayKeyboard(){
     QList<QLineEdit*> lineEditList = this->findChildren<QLineEdit*>();
     foreach(QLineEdit* lineEdit, lineEditList)
     {
+        lineEdit->setFocusPolicy(Qt::NoFocus);
         disconnect(lineEdit,&QLineEdit::selectionChanged,this,&MainWindow::showKeyboardLineEdit);
     }
 }
@@ -374,6 +380,7 @@ void MainWindow::saveSettings(){
     settings->setValue("colorscheme/data", colorSchemeDrop->currentData());
     settings->setValue("font/index", fontDrop->currentIndex());
     settings->setValue("font/text", fontDrop->currentText());
+    settings->setValue("autoLogout/value", autoLogout->isChecked());
 
     restoreSettings();
 }
@@ -388,11 +395,14 @@ void MainWindow::restoreSettings(){
     int currentColorIndex = settings->value("colorscheme/index").value<int>();
     int currentFontIndex = settings->value("font/index").value<int>();
     QString currenFont = settings->value("font/text").toString();
+    bool disableAutoLogin = settings->value("autoLogout/value").value<bool>();
 
     keyboardEnabled->setChecked(enableKeyboard);
     standardSortDrop->setCurrentIndex(currentSortIndex);
     colorSchemeDrop->setCurrentIndex(currentColorIndex);
     fontDrop->setCurrentIndex(currentFontIndex);
+    autoLogout->setChecked(disableAutoLogin);
+    logoutUser::getInstance()->setIsAutoLogoutDisabled(disableAutoLogin);
 
     if(enableKeyboard){
         grabKeyboard();
@@ -1171,6 +1181,7 @@ void MainWindow::showAdminScreen(){
     logOutButton->show();
     showAdminFrame->show();
     ui->statusbar->showMessage("admin logged in");
+    autoLogout->show();
     emit LoggingTest("admin logged in",(int)LOG_COMMON);
 }
 
@@ -1190,6 +1201,7 @@ void MainWindow::hideAdminScreen(bool chip){
     timeLabel->clear();
     putCurrentOnTop("0");
     adminLogged = false;
+    autoLogout->hide();
     if(!chip){
         emit LoggingTest("log out button pressed",(int)LOG_BUTTON);
     }
@@ -1347,6 +1359,8 @@ void MainWindow::scanned(QString RFID, QString loc){
         emit LoggingTest(loc, 0);
         emit PutCurrentOnTop(RFID);
         logoutUser::getInstance()->setUserLoggedIn(true);
+        logoutUser::getInstance()->setIsAdmin(adminLogged);
+        logoutUser::getInstance()->setIsAutoLogoutDisabled(settings->value("autoLogout/value").value<bool>());
     }else{
         qDebug() << "RFID is in a faulty format";
         //emit LoggingTest(QString("UID is in a faulty format; UID: ").append(QString::number(UID)), 1);
